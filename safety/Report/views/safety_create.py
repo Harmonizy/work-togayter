@@ -9,6 +9,7 @@ from ..forms.reports import BaseReportForm
 from ..choices import PriorityChoices
 # , HazardReportForm, AviationReportForm, GroundReportForm, SafetyReportForm
 from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet
+from ..services.safety_create import create_new_report
 
 
 logger = logging.getLogger('report')
@@ -16,28 +17,13 @@ logger = logging.getLogger('report')
 @login_required
 def new_report(request):
     if request.method == 'POST':
-        base_form = BaseReportForm(request.POST, prefix="base_form")
-        image_formset = ImageFormSet(request.POST, request.FILES, prefix='images')
-        recommendation_formset = RecommendationFormSet(request.POST, prefix='recommendations')
-        file_formset = FileFormSet(request.POST, request.FILES, prefix='files')
+        success, forms, base_report = create_new_report(request)
+        base_form, image_formset, recommendation_formset, file_formset = forms
 
-        if base_form.is_valid() and image_formset.is_valid() and recommendation_formset.is_valid() and file_formset.is_valid():
-
-            with transaction.atomic():
-                base_report = base_form.save(commit=False)
-                if not base_report.anonymous:
-                    base_report.recorder = request.user
-
-                base_report.priority = request.POST.get("initial_assessment")
-                base_report.save()
-
-                for formset in [image_formset, recommendation_formset, file_formset]:
-                    for obj in formset.save(commit=False):
-                        obj.base_report = base_report
-                        obj.save()
-
+        if success:
             return redirect('report:safety-report.list')
-    else:
+
+    else:  # GET
         initial_data = {'affiliation': request.user.affiliation}
         if request.user.affiliation.airviation_content:
             initial_data['content'] = request.user.affiliation.airviation_content

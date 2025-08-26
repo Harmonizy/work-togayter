@@ -18,8 +18,8 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
     networks:
-      - mydocker_mynetwork
+      - docker_general_network
 
 networks:
-  mydocker_mynetwork:
+  docker_general_network:
     external: true
