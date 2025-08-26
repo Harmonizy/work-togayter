@@ -1,0 +1,71 @@
+from common.RTAFUser.models import Rank
+
+# Data to be imported
+data = [
+    (30101, 'พล.อ.อ.*', 'ACM.', 'พลอากาศเอก', 'Air Chief Marshal', 11, 'ACM', True),
+    (30102, 'พล.อ.อ.*หญิง', 'ACM.', 'พลอากาศเอกหญิง', 'Air Chief Marshal', 11, 'ACM', True),
+    (30211, 'พล.อ.อ.', 'ACM.', 'พลอากาศเอก', 'Air Chief Marshal', 10, 'ACM', True),
+    (30212, 'พล.อ.อ.หญิง', 'ACM.', 'พลอากาศเอกหญิง', 'Air Chief Marshal', 10, 'ACM', True),
+    (30213, 'พล.อ.', 'Gen.', 'พลเอก', 'General', 10, 'Gen.', False),
+    (30221, 'พล.อ.ท.', 'AM.', 'พลอากาศโท', 'Air Marshal', 9, 'AM.', True),
+    (30222, 'พล.อ.ท.หญิง', 'AM.', 'พลอากาศโทหญิง', 'Air Marshal', 9, 'AM.', True),
+    (30231, 'พล.อ.ต.', 'AVM.', 'พลอากาศตรี', 'Air Vice Marshal', 8, 'AVM.', True),
+    (30232, 'พล.อ.ต.หญิง', 'AVM.', 'พลอากาศตรีหญิง', 'Air Vice Marshal', 8, 'AVM.', True),
+    (30301, 'น.อ.(พ)', 'Gp.Capt.', 'นาวาอากาศเอก (พ)', 'Group Captain', 7, 'Gp.Capt.', True),
+    (30302, 'น.อ.(พ) หญิง', 'Gp.Capt.', 'นาวาอากาศเอก (พ) หญิง', 'Group Captain', 7, 'Gp.Capt.', True),
+    (30410, 'พ.อ.', 'Col.', 'พันเอก', 'Colonel', 6, 'Col.', False),
+    (30411, 'น.อ.', 'Gp.Capt.', 'นาวาอากาศเอก', 'Group Captain', 6, 'Gp.Capt.', True),
+    (30412, 'น.อ.หญิง', 'Gp.Capt.', 'นาวาอากาศเอกหญิง', 'Group Captain', 6, 'Gp.Capt.', True),
+    (30420, 'พ.ท.', 'Lt.Col.', 'พันโท', 'Lieutenant Colonel', 5, 'Lt.Col.', False),
+    (30421, 'น.ท.', 'Wg.Cdr.', 'นาวาอากาศโท', 'Wing Commander', 5, 'Wg.Cdr.', True),
+    (30422, 'น.ท.หญิง', 'Wg.Cdr.', 'นาวาอากาศโทหญิง', 'Wing Commander', 5, 'Wg.Cdr.', True),
+    (30431, 'น.ต.', 'Sqn.Ldr.', 'นาวาอากาศตรี', 'Squadron Leader', 4, 'Sqn.Ldr.', True),
+    (30432, 'น.ต.หญิง', 'Sqn.Ldr.', 'นาวาอากาศตรีหญิง', 'Squadron Leader', 4, 'Sqn.Ldr.', True),
+    (30511, 'ร.อ.', 'Flt.Lt.', 'เรืออากาศเอก', 'Flight Lieutenant', 3, 'Flt.Lt.', True),
+    (30512, 'ร.อ.หญิง', 'Flt.Lt.', 'เรืออากาศเอกหญิง', 'Flight Lieutenant', 3, 'Flt.Lt.', True),
+    (30521, 'ร.ท.', 'Flg.Off.', 'เรืออากาศโท', 'Flying Officer', 2, 'Flg.Off.', True),
+    (30522, 'ร.ท.หญิง', 'Flg.Off.', 'เรืออากาศโทหญิง', 'Flying Officer', 2, 'Flg.Off.', True),
+    (30531, 'ร.ต.', 'Plt.Off.', 'เรืออากาศตรี', 'Pilot Officer', 1, 'Plt.Off.', True),
+    (30532, 'ร.ต.หญิง', 'Plt.Off.', 'เรืออากาศตรีหญิง', 'Pilot Officer', 1, 'Plt.Off.', True),
+    (30541, 'กห.ส.', '', 'กห.ส.', '', 1, 'กห.ส.', True),
+    (30542, 'กห.ส.หญิง', '', 'กห.ส.หญิง', '', 1, 'กห.ส.หญิง', True),
+    (30611, 'พ.อ.อ.(พ)', 'FS1.', 'พันจ่าอากาศเอก(พ)', 'Flight Sergeant (1)', 1, 'FS1.', True),
+    (30612, 'พ.อ.อ.(พ) หญิง', 'FS1.', 'พันจ่าอากาศเอก(พ) หญิง', 'Flight Sergeant (1)', 1, 'FS1.', True),
+    (30711, 'พ.อ.อ.', 'FS1.', 'พันจ่าอากาศเอก', 'Flight Sergeant (1)', 1, 'FS1.', True),
+    (30712, 'พ.อ.อ.หญิง', 'FS1.', 'พันจ่าอากาศเอกหญิง', 'Flight Sergeant (1)', 1, 'FS1.', True),
+    (30721, 'พ.อ.ท.', 'FS2.', 'พันจ่าอากาศโท', 'Flight Sergeant (2)', 1, 'FS2.', True),
+    (30722, 'พ.อ.ท.หญิง', 'FS2.', 'พันจ่าอากาศโทหญิง', 'Flight Sergeant (2)', 1, 'FS2.', True),
+    (30731, 'พ.อ.ต.', 'Sgt.', 'พันจ่าอากาศตรี', 'Sergeant', 1, 'Sgt.', True),
+    (30732, 'พ.อ.ต.หญิง', 'Sgt.', 'พันจ่าอากาศตรีหญิง', 'Sergeant', 1, 'Sgt.', True),
+    (30811, 'จ.อ.', 'Sgt.', 'จ่าอากาศเอก', 'Sergeant', 1, 'Sgt.', True),
+    (30812, 'จ.อ.หญิง', 'Sgt.', 'จ่าอากาศเอกหญิง', 'Sergeant', 1, 'Sgt.', True),
+    (30821, 'จ.ท.', 'Cpl.', 'จ่าอากาศโท', 'Corporal', 1, 'Cpl.', True),
+    (30822, 'จ.ท.หญิง', 'Cpl.', 'จ่าอากาศโทหญิง', 'Corporal', 1, 'Cpl.', True),
+    (30831, 'จ.ต.', 'LAC.', 'จ่าอากาศตรี', 'Leading Aircraftman', 1, 'LAC.', True),
+    (30832, 'จ.ต.หญิง', 'LAC.', 'จ่าอากาศตรีหญิง', 'Leading Aircraftman', 1, 'LAC.', True),
+    (31411, 'ว่าที่ น.อ.', 'Gp.Capt.', 'ว่าที่ นาวาอากาศเอก', 'Group Captain', 6, 'Gp.Capt.', True),
+    (31412, 'ว่าที่ น.อ.หญิง', 'Gp.Capt.', 'ว่าที่ นาวาอากาศเอกหญิง', 'Group Captain', 6, 'Gp.Capt.', True),
+    (31421, 'ว่าที่ น.ท.', 'Wg.Cdr.', 'ว่าที่ นาวาอากาศโท', 'Wing Commander', 5, 'Wg.Cdr.', True),
+    (31422, 'ว่าที่ น.ท.หญิง', 'Wg.Cdr.', 'ว่าที่ นาวาอากาศโทหญิง', 'Wing Commander', 5, 'Wg.Cdr.', True),
+    (31511, 'ว่าที่ ร.อ.', 'Flt.Lt.', 'ว่าที่ เรืออากาศเอก', 'Flight Lieutenant', 3, 'Flt.Lt.', True),
+    (31512, 'ว่าที่ ร.อ.หญิง', 'Flt.Lt.', 'ว่าที่ เรืออากาศเอกหญิง', 'Flight Lieutenant', 3, 'Flt.Lt.', True),
+    (40200, 'พนง.อาวุโสหญิง', '', 'พนักงานอาวุโสหญิง', '', 1, 'พนง.อาวุโสหญิง', False),
+    (40201, 'พนง.อาวุโส', '', 'พนักงานอาวุโส', '', 1, 'พนง.อาวุโส', False),
+    (40400, 'พนง.หญิง', '', 'พนักงานหญิง', '', 1, 'พนง.หญิง', False),
+    (40401, 'พนง.', '', 'พนักงาน', '', 1, 'พนง.', False),
+    (40600, 'นาย', 'Mr.', 'นาย', 'Mister', 1, 'นาย', False),
+    (40601, 'นาง', 'Mrs.', 'นาง', 'Mrs.', 1, 'นาง', False),
+    (40602, 'น.ส.', 'Miss.', 'นางสาว', 'Miss', 1, 'น.ส.', False),
+    (31521, 'ว่าที่ ร.ท.', '', '', '', 1, '', True),
+    (31522, 'ว่าที่ ร.ท.หญิง', '', '', '', 1, '', True),
+    (31531, 'ว่าที่ ร.ต.', '', '', '', 1, '', True),
+    (31532, 'ว่าที่ ร.ต.หญิง', '', '', '', 1, '', True),
+]
+
+def do_it():
+    ranks = [
+        Rank(id=id, short_name=th, full_name=th_desc, eng_short_name=en, eng_full_name=en_desc, level=level, short_display=abbr, is_airforce=is_military) 
+        for id, th, en, th_desc, en_desc, level, abbr, is_military in data
+    ]
+    
+    Rank.objects.bulk_create(ranks)

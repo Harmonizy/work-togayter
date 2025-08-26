@@ -1,0 +1,111 @@
+{% extends "_base_bs.html" %}
+
+{% load static %}
+
+{% block title %}Affiliation Detail{% endblock %}
+
+{% block css %}
+    <!-- Additional CSS if needed for this page -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .affiliation-header {
+            margin-bottom: 20px;
+        }
+
+        .affiliation-details {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .affiliation-header h3 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .affiliation-header p {
+            font-size: 18px;
+            color: #6c757d;
+        }
+
+        .affiliation-info {
+            margin-bottom: 15px;
+        }
+
+        .affiliation-info .info-title {
+            font-weight: bold;
+        }
+
+        .affiliation-info .info-value {
+            font-size: 18px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block script %}
+    <!-- Additional JavaScript if needed for this page -->
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="affiliation-header">
+        <h3>Affiliation Details</h3>
+        <p>View detailed information about the user's affiliation with an organization.</p>
+    </div>
+
+    <div class="affiliation-details">
+        <!-- Affiliation HRIS Code -->
+        <div class="affiliation-info">
+            <span class="info-title">HRIS Code:</span>
+            <span class="info-value">{{ affiliation.hris_code }}</span>
+        </div>
+
+        <!-- Affiliation Short Name -->
+        <div class="affiliation-info">
+            <span class="info-title">Short Name:</span>
+            <span class="info-value">{{ affiliation.short_name }}</span>
+        </div>
+
+        <!-- Affiliation Full Name -->
+        <div class="affiliation-info">
+            <span class="info-title">Full Name:</span>
+            <span class="info-value">{{ affiliation.full_name }}</span>
+        </div>
+
+        <!-- Affiliation RTAF Directed Status -->
+        <div class="affiliation-info">
+            <span class="info-title">RTAF Directed:</span>
+            <span class="info-value">
+                {% if affiliation.is_rtaf_directed %}
+                    <span class="text-success">Yes</span>
+                {% else %}
+                    <span class="text-danger">No</span>
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Affiliation Super Affiliation -->
+        <div class="affiliation-info">
+            <span class="info-title">Super Affiliation:</span>
+            <span class="info-value">
+                {% if affiliation.super_affiliation %}
+                    {{ affiliation.super_affiliation.short_name }}
+                {% else %}
+                    <span class="text-muted">None</span>
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Back Button -->
+        <a href="{% url 'RTAFUser:affiliation_update' affiliation.id %}" class="btn btn-warning">แก้ไข</a>
+        <a href="{% url 'RTAFUser:affiliation_list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block footer_script %}
+    <!-- Footer script (if needed) -->
+{% endblock %}

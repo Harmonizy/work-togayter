@@ -1,0 +1,19 @@
+{% extends "_base_bs.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class="affiliation-header">
+        <h3>Update Affiliation</h3>
+        <p>Edit the details of the affiliation.</p>
+    </div>
+
+    <div class="affiliation-update">
+        <form method="post">
+            {% csrf_token %}
+            {% crispy form %}
+        </form>
+    </div>
+</div>
+{% endblock %}

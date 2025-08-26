@@ -1,0 +1,19 @@
+{% extends "_base_bs.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">บันทึกสำเร็จ</h4>
+            <ul>
+                <li><strong>Name:</strong> {{ user.get_full_name }}</li>
+                <li><strong>AF ID:</strong> {{ user.af_id }}</li>
+                <li><strong>Person ID:</strong> {{ user.person_id }}</li>
+                <li><strong>Position:</strong> {{ user.position }}</li>
+                <li><strong>Affiliation:</strong> {{ user.affiliation }}</li>
+                <li><strong>Work Affiliation:</strong> {{ user.work_affiliation }}</li>
+            </ul>
+        <hr>
+        {% comment %} <p class="mb-0">You can now <a href="#" class="alert-link">return to the user list</a> or <a href="#" class="alert-link">add another user</a>.</p> {% endcomment %}
+    </div>
+</div>
+{% endblock %}

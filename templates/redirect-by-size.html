@@ -1,0 +1,23 @@
+<!-- templates/redirect_by_size.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting...</title>
+    <script>
+        window.onload = function() {
+            const width = window.innerWidth;
+
+            if (width < 768) {
+                // Mobile
+                window.location.href = "{% url 'report:safety-mobile-home' %}";
+            } else {
+                // Desktop
+                window.location.href = "{% url 'report:safety-desktop-home' %}";
+            }
+        };
+    </script>
+</head>
+<body>
+    <p>Redirecting based on your screen size...</p>
+</body>
+</html>

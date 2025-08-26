@@ -1,0 +1,299 @@
+{% extends "partials/base-mobile.html" %}
+{% load crispy_forms_tags partials %}
+{% load services_tags report_tags %}
+    
+{% block extra_css %}
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .menu-container {
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 20px 16px;
+        }
+        
+        .menu-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 16px;
+        }
+        
+        .menu-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #212529;
+        }
+        
+        .menu-subtitle {
+            font-size: 0.875rem;
+            color: #6c757d;
+            font-weight: 400;
+        }
+        
+        .menu-item {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* Individual button background colors */
+        .menu-item:nth-child(1) { background: #e3f2fd; border-left: 4px solid #2196f3; }  /* Dashboard - Blue */
+        .menu-item:nth-child(2) { background: #f3e5f5; border-left: 4px solid #9c27b0; }  /* Reports - Purple */
+        .menu-item:nth-child(3) { background: #e8f5e8; border-left: 4px solid #4caf50; }  /* Analytics - Green */
+        .menu-item:nth-child(4) { background: #fff3e0; border-left: 4px solid #ff9800; }  /* Settings - Orange */
+        .menu-item:nth-child(5) { background: #fce4ec; border-left: 4px solid #e91e63; }  /* Profile - Pink */
+        .menu-item:nth-child(6) { background: #fce4e4ff; border-left: 4px solid #e91e1eff; }  /* Profile - Pink */
+        .menu-item:nth-child(7) { background: #f6fce4ff; border-left: 4px solid #e9dc1eff; }  /* Profile - Pink */
+        .menu-item:nth-child(8) { background: #e6fce4ff; border-left: 4px solid #1ee93dff; }  /* Profile - Pink */
+        .menu-item:nth-child(9) { background: #f9e4fcff; border-left: 4px solid #471ee9ff; }  /* Profile - Pink */
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #007bff;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            filter: brightness(1.02);
+        }
+        
+        .menu-item:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .menu-item:active {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .menu-icon {
+            font-size: 2.5rem;
+            color: #495057;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .menu-item:hover .menu-icon {
+            transform: scale(1.1);
+            color: #007bff;
+        }
+        
+        .menu-content {
+            flex: 1;
+        }
+        
+        .menu-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0 0 4px 0;
+            line-height: 1.3;
+        }
+        
+        .menu-subtitle {
+            font-size: 0.875rem;
+            color: #6c757d;
+            font-weight: 400;
+            margin: 0;
+        }
+        
+        .menu-arrow {
+            font-size: 1.2rem;
+            color: #6c757d;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .menu-item:hover .menu-arrow {
+            color: #007bff;
+            transform: translateX(4px);
+        }
+        
+        .menu-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .menu-container {
+                padding: 16px 12px;
+            }
+            
+            .menu-item {
+                padding: 18px 20px;
+                margin-bottom: 14px;
+            }
+            
+            .menu-icon {
+                font-size: 2.2rem;
+            }
+            
+            .menu-label {
+                font-size: 1rem;
+            }
+            
+            .menu-subtitle {
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Clean animation for menu items */
+        .menu-item {
+            animation: slideInLeft 0.4s ease-out;
+        }
+        
+        .menu-item:nth-child(1) { animation-delay: 0.1s; }
+        .menu-item:nth-child(2) { animation-delay: 0.2s; }
+        .menu-item:nth-child(3) { animation-delay: 0.3s; }
+        .menu-item:nth-child(4) { animation-delay: 0.4s; }
+        .menu-item:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %}
+    <div class="menu-container">
+        <div class="container">
+            <!-- Header -->
+            <div class="menu-header">
+                <h1 class="menu-title">RTAF Safety Analysis</h1>
+                <p class="menu-subtitle">โปรแกรมวิเคราะห์นิรภัย</p>
+            </div>
+            
+            <!-- Menu Items -->
+            <div class="menu-container">
+                
+                <!-- Create -->
+                <div class="menu-item" onclick="handleMenuClick('analytics')">
+                    <i class="bi bi-exclamation-triangle-fill menu-icon"></i>
+                    <div class="menu-content">
+                        <p class="menu-label">Create</p>
+                        <p class="menu-subtitle">สร้างรายงาน Hazard</p>
+                    </div>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </div>
+
+                <!-- Create -->
+                <div class="menu-item" onclick="handleMenuClick('analytics')">
+                    <i class="bi bi-shield-fill-plus menu-icon"></i>
+                    <div class="menu-content">
+                        <p class="menu-label">Create</p>
+                        <p class="menu-subtitle">สร้างรายงานนิรภัยอุบัติการณ์</p>
+                    </div>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </div>
+
+                <!-- Create -->
+                <div class="menu-item" onclick="handleMenuClick('analytics')">
+                    <i class="bi bi-airplane-engines menu-icon"></i>
+                    <div class="menu-content">
+                        <p class="menu-label">Create</p>
+                        <p class="menu-subtitle">สร้างรายงานภาคอากาศ</p>
+                    </div>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </div>
+
+                <!-- Create -->
+                <div class="menu-item" onclick="handleMenuClick('analytics')">
+                    <i class="bi bi-buildings-fill menu-icon"></i>
+                    <div class="menu-content">
+                        <p class="menu-label">Create</p>
+                        <p class="menu-subtitle">รายงานภาคพื้น</p>
+                    </div>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        function handleMenuClick(menuType) {
+            // Add click effect
+            const clickedItem = event.currentTarget;
+            clickedItem.style.transform = 'scale(0.98)';
+            
+            setTimeout(() => {
+                clickedItem.style.transform = '';
+            }, 150);
+            
+            // Handle different menu types
+            switch(menuType) {
+                case 'dashboard':
+                    console.log('Opening Dashboard...');
+                    // Add your navigation logic here
+                    break;
+                case 'reports':
+                    console.log('Opening Reports...');
+                    break;
+                case 'analytics':
+                    console.log('Opening Analytics...');
+                    break;
+                case 'settings':
+                    console.log('Opening Settings...');
+                    break;
+                case 'profile':
+                    console.log('Opening Profile...');
+                    break;
+                default:
+                    console.log('Unknown menu type:', menuType);
+            }
+        }
+        
+        // Add touch feedback for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                item.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+    </script>
+{% endblock extra_js %}

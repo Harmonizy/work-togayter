@@ -1,0 +1,28 @@
+
+<div class="col-xl-3 col-sm-6">
+    <div class="card card-animate">
+        <div class="card-body">
+            <div class="row">
+                <div class ="d-flex justify-content-between">
+                    <div>
+                        <p class="fw-medium text-muted mb-0">{{ label }}</p>
+                        <h2 class="mt-2 ff-secondary fw-semibold">
+                            <span class="counter-value" data-target="{{ count }}">0</span>
+                        </h2>
+                    </div>
+                    
+                    <div class="avatar-sm flex-shrink-0">
+                        <span class="avatar-title {{ icon_bg }} {{ icon_text }} rounded-circle fs-4">
+                            <i class="{{ icon }}"></i>
+                        </span>
+                    </div>
+                </div>
+                <p class="mt-2 mb-0 text-muted">
+                    <span class="badge bg-light text-{{ trend_color }} mb-0">
+                        <i class="ri-arrow-{{ trend_icon }}-line align-middle"></i> {{ growth }} %
+                    </span> vs. prev month
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

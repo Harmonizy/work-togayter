@@ -1,0 +1,53 @@
+{% extends "_base_bs.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3 class="mb-4 d-inline">หน่วยงาน ทอ.</h3>
+    <a href="{% url 'RTAFUser:affiliation_create' %}" class="btn btn-info float-end">สร้างหน่วยใหม่</a>
+    <!-- Table to display the affiliations -->
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr class="text-center">
+                <th>รหัส HRIS</th>
+                <th>ชื่อเต็ม</th>
+                <th>นขต.ทอ.</th>
+                <th>ต้นสังกัด</th>
+                <th>รายละเอียด</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for affiliation in affiliations %}
+            <tr class="text-center">
+                <td >{{ affiliation.hris_code }}</td>
+                <td class="text-start">
+                    <span class = "fw-bold">{{ affiliation.short_name }}</span>
+                    : {{ affiliation.full_name }}
+                </td>
+                <td >
+                    {% if affiliation.is_rtaf_directed %}
+                        <span class="badge bg-success">ใช่</span>
+                    {% else %}
+                        <span class="badge bg-danger">No</span>
+                    {% endif %}
+                </td>
+                <td >
+                    {% if affiliation.super_affiliation %}
+                        {{ affiliation.super_affiliation.short_name }}
+                    {% else %}
+                        <span class="text-muted">None</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'RTAFUser:affiliation_detail' affiliation.id %}" class="btn btn-sm btn-primary">รายละเอียด</a>
+                    <a href="{% url 'RTAFUser:affiliation_update' affiliation.id %}" class="btn btn-sm btn-warning">แก้ไข</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No affiliations found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

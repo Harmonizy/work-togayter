@@ -1,0 +1,131 @@
+{% extends "partials/base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Safety Reports Create{% endblock title %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm" crossorigin="anonymous"></script>
+
+<style>    
+   
+    .django-ckeditor-widget {
+        width: 100% !important;
+    }
+</style>
+{% endblock extra_css %}
+
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            {% url 'report:safety-report.list' as safety_report_list_url %}
+            {% include "partials/page-title.html" with pagetitle="รายงาน" pagetitle_url=safety_report_list_url title="สร้างรายงานใหม่" %}
+
+
+            <!-- ตรวจสอบ report_type -->
+            <p>ประเภทรายงาน: {{ report_type_label }}</p>
+
+            <form id="reportForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% crispy base_form %}
+
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" title="รูปภาพ" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" title="ไฟล์" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" title="คอมเมนต์" %}
+
+                <div class="my-5">
+                    <button type="submit" name="initial_assessment" value="L" class="btn btn-success">บันทึก (ปกติ)</button>
+                    <button type="submit" name="initial_assessment" value="M" class="btn btn-warning">บันทึก (ต้องติดตาม)</button>
+                    <button type="submit" name="initial_assessment" value="H" class="btn btn-danger">บันทึก (เร่งด่วน)</button>
+                </div>
+            </form>
+
+        </div>
+    </div>            
+    {% include "partials/footer.html" %}
+</div>
+
+
+{% endblock %}
+
+{% comment %} {% block footer %}{% endblock footer %} {% endcomment %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'libs/sweetalert2/dist/sweetalert2.min.js' %}"></script>
+
+<script>
+$(document).ready(function () {
+    $('.js-example-basic-multiple').select2();
+    $('.js-example-basic-single').select2();
+
+    $('.django-ckeditor-widget').addClass('w-100');
+
+    let clickedButtonValue = null;
+
+    $('#reportForm button[type="submit"]').click(function() {
+        clickedButtonValue = $(this).val(); // เก็บค่าที่กด
+    });
+
+    $('#reportForm').on('submit', function(e) {
+        e.preventDefault();
+
+        if (clickedButtonValue) {
+            // สร้าง hidden input ส่งค่าปุ่มที่กด
+            if (!$(this).find('input[name="initial_assessment"]').length) {
+                $(this).append(
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'initial_assessment',
+                        value: clickedButtonValue
+                    })
+                );
+            } else {
+                $(this).find('input[name="initial_assessment"]').val(clickedButtonValue);
+            }
+        }
+
+        const form = this;
+        Swal.fire({
+            title: 'ยืนยันส่งข้อมูล?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'ยืนยัน',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // ส่ง form พร้อมค่าที่ถูกต้อง
+            }
+        });
+    });
+    
+  $('.add-formset-btn').click(function () {
+    const targetContainerSelector = $(this).data('target');
+    const container = $(targetContainerSelector);
+    const totalFormsSelector = container.data('total-forms');
+    const emptyFormSelector = container.data('empty-form');
+
+    let totalFormsInput = $(totalFormsSelector);
+    let totalFormsCount = parseInt(totalFormsInput.val());
+
+    // Get empty form HTML, replace __prefix__ with current count
+    let newFormHtml = $(emptyFormSelector).html().replace(/__prefix__/g, totalFormsCount);
+
+    // Append new form
+    container.append(newFormHtml);
+
+    // Increment total forms count
+    totalFormsInput.val(totalFormsCount + 1);
+  });
+});
+</script>
+{% endblock %}
