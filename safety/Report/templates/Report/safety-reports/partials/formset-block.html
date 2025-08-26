@@ -1,0 +1,39 @@
+{% comment %} Partial template for rendering a formset block {% endcomment %}
+{% load crispy_forms_tags %}
+
+<hr>
+<div class="card p-3">
+    {{ formset.management_form }}
+    <h6>{{ title }}</h6>
+    <div id="{{ container_id }}" data-total-forms="#id_{{ formset_name }}-TOTAL_FORMS" data-empty-form="#{{ empty_form_id }}">
+        {% for form in formset.forms %}
+            <div class="{{ form_class }} position-relative formset-form">
+                {% crispy form %}
+
+                <!-- Delete button -->
+                <button type="button" class="btn btn-sm btn-danger delete-form-btn position-absolute" style="top:6px; right:10px;">
+                    ลบ
+                </button>
+
+                <!-- Hide DELETE field if it's rendered -->
+                {% if form.DELETE %}
+                    <div class="d-none delete-checkbox">
+                        {{ form.DELETE }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="{{ empty_form_id }}" style="display:none;">
+        <div class="{{ form_class }}">
+            {% crispy formset.empty_form %}
+        </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-sm btn-outline-primary add-formset-btn" data-target="#{{ container_id }}">
+            <i class="{{ icon }}"></i> เพิ่ม{{ title }}
+        </button>
+    </div>
+</div>
+

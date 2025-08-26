@@ -1,0 +1,53 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h2>Configurations</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{% url 'Configurations:add' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New
+            </a>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 30%;">
+                <col style="width: 40%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+                <tr class="text-center">
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for config in configs %}
+                <tr>
+                    <td>{{ config.key }}</td>
+                    <td>{{ config.value }}</td>
+                    <td>{{ config.description|default:"" }}</td>
+                    <td>
+                        <a href="{% url 'Configurations:edit' config.pk %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No configurations found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

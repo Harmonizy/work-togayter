@@ -1,0 +1,20 @@
+{% load crispy_forms_tags %}
+
+{% if ground_form %}
+    {% crispy ground_form %}
+{% endif %}
+{% if base_form %}
+    {% crispy base_form %}
+{% endif %}
+
+
+{% if aviation_form %}
+    {% crispy aviation_form %}
+{% endif %}
+
+<script>
+$(document).ready(function () {
+    $('.js-example-basic-multiple').select2();
+    $('.js-example-basic-single').select2();
+});
+</script>

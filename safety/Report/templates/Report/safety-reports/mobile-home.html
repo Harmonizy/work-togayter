@@ -1,0 +1,379 @@
+{% extends "partials/base-mobile.html" %}
+{% load crispy_forms_tags partials %}
+{% load services_tags report_tags %}
+
+{% block extra_css %}
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .menu-grid {
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 24px 16px;
+        }
+        
+        .menu-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            transition: all 0.15s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Individual button background colors */
+        .menu-item:nth-child(1) { background: #e3f2fd; }  /* Dashboard - Light Blue */
+        .menu-item:nth-child(2) { background: #f3e5f5; }  /* Reports - Light Purple */
+        .menu-item:nth-child(3) { background: #e8f5e8; }  /* Analytics - Light Green */
+        .menu-item:nth-child(4) { background: #fff3e0; }  /* Settings - Light Orange */
+        .menu-item:nth-child(5) { background: #fce4ec; }  /* Users - Light Pink */
+        .menu-item:nth-child(6) { background: #e0f2f1; }  /* Alerts - Light Teal */
+        .menu-item:nth-child(7) { background: #f1f8e9; }  /* Calendar - Light Lime */
+        .menu-item:nth-child(8) { background: #e8eaf6; }  /* Messages - Light Indigo */
+        .menu-item:nth-child(9) { background: #fafafa; }  /* Files - Light Gray */
+        .menu-item:nth-child(10) { background: #fff8e1; } /* Help - Light Yellow */
+        .menu-item:nth-child(11) { background: #e0f7fa; } /* Profile - Light Cyan */
+        .menu-item:nth-child(12) { background: #ffebee; } /* Logout - Light Red */
+        
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #007bff;
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            border-color: #007bff;
+            filter: brightness(1.05);
+        }
+        
+        .menu-item:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .menu-item:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            color: #495057;
+            transition: color 0.15s ease;
+        }
+        
+        .menu-item:hover .menu-icon {
+            color: #007bff;
+        }
+        
+        .menu-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: 0.3px;
+        }
+        
+        .menu-subtitle {
+            font-size: 0.65rem;
+            color: #6c757d;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+        
+        .grid-container {
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        
+        .menu-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 0 16px;
+        }
+        
+        .menu-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #212529;
+        }
+        
+        .menu-subtitle {
+            font-size: 0.875rem;
+            color: #6c757d;
+            font-weight: 400;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .menu-grid {
+                padding: 20px 12px;
+            }
+            
+            .menu-item {
+                padding: 18px 14px;
+            }
+            
+            .menu-icon {
+                font-size: 1.75rem;
+            }
+            
+            .menu-label {
+                font-size: 0.75rem;
+            }
+            
+            .menu-subtitle {
+                font-size: 0.6rem;
+            }
+        }
+        
+        /* Clean animation for menu items */
+        .menu-item {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .menu-item:nth-child(1) { animation-delay: 0.05s; }
+        .menu-item:nth-child(2) { animation-delay: 0.1s; }
+        .menu-item:nth-child(3) { animation-delay: 0.15s; }
+        .menu-item:nth-child(4) { animation-delay: 0.2s; }
+        .menu-item:nth-child(5) { animation-delay: 0.25s; }
+        .menu-item:nth-child(6) { animation-delay: 0.3s; }
+        .menu-item:nth-child(7) { animation-delay: 0.35s; }
+        .menu-item:nth-child(8) { animation-delay: 0.4s; }
+        .menu-item:nth-child(9) { animation-delay: 0.45s; }
+        .menu-item:nth-child(10) { animation-delay: 0.5s; }
+        .menu-item:nth-child(11) { animation-delay: 0.55s; }
+        .menu-item:nth-child(12) { animation-delay: 0.6s; }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %}
+    <div class="menu-grid">
+        <div class="container">
+            <!-- Header -->
+            <div class="menu-header">
+                <h1 class="menu-title">RTAF Safety Analysis</h1>
+                <p class="menu-subtitle">โปรแกรมวิเคราะห์นิรภัย</p>
+            </div>
+            
+            <!-- Menu Grid -->
+            <div class="grid-container">
+                <div class="row g-3">
+                    <!-- Row 1 -->
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('dashboard')">
+                            <i class="bi bi-graph-up menu-icon"></i>
+                            <p class="menu-label">Dashboard</p>
+                            <small class="menu-subtitle">สถิติ</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <a href="{% url 'report:safety-report.list' %}">
+                        <div class="menu-item" onclick="handleMenuClick('reports')">
+                            <i class="bi bi-file-earmark-text menu-icon"></i>
+                            <p class="menu-label">Report</p>
+                            <small class="menu-subtitle">รายงาน</small>
+                        </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-4">
+                        <a href="{% url 'report:mobile_create' %}">
+                        <div class="menu-item" onclick="handleMenuClick('analytics')">
+                            <i class="bi bi-file-earmark-plus menu-icon"></i>
+                            <p class="menu-label">Create</p>
+                            <small class="menu-subtitle">ฟอร์ม</small>
+                        </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Row 2 -->
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('settings')">
+                            <i class="bi bi-gear menu-icon"></i>
+                            <p class="menu-label">Admin</p>
+                            <small class="menu-subtitle">เจ้าหน้าที่</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('users')">
+                            <i class="bi bi-people menu-icon"></i>
+                            <p class="menu-label">Management</p>
+                            <small class="menu-subtitle">การบริหาร</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('notifications')">
+                            <i class="bi bi-bell menu-icon"></i>
+                            <p class="menu-label">Alerts</p>
+                            <small class="menu-subtitle">ประชาสัมพันธ์</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 3 -->
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('calendar')">
+                            <i class="bi bi-calendar-event menu-icon"></i>
+                            <p class="menu-label">Calendar</p>
+                            <small class="menu-subtitle">ปฏิธิน</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('messages')">
+                            <i class="bi bi-chat-dots menu-icon"></i>
+                            <p class="menu-label">Command</p>
+                            <small class="menu-subtitle">คำสั่งการ</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('files')">
+                            <i class="bi bi-folder menu-icon"></i>
+                            <p class="menu-label">Files</p>
+                            <small class="menu-subtitle">ฐานข้อมูล</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Row 4 -->
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('help')">
+                            <i class="bi bi-question-circle menu-icon"></i>
+                            <p class="menu-label">Help</p>
+                            <small class="menu-subtitle">แจ้งปัญหา</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('profile')">
+                            <i class="bi bi-person-circle menu-icon"></i>
+                            <p class="menu-label">Profile</p>
+                            <small class="menu-subtitle">โปรไฟล์</small>
+                        </div>
+                    </div>
+                    
+                    <div class="col-4">
+                        <div class="menu-item" onclick="handleMenuClick('logout')">
+                            <i class="bi bi-box-arrow-right menu-icon"></i>
+                            <p class="menu-label">Logout</p>
+                            <small class="menu-subtitle">ออกระบบ</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        function handleMenuClick(menuType) {
+            // Add click effect
+            const clickedItem = event.currentTarget;
+            clickedItem.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                clickedItem.style.transform = '';
+            }, 150);
+            
+            // Handle different menu types
+            switch(menuType) {
+                case 'dashboard':
+                    console.log('Opening Dashboard...');
+                    // Add your navigation logic here
+                    break;
+                case 'reports':
+                    console.log('Opening Reports...');
+                    break;
+                case 'analytics':
+                    console.log('Opening Analytics...');
+                    break;
+                case 'settings':
+                    console.log('Opening Settings...');
+                    break;
+                case 'users':
+                    console.log('Opening Users...');
+                    break;
+                case 'notifications':
+                    console.log('Opening Notifications...');
+                    break;
+                case 'calendar':
+                    console.log('Opening Calendar...');
+                    break;
+                case 'messages':
+                    console.log('Opening Messages...');
+                    break;
+                case 'files':
+                    console.log('Opening Files...');
+                    break;
+                case 'help':
+                    console.log('Opening Help...');
+                    break;
+                case 'profile':
+                    console.log('Opening Profile...');
+                    break;
+                case 'logout':
+                    console.log('Logging out...');
+                    // Add logout logic here
+                    break;
+                default:
+                    console.log('Unknown menu type:', menuType);
+            }
+        }
+        
+        // Add touch feedback for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                item.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+    </script>
+{% endblock extra_js %}

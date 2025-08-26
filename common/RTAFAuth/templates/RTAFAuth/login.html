@@ -1,0 +1,103 @@
+{% extends "_blank_bs.html" %}
+{% load static %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'RTAFUser/login-9.css' %}">
+
+{% endblock %}
+{% block navbar %}{% endblock %}
+
+{% block content %}
+<section class="bg-primary py-2 py-md-4 py-xl-8 vh-100">
+  <div class="container mt-5">
+    <div class="row gy-4 align-items-center">
+      
+      <!-- Left: Logo + Text -->
+      <div class="col-md-6 col-xl-7 text-white text-bg-primary d-flex justify-content-center">
+        <div class="col-xl-9">
+          <img class="img-fluid rounded mb-4" loading="lazy" src="{% static 'RTAFUser/bsb-logo-light.svg' %}" width="245" height="80" alt="BootstrapBrain Logo">
+          <hr class="border-primary-subtle mb-4">
+          <h2 class="h3 mb-4">โปรแกรมสนับสนุนการปฏิบัติภารกิจบรรเทาสาธารณภัย</h2>
+          <p class="lead mb-5">
+            โปรแกรมนี้พัฒนาขึ้นเพื่อสนับสนุนการวางแผนและติดตามสถานการณ์บรรเทาสาธารณภัยภายในประเทศ...
+          </p>
+          <div class="text-end">
+            <!-- SVG Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
+              <path d="M2 8a1 1 0 1 1 0 2..."/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Login Card -->
+      <div class="col-md-6 col-xl-5">
+        <div class="card border-0 rounded-4">
+          <div class="card-body p-3 p-md-4 p-xl-5">
+
+            <h3>เข้าสู่ระบบ</h3>
+            <p>ใช้ OTP เพื่อเข้าสู่ระบบเท่านั้น <a href="#!">ต้องการ OTP</a></p>
+
+            <form method="POST" action="" class="my-4">
+              {% csrf_token %}
+              <div class="form-floating mb-3">
+                {{ form.username }}
+                <label for="email" class="form-label">Username</label>
+              </div>
+              <div class="form-floating mb-3">
+                {{ form.password }}
+                <label for="password" class="form-label">Password</label>
+              </div>
+
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="showPassword" onclick="togglePassword()">
+                <label class="form-check-label" for="showPassword">แสดงรหัสผ่าน</label>
+              </div>
+
+              {% if form.non_field_errors %}
+              <div class="alert alert-danger p-1 mb-1">
+                <ul class="mb-1">
+                  {% for error in form.non_field_errors %}
+                  <li class="p-1">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+
+              {% if messages %}
+              <div class="alert alert-danger p-1 mb-1">
+                <ul class="mb-1">
+                  {% for message in messages %}
+                  <li class="p-1">{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+
+              <div class="d-grid mb-3">
+                <button class="btn btn-primary btn-lg" type="submit">เข้าสู่โปรแกรม</button>
+              </div>
+            </form>
+
+            <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end mt-4">
+              <a href="#!">แก้ปัญหาการเข้าใช้งานไม่ได้</a>
+            </div>
+         
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block footer_script %}
+<script>
+  function togglePassword(){
+
+    let input_password = document.getElementById("id_password");
+    input_password.type = input_password.type === "password" ? "text" : "password";    
+  }
+</script>
+{% endblock %}

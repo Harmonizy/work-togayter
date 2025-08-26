@@ -1,0 +1,146 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load partials %}
+
+{% block scripts %}
+    <script src="{% static 'js/sweetalert2_11.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Feedback Form</h2>
+
+    <button type="button" 
+            class="btn btn-primary" 
+            hx-get="{% url 'feedback' %}" 
+            hx-target="#feedbackModal"
+            hx-swap="innerHTML"
+            hx-confirm="Are you sure you want to open the feedback form?"
+            data-bs-toggle="modal" 
+            data-bs-target="#feedbackModal">
+        Open Feedback Form
+    </button>
+<!-- Modal with form and tabs -->
+<div class="modal fade {% if form.errors %}show d-block{% endif %}" id="feedbackModal" tabindex="-1">
+    {% partialdef feedback-form-modal inline %}
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form hx-post="{% url 'feedback' %}" hx-target="#feedbackModal" hx-swap="innerHTML">
+                {% csrf_token %}
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" id="feedbackTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="form-tab" data-bs-toggle="tab" data-bs-target="#form-tab-pane" type="button" role="tab">
+                                Form
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data-tab-pane" type="button" role="tab">
+                                Info
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content  border p-3 border-top-0">
+                        <!-- Form tab -->
+                        <div class="tab-pane fade show active" id="form-tab-pane" role="tabpanel">
+                            {% crispy form %}
+                        </div>
+
+                        <!-- Data tab -->
+                        <div class="tab-pane fade" id="data-tab-pane" role="tabpanel">
+                            <div class="row mb-2">
+                                <div class="col-sm-4 fw-bold">Name:</div>
+                                <div class="col-sm-8">{{ info.name }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 fw-bold">Email:</div>
+                                <div class="col-sm-8">{{ info.email }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 fw-bold">Last Feedback:</div>
+                                <div class="col-sm-8">{{ info.message }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>                        
+                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endpartialdef %}
+</div>
+
+
+<!-- Show success message -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-success mt-3">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>    
+    /*
+    window.addEventListener('dataReceived', function(event) {
+        console.log('Data received:', event.detail);
+        
+    });*/
+
+    document.body.addEventListener("dataReceived", function(evt){
+        console.log('Data received:', evt);
+        var modal = bootstrap.Modal.getInstance(document.getElementById('feedbackModal'));
+        if (modal) {
+            modal.hide();
+        }
+
+        // add toast
+        swal.fire({
+            icon: 'success',
+            title: 'Feedback submitted successfully!',
+            // toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    });
+
+    
+    document.addEventListener("htmx:confirm", function(e) {
+      e.preventDefault();
+      if (!e.target.hasAttribute('hx-confirm')) {
+          e.detail.issueRequest(true);
+          return;
+      } 
+      Swal.fire({
+          title: "Proceed?",
+          text: `${e.detail.question}`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "No",
+          reverseButtons: true
+      }).then(function(result) {
+          if(result.isConfirmed) e.detail.issueRequest(true); // use true to skip window.confirm
+      });
+  });
+
+</script>
+{% endblock %}

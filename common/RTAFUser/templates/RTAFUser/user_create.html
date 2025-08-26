@@ -1,0 +1,11 @@
+{% extends "_base_bs.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}สร้างข้อมูลผู้ใช้{% endblock %}
+{% block content %}
+<div class="container-fluid p-3">
+    <form method="post" enctype="multipart/form-data">        
+        {% crispy user_form %}
+    </form>
+</div>
+{% endblock %}

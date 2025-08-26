@@ -1,0 +1,30 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if object %}Edit "{{ key }}"{% else %}Add{% endif %} Configuration</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.key|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.value|as_crispy_field }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.description|as_crispy_field }}
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save
+        </button>
+        <a href="{% url 'Configurations:list' %}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+# Python
+*.py[cod]
+*.pyc
+*.pyo
+*.so
+*.spec
+
+.env
+
+*.sqlite3
+*.db
+*.pot
+*.mo
+*.log
+
+# Django
+db.sqlite3
+migrations/
+media/
+staticfiles/
+logs/
+*.egg-info/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# VSCode / IDE / Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker
+*.pid
+docker-compose.override.yml
+/postgres_data
+
+# Testing / Coverage
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+htmlcov/
+
+# Temporary files
+*.swp
+*.tmp
+*.bak
+.dir.txt
