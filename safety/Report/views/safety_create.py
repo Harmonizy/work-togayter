@@ -15,7 +15,7 @@ from ..services.safety_create import create_new_report
 logger = logging.getLogger('report')
 
 @login_required
-def new_report(request):
+def new_report(request): 
     if request.method == 'POST':
         success, forms, base_report = create_new_report(request)
         base_form, image_formset, recommendation_formset, file_formset = forms
