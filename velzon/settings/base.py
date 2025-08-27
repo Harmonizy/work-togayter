@@ -152,6 +152,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,"static")]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
 
@@ -175,10 +176,10 @@ EMAIL_HOST_PASSWORD = ""
 DEFAULT_FROM_EMAIL = ""
 
 LOGIN_URL = "account_login"
-LOGOUT_REDIRECT_URL = "/"
+# LOGOUT_REDIRECT_URL = "/"
 
 
-# LOGIN_REDIRECT_URL = "/redirect-by-size/"
+LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "account_login"
 LOGOUT_REDIRECT_URL = "/login"
 ACCOUNT_LOGOUT_ON_GET = False

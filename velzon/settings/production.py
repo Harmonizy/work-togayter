@@ -1,12 +1,21 @@
+import os
+import socket
+
 from .base import *
 
 DEBUG = False
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://medkittracker.rtaf.mi.th',
+    'https://safety-analysis.rtaf.mi.th',
 ]
 
+INSTALLED_APPS += ["debug_toolbar",]
+MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+
+ip = socket.gethostbyname(socket.gethostname())
+
+INTERNAL_IPS = ['127.0.0.1',  ip[:-1] + '1']
 
 # Redis caching (uncomment if used)
 # CACHES = {
