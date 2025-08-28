@@ -26,7 +26,7 @@ class BaseReport(models.Model):
     fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ",default=current_fiscal_year)
     affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยงาน",on_delete=models.SET_NULL,null=True,blank=True)
     event_date = models.DateField(verbose_name="วันที่เกิดเหตุ",default=date.today)
-    event_time = models.TimeField(verbose_name="เวลาเกิดเหตุ",default=timezone.localtime(timezone.now()).time())
+    event_time = models.TimeField(verbose_name="เวลาเกิดเหตุ",default=timezone.now)
     
     mission_type = models.CharField(verbose_name="ภารกิจ",max_length=1,choices=MissionTypeChoices.choices,null=True,blank=True)
     report_type = models.CharField(verbose_name="ประเภทรายงาน",max_length=2,choices=ReportTypeChoices.choices,default=ReportTypeChoices.SIMPLE)
