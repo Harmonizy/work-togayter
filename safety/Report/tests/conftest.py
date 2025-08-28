@@ -108,3 +108,53 @@ def recommendation_attachment(db, base_report):
     """
     rec = Recommendation.objects.create(base_report=base_report, note="คำแนะนำเบื้องต้น")
     return rec
+
+# -----------------------
+
+@pytest.fixture
+def base_form_minimal_fields(affiliation):
+    return {
+        "title": "รายงานใหม่",
+        "priority": "LOW",
+        "event_date": "2025-08-01",
+        "event_time": "10:00:00",
+        "affiliation": affiliation.pk if affiliation else "",
+        "report_type": "S",
+    }
+
+@pytest.fixture
+def empty_formsets_payload():
+    return {
+        "image-TOTAL_FORMS": "0",
+        "image-INITIAL_FORMS": "0",
+        "image-MIN_NUM_FORMS": "0",
+        "image-MAX_NUM_FORMS": "1000",
+
+        "recommendation-TOTAL_FORMS": "0",
+        "recommendation-INITIAL_FORMS": "0",
+        "recommendation-MIN_NUM_FORMS": "0",
+        "recommendation-MAX_NUM_FORMS": "1000",
+
+        "file-TOTAL_FORMS": "0",
+        "file-INITIAL_FORMS": "0",
+        "file-MIN_NUM_FORMS": "0",
+        "file-MAX_NUM_FORMS": "1000",
+    }
+
+@pytest.fixture
+def payload_new_report_success(base_form_minimal_fields, empty_formsets_payload):
+    data = {}
+    data.update(base_form_minimal_fields)
+    data.update(empty_formsets_payload)
+    return data
+
+@pytest.fixture
+def payload_new_report_fail(empty_formsets_payload):
+    data = {
+        "title": "รายงานไม่ครบ",
+        "priority": "INVALID",
+        "event_date": "2025-08-01",
+        "event_time": "10:00:00",
+    }
+    data.update(empty_formsets_payload)
+    return data
