@@ -10,7 +10,7 @@ from docx import Document
 from docx.shared import Pt
 from html2docx import html2docx
 
-from ..models import BaseReport
+from ..models import BaseReport, AviationReport, GroundReport
 from ..choices import ReportTypeChoices
 from common.Services.thaidate import thai_date
 
@@ -56,11 +56,15 @@ def get_aviation_incident_report_context(base_report, aviation_report):
     return {
         '##title##': base_report.title or '',
         '##fiscal-year##': str(base_report.fiscal_year),
-        '##event-date##': thai_date(base_report.event_date),
-        '##event-time##': base_report.event_time.strftime("%H:%M"),
-        '##squadron##': str(aviation_report.squadron) if aviation_report.squadron else '',
-        '##aircraft##': str(aviation_report.aircraft) if aviation_report.aircraft else '',
-        # Add other aviation-specific fields here
+        '##event-date##': thai_date(base_report.event_date) if base_report.event_date else '',
+        '##event-time##': base_report.event_time.strftime("%H:%M") if base_report.event_time else '',
+        '##squadron##': str(aviation_report.squadron) if getattr(aviation_report, 'squadron', None) else '',
+        '##aircraft##': str(aviation_report.aircraft) if getattr(aviation_report, 'aircraft', None) else '',
+        '##mission-type##': base_report.get_mission_type_display() if base_report.mission_type else '',
+        '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
+        '##location##': getattr(aviation_report, 'location', '') or '',
+        '##injury-type##': getattr(aviation_report, 'injury_type', '') or '',
+        '##damage-level##': getattr(aviation_report, 'damage_level', '') or '',
         '##recorder##': base_report.recorder.get_full_name() if base_report.recorder else '',
         '##date##': thai_date(date.today()),
     }
@@ -85,7 +89,9 @@ def replace_placeholders_in_paragraphs(doc, context):
         for key, value in context.items():
             if key in paragraph.text:
                 for run in paragraph.runs:
+                    print(key, " xx ", f"'{run.text}'")
                     if key in run.text:
+                        print("**match**")
                         run.text = run.text.replace(key, value)
 
 
@@ -104,41 +110,77 @@ def docx_to_response(doc, filename):
 @login_required
 def safety_doc(request, pk):
     base_report = BaseReport.objects.get(id=pk)
+    aviation_report = AviationReport.objects.filter(base_report=base_report).first()
+    ground_report = GroundReport.objects.filter(base_report=base_report).first()
 
-    BASE_TEMPLATE_DIR = os.path.join(settings.BASE_DIR, 'safety', 'Report', 'templates','Documents')
+    BASE_TEMPLATE_DIR = os.path.join(settings.BASE_DIR, 'safety', 'Report', 'templates', 'Documents')
+
     report_type_to_template = {
         ReportTypeChoices.SIMPLE: 'safety-report.docx',
-        ReportTypeChoices.SAFETY_AVIATION: 'aviation-incident-report.docx',
-        ReportTypeChoices.SAFETY_GROUND: 'ground-incident-report.docx',
+        ReportTypeChoices.HAZARD_GROUND: 'ground-hazard-report.docx',
+        ReportTypeChoices.HAZARD_AVIATION: 'aviation-hazard-report.docx',
+        ReportTypeChoices.SAFETY_GROUND: 'ground-safety-report.docx',
+        ReportTypeChoices.SAFETY_AVIATION: 'aviation-safety-report.docx',
+        ReportTypeChoices.OBSERVATION: 'behavior-observation-report.docx',
     }
 
-    template_path = os.path.join(BASE_TEMPLATE_DIR, report_type_to_template.get(base_report.report_type))
+    template_filename = report_type_to_template.get(base_report.report_type, 'safety-report.docx')
+    template_path = os.path.join(BASE_TEMPLATE_DIR, template_filename)
 
     doc = Document(template_path)
 
-    if hasattr(base_report, 'safetyreport'):
-        data_report = base_report.safetyreport
-        context = get_safety_report_context(base_report, data_report)
-        filename = f'safety-report-{pk}.docx'
-    elif hasattr(base_report, 'AviationReport'):
-        data_report = base_report.AviationReport
-        context = get_aviation_incident_report_context(base_report, data_report)
-        filename = f'aviation-incident-report-{pk}.docx'
-    elif hasattr(base_report, 'GroundReport'):
-        data_report = base_report.GroundReport
-        context = get_ground_incident_report_context(base_report, data_report)
-        filename = f'ground-incident-report-{pk}.docx'
-    else:
-        context = {
-            '##title##': base_report.title or '',
-            '##recorder##': base_report.recorder.get_full_name() if base_report.recorder else '',
-            '##date##': thai_date(date.today()),
+    base_context = {
+        '##unit-short-name##': str(base_report.affiliation),
+        '##title##': base_report.title or '',
+        '##recorder##': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
+        '##date##': thai_date(date.today()),
+        '##mission-type##': base_report.get_mission_type_display() if base_report.mission_type else '',
+        '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
+        
+        '##fiscal-year##': str(base_report.fiscal_year),
+        '##affiliation##': str(base_report.affiliation),
+        '##event-date##': thai_date(base_report.event_date),
+        '##event-time##': base_report.event_time.strftime("%H:%M") if base_report.event_time else '',
+        
+        '##content##': base_report.content,
+        '##first_recommendation##': base_report.first_recommendation,
+        '##initial_action_taken##': base_report.initial_action_taken,
+
+        '##status##': base_report.get_status_display(),
+        
+        '##comment##': str(base_report.comment),
+        '##created_at##': base_report.created_at,
+        '##updated_at##': base_report.updated_at,
+    }
+
+    ground_context = {}
+
+    if hasattr(base_report,'ground_report'):      
+        ground_report = base_report.ground_report  
+        ground_context = {
+            '##location##': ground_report.location or  '',
         }
-        filename = f'report-{pk}.docx'
+        if ground_report and ground_report.category:
+            ground_context['##category##'] = str(ground_report.category.name)
+
+    air_context = {}
+    if hasattr(base_report, 'aviation_report'):
+        aviation_report = base_report.aviation_report
+        air_context['##squadron##'] = str(aviation_report.squadron.name) if aviation_report.squadron else '-'
+        air_context['##aircraft##'] = str(aviation_report.aircraft.name) if aviation_report.aircraft else '-'
+        air_context['##flight_phase##'] = ', '.join(str(phase.name) for phase in aviation_report.flight_phase.all())
+
+
+    context = {**base_context, **ground_context, **air_context}
+
+    print("=== CONTEXT ===")
+    for key, value in context.items():
+        print(f"{key}: {value}")
+    print("=== CONTEXT ===")
 
     replace_placeholders_in_paragraphs(doc, context)
-    
+
     if base_report.content:
         append_html_to_document(doc, base_report.content)
-        
-    return docx_to_response(doc, filename)
+
+    return docx_to_response(doc, f"file-{template_filename}")
