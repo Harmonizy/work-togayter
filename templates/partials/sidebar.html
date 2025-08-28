@@ -59,7 +59,7 @@
                     </div>
                     <ul class="navbar-nav" id="navbar-nav">
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-                        <li class="nav-item">
+                        {% comment %} <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarDashboard" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarDashboard">
                                 <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
@@ -71,7 +71,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </li> <!-- end Reports Menu -->
+                        </li> <!-- end Reports Menu --> {% endcomment %}
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarReports" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarReports">
@@ -80,7 +80,13 @@
                             <div class="collapse menu-dropdown" id="sidebarReports">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
+                                        <a href="{% url 'safety-dashboard:dashboard-home.index' %}" class="nav-link" data-key="t-safety">สถิติ & ข้อมูล</a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="{% url 'report:safety-report.list' %}" class="nav-link" data-key="t-safety">รายงานนิรภัย</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-safety">มือถือ</a>
                                     </li>
                                     {% comment %} 
                                     <li class="nav-item">

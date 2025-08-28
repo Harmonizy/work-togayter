@@ -31,6 +31,7 @@ class BaseReport(models.Model):
     mission_type = models.CharField(verbose_name="ภารกิจ",max_length=1,choices=MissionTypeChoices.choices,null=True,blank=True)
     report_type = models.CharField(verbose_name="ประเภทรายงาน",max_length=2,choices=ReportTypeChoices.choices,default=ReportTypeChoices.SIMPLE)
     priority = models.CharField(verbose_name="ความสำคัญ",max_length=4,choices=PriorityChoices.choices,null=True,blank=True)
+    status = models.IntegerField(verbose_name="สถานะ",choices=ReportStatusChoices.choices,default=ReportStatusChoices.DRAFT)
 
     title = models.CharField(verbose_name="หัวข้อรายงาน",max_length=255)
     content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
@@ -40,7 +41,6 @@ class BaseReport(models.Model):
     first_recommendation = models.TextField(verbose_name="คำแนะนำเบื้องต้น",null=True,blank=True)
     initial_action_taken = models.TextField(verbose_name="การแก้ไขที่ดำเนินการ",null=True,blank=True)
     
-    status = models.IntegerField(verbose_name="สถานะ",choices=ReportStatusChoices.choices,default=ReportStatusChoices.DRAFT)
     recorder = models.ForeignKey(RTAFUser,verbose_name="ผู้บันทึก",on_delete=models.CASCADE,null=True,blank=True)
     anonymous = models.BooleanField(verbose_name="ไม่ระบุชื่อผู้บันทึก",default=False)
     comment = models.CharField(verbose_name="หมายเหตุ",max_length=120,null=True,blank=True)

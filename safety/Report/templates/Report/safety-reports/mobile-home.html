@@ -194,11 +194,13 @@
                 <div class="row g-3">
                     <!-- Row 1 -->
                     <div class="col-4">
+                        <a href="{% url 'safety-dashboard:dashboard-home.index' %}">
                         <div class="menu-item" onclick="handleMenuClick('dashboard')">
                             <i class="bi bi-graph-up menu-icon"></i>
                             <p class="menu-label">Dashboard</p>
                             <small class="menu-subtitle">สถิติ</small>
                         </div>
+                        </a>
                     </div>
                     
                     <div class="col-4">
@@ -223,11 +225,13 @@
                     
                     <!-- Row 2 -->
                     <div class="col-4">
+                        <a href="{% url 'admin:index' %}">
                         <div class="menu-item" onclick="handleMenuClick('settings')">
                             <i class="bi bi-gear menu-icon"></i>
                             <p class="menu-label">Admin</p>
                             <small class="menu-subtitle">เจ้าหน้าที่</small>
                         </div>
+                        </a>
                     </div>
                     
                     <div class="col-4">
@@ -287,14 +291,21 @@
                             <small class="menu-subtitle">โปรไฟล์</small>
                         </div>
                     </div>
+
                     
                     <div class="col-4">
-                        <div class="menu-item" onclick="handleMenuClick('logout')">
-                            <i class="bi bi-box-arrow-right menu-icon"></i>
-                            <p class="menu-label">Logout</p>
-                            <small class="menu-subtitle">ออกระบบ</small>
-                        </div>
+                        <form id="logout-form" action="{% url 'account_logout' %}" method="post" onsubmit="return confirmLogout(event);" class="p-0 w-100">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0 w-100 text-start" style="text-decoration: none;">
+                                <div class="menu-item" onclick="handleMenuClick('logout')">
+                                    <i class="bi bi-box-arrow-right menu-icon"></i>
+                                    <p class="menu-label">Logout</p>
+                                    <small class="menu-subtitle">ออกระบบ</small>
+                                </div>
+                            </button>
+                        </form>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -375,5 +386,13 @@
                 });
             });
         });
+
+        function confirmLogout(event) {
+            if (!confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
     </script>
 {% endblock extra_js %}
