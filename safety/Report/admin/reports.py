@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models.reports import (
+from ..models.reports import (
     BaseReport,
     # GroundReport,
     # AviationReport,
@@ -10,7 +10,7 @@ from .models.reports import (
     # SafetyReportFlightPhase
 )
 
-from .models.attachments import File, Image, Recommendation
+from ..models.attachments import File, Image, Recommendation
 
 
 class FileAdminInline(admin.TabularInline):

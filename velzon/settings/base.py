@@ -31,6 +31,7 @@ LOCAL_APPS = [
     
     "safety.Data",
     "safety.Report",
+    "safety.Evaluate",
     'safety.Dashboard',
 ]
 
