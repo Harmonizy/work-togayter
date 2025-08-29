@@ -234,7 +234,7 @@
                         </a>
                     </div>
                     
-                    <div class="col-4">
+                    {% comment %} <div class="col-4">
                         <div class="menu-item" onclick="handleMenuClick('users')">
                             <i class="bi bi-people menu-icon"></i>
                             <p class="menu-label">Management</p>
@@ -290,9 +290,8 @@
                             <p class="menu-label">Profile</p>
                             <small class="menu-subtitle">โปรไฟล์</small>
                         </div>
-                    </div>
+                    </div> {% endcomment %}
 
-                    
                     <div class="col-4">
                         <form id="logout-form" action="{% url 'account_logout' %}" method="post" onsubmit="return confirmLogout(event);" class="p-0 w-100">
                             {% csrf_token %}

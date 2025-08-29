@@ -1,19 +1,19 @@
 from django.db import models
 
+class ReportTypeChoices(models.TextChoices):
+    SIMPLE = 'S', 'รายงานขั้นต้น'
+    HAZARD_GROUND = 'HG', 'รายงานอุบัติการณ์ภาคพื้น'
+    HAZARD_AVIATION = 'HA', 'รายงานอากาศยานอุบัติการณ์'
+    SAFETY_GROUND = 'SG', 'รายงานอุบัติเหตุภาคพื้น'
+    SAFETY_AVIATION = 'SA', 'รายงานากาศยานอุบัติเหตุ'
+    OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
+
+
 class BaseReportTypeChoices(models.TextChoices):
     HAZARD_GROUND = 'HG', 'รายงานอันตราย (ภาคพื้น)'
     HAZARD_AVIATION = 'HA', 'รายงานอันตราย (ภาคอากาศ)'
     SAFETY_GROUND = 'SG', 'รายงานนิรภัยอุบัติการณ์ (ภาคพื้น)'
     SAFETY_AVIATION = 'SA', 'รายงานนิรภัยอุบัติการณ์ (ภาคอากาศ)'
-
-
-class ReportTypeChoices(models.TextChoices):
-    SIMPLE = 'S', 'รายงานขั้นต้น'
-    HAZARD_GROUND = 'HG', 'รายงานอันตราย (ภาคพื้น)'
-    HAZARD_AVIATION = 'HA', 'รายงานอันตราย (ภาคอากาศ)'
-    SAFETY_GROUND = 'SG', 'รายงานอุบัติเหตุ/อุบัติการณ์ (ภาคพื้น)'
-    SAFETY_AVIATION = 'SA', 'รายงานอุบัติเหตุ/อุบัติการณ์ (ภาคอากาศ)'
-    OBSERVATION = 'O', 'สังเกตุการณ์พฤติกรรม'
 
 
 class PriorityChoices(models.TextChoices):

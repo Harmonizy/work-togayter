@@ -194,49 +194,59 @@
                 <h1 class="menu-title">RTAF Safety Analysis</h1>
                 <p class="menu-subtitle">โปรแกรมวิเคราะห์นิรภัย</p>
             </div>
-            
+
             <!-- Menu Items -->
             <div class="menu-container">
                 
-                <!-- Create -->
+                <a href="{% url 'report:safety-create.new_report' %}">
                 <div class="menu-item" onclick="handleMenuClick('analytics')">
-                    <i class="bi bi-exclamation-triangle-fill menu-icon"></i>
+                    <i class="bi bi-check-square menu-icon"></i>
                     <div class="menu-content">
-                        <p class="menu-label">Create</p>
-                        <p class="menu-subtitle">สร้างรายงาน Hazard</p>
+                        <p class="menu-label">Simple</p>
+                        <p class="menu-subtitle">รายงานขั้นต้น</p>
                     </div>
                     <i class="bi bi-chevron-right menu-arrow"></i>
                 </div>
+                </a>
 
-                <!-- Create -->
+                <a href="{% url 'report:safety-create.new_report' %}">
+                <div class="menu-item" onclick="handleMenuClick('analytics')">
+                    <i class="bi bi-cone-striped menu-icon"></i>
+                    <div class="menu-content">
+                        <p class="menu-label">Hazard</p>
+                        <p class="menu-subtitle">รายงานอุบัติการณ์</p>
+                    </div>
+                    <i class="bi bi-chevron-right menu-arrow"></i>
+                </div>
+                </a>
+
+                <a href="{% url 'report:safety-create.new_report' %}">
                 <div class="menu-item" onclick="handleMenuClick('analytics')">
                     <i class="bi bi-shield-fill-plus menu-icon"></i>
                     <div class="menu-content">
-                        <p class="menu-label">Create</p>
-                        <p class="menu-subtitle">สร้างรายงานนิรภัยอุบัติการณ์</p>
+                        <p class="menu-label">Safety</p>
+                        <p class="menu-subtitle">รายงานอุบัติเหตุ</p>
                     </div>
                     <i class="bi bi-chevron-right menu-arrow"></i>
                 </div>
+                </a>
 
-                <!-- Create -->
+                <a href="{% url 'report:safety-create.new_report' %}">
                 <div class="menu-item" onclick="handleMenuClick('analytics')">
-                    <i class="bi bi-airplane-engines menu-icon"></i>
+                    <i class="bi bi-eye-fill menu-icon"></i>
                     <div class="menu-content">
-                        <p class="menu-label">Create</p>
-                        <p class="menu-subtitle">สร้างรายงานภาคอากาศ</p>
+                        <p class="menu-label">Observation</p>
+                        <p class="menu-subtitle">รายงานสังเกตการณ์พฤติกรรม</p>
                     </div>
                     <i class="bi bi-chevron-right menu-arrow"></i>
                 </div>
+                </a>
 
-                <!-- Create -->
-                <div class="menu-item" onclick="handleMenuClick('analytics')">
-                    <i class="bi bi-buildings-fill menu-icon"></i>
-                    <div class="menu-content">
-                        <p class="menu-label">Create</p>
-                        <p class="menu-subtitle">รายงานภาคพื้น</p>
-                    </div>
-                    <i class="bi bi-chevron-right menu-arrow"></i>
+                <a href="{% url 'report:mobile_home' %}">
+                <div class="text-end pe-3">
+                    <i class="bi bi-arrow-left"></i>
                 </div>
+                </a>
 
             </div>
         </div>
