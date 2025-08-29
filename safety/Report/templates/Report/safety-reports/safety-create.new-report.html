@@ -35,14 +35,14 @@
                 {% csrf_token %}
                 {% crispy base_form %}
 
-                {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" title="รูปภาพ" %}
-                {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" title="ไฟล์" %}
-                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" title="คอมเมนต์" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
 
                 <div class="my-5">
-                    <button type="submit" name="initial_assessment" value="L" class="btn btn-success">บันทึก (ปกติ)</button>
-                    <button type="submit" name="initial_assessment" value="M" class="btn btn-warning">บันทึก (ต้องติดตาม)</button>
-                    <button type="submit" name="initial_assessment" value="H" class="btn btn-danger">บันทึก (เร่งด่วน)</button>
+                    <button type="submit" name="priority-L" class="btn btn-success">บันทึก (ปกติ)</button>
+                    <button type="submit" name="priority-M" class="btn btn-warning">บันทึก (ต้องติดตาม)</button>
+                    <button type="submit" name="priority-H" class="btn btn-danger">บันทึก (เร่งด่วน)</button>
                 </div>
             </form>
 
@@ -68,30 +68,9 @@ $(document).ready(function () {
 
     $('.django-ckeditor-widget').addClass('w-100');
 
-    let clickedButtonValue = null;
-
-    $('#reportForm button[type="submit"]').click(function() {
-        clickedButtonValue = $(this).val(); // เก็บค่าที่กด
-    });
-
     $('#reportForm').on('submit', function(e) {
         e.preventDefault();
-
-        if (clickedButtonValue) {
-            // สร้าง hidden input ส่งค่าปุ่มที่กด
-            if (!$(this).find('input[name="initial_assessment"]').length) {
-                $(this).append(
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'initial_assessment',
-                        value: clickedButtonValue
-                    })
-                );
-            } else {
-                $(this).find('input[name="initial_assessment"]').val(clickedButtonValue);
-            }
-        }
-
+        
         const form = this;
         Swal.fire({
             title: 'ยืนยันส่งข้อมูล?',
