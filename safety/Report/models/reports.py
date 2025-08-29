@@ -30,7 +30,7 @@ class BaseReport(models.Model):
     
     mission_type = models.CharField(verbose_name="ภารกิจ",max_length=1,choices=MissionTypeChoices.choices,null=True,blank=True)
     report_type = models.CharField(verbose_name="ประเภทรายงาน",max_length=2,choices=ReportTypeChoices.choices,default=ReportTypeChoices.SIMPLE)
-    priority = models.CharField(verbose_name="ความสำคัญ",max_length=4,choices=PriorityChoices.choices,null=True,blank=True)
+    priority = models.CharField(verbose_name="ความสำคัญ",max_length=1,choices=PriorityChoices.choices,null=True,blank=True)
     status = models.IntegerField(verbose_name="สถานะ",choices=ReportStatusChoices.choices,default=ReportStatusChoices.DRAFT)
 
     title = models.CharField(verbose_name="หัวข้อรายงาน",max_length=255)
