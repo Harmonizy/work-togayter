@@ -1,16 +1,19 @@
+from datetime import datetime
+
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from datetime import datetime
+from django.views.generic import TemplateView
 
 from .utils import card_data
 from ..models import BaseReport
-
 from ..choices import ReportStatusChoices
-
-
 from ..rules import q_condition
+from common.RTAFAuth.views import SuperAppLoginMixins
+
+
 
 can_view_report = q_condition['report.can_view']
 
@@ -68,9 +71,15 @@ def list(request):
     return render(request, 'Report/safety-reports/list.html', context)
 
 
-@login_required
-def mobile_home(request):
-    return render(request, 'Report/safety-reports/mobile-home.html')
+class MobileHomeView(SuperAppLoginMixins, LoginRequiredMixin, TemplateView):
+    template_name = 'Report/safety-reports/mobile-home.html'
+    
+    def get(self, request, *args, **kwargs):
+        context = {
+            "test": "test message"
+        }
+        return render(request, self.template_name, context)
+
 
 @login_required
 def mobile_create(request):

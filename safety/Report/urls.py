@@ -27,7 +27,7 @@ main_urlpatterns = [
     # path('create-safety-report/<str:report_type>/', create.create_report, name='create.create_report'),
 
     # mobile
-    path('mobile-home/', safety_report.mobile_home, name='mobile_home'),
+    path('mobile-home/', safety_report.MobileHomeView.as_view(), name='mobile_home'),
     path('mobile-create/', safety_report.mobile_create, name='mobile_create'),
 ]
 
