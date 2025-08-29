@@ -17,10 +17,25 @@ logger = logging.getLogger('report')
 @login_required
 def new_report(request): 
     if request.method == 'POST':
-        success, forms, base_report = create_new_report(request)
-        base_form, image_formset, recommendation_formset, file_formset = forms
+        base_form = BaseReportForm(request.POST, prefix="base_form")
+        image_formset = ImageFormSet(request.POST, request.FILES, prefix='images')
+        recommendation_formset = RecommendationFormSet(request.POST, prefix='recommendations')
+        file_formset = FileFormSet(request.POST, request.FILES, prefix='files')
+        
+        if "priority-H" in request.POST:
+            priority = "H"
+        elif "priority-M" in request.POST:
+            priority = "M"
+        else:
+            priority = "L"
 
+        forms_validate = [base_form.is_valid(), image_formset.is_valid(), recommendation_formset.is_valid(), file_formset.is_valid()]
+        if all(forms_validate):        
+            success, forms, base_report = create_new_report(base_form, image_formset, recommendation_formset, file_formset, request.user, priority)
+            base_form, image_formset, recommendation_formset, file_formset = forms
         if success:
+            
+            messages.info(request, f"บันทึกข้อมูลเหตุการณ์ {base_report} เรียบร้อยแล้ว")
             return redirect('report:safety-report.list')
 
     else:  # GET
