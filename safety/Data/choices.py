@@ -9,6 +9,3 @@ class RegionChoices(models.TextChoices):
     NORTHEAST = "NE", "ภาคตะวันออกเฉียงเหนือ"
     SOUTH = "ST", "ภาคใต้"
 
-
-
-

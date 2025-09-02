@@ -11,8 +11,8 @@ logger = logging.getLogger('report')
 def create_new_report(base_form, image_formset, recommendation_formset, file_formset, request, priority):
     with transaction.atomic():
         base_report = base_form.save(commit=False)
-
-        # assign user if not anonymous
+        
+        # assign user if not anonbymous
         if not base_report.anonymous:
             base_report.recorder = request.user
 
