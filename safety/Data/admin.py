@@ -45,6 +45,7 @@ class GroundSafetyCategoryAdmin(admin.ModelAdmin):
 class AircraftAdmin(admin.ModelAdmin):
     list_display = ('name', )
     search_fields = ('name',)
+    filter_horizontal = ('type',) 
 
 @admin.register(FlightPhase)
 class FlightPhaseAdmin(admin.ModelAdmin):
