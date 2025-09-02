@@ -26,7 +26,6 @@ class AircraftType(models.Model):
 
 
 class Aircraft(models.Model):
-    model = models.CharField(verbose_name="รุ่น", max_length=20)
     name = models.CharField(verbose_name="แบบ บ.", max_length=60)
     name_en = models.CharField(verbose_name="แบบ บ.(ENG)", max_length=120, blank=True, null=True)
     affiliation_fk = models.ForeignKey("RTAFUser.Affiliation", verbose_name="กองบิน",related_name="aircrafts_fk",on_delete=models.CASCADE, blank=True, null=True)
