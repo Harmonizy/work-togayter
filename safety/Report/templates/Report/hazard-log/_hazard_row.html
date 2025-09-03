@@ -1,0 +1,39 @@
+<tr>
+  <td>#{{ id|stringformat:"04d" }}</td>
+  <td class="font-monospace">{{ code }}</td>
+  <td>
+    <a href="{{ event_url }}" class="fw-medium link-primary">{{ event_name }}</a>
+    <div class="text-muted small">{{ title }}</div>
+  </td>
+  <td>
+    {% if status == "open" %}
+      <span class="badge bg-warning-subtle text-warning">Open</span>
+    {% else %}
+      <span class="badge bg-success-subtle text-success">Close</span>
+    {% endif %}
+  </td>
+  <td class="text-center">{{ init_l }}</td>
+  <td class="text-center">{{ init_s }}</td>
+  <td class="text-center">
+    <span class="risk-chip {{ init_color }}">{{ init_risk }}</span>
+  </td>
+  <td class="text-center">{{ res_l }}</td>
+  <td class="text-center">{{ res_s }}</td>
+  <td class="text-center">
+    <span class="risk-chip {{ res_color }}">{{ res_risk }}</span>
+  </td>
+  <td>
+    <div class="dropdown">
+      <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15 material-shadow-none"
+              data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <i class="ri-more-2-fill align-bottom"></i>
+      </button>
+      <div class="dropdown-menu dropdown-menu-end">
+        <a class="dropdown-item" href="#"><i class="ri-eye-fill align-bottom me-2 text-primary"></i> View</a>
+        <a class="dropdown-item" href="#"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill align-bottom me-2"></i> Remove</a>
+      </div>
+    </div>
+  </td>
+</tr>

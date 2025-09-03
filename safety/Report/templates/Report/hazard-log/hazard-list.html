@@ -1,0 +1,294 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% load crispy_forms_tags partials %}
+{% load services_tags report_tags %}
+
+{% block title %}Safety Reports List{% endblock title %}
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
+    <script src="{% static 'libs/htmx/htmx.min.js' %}"></script>
+    <style>
+        .risk-chip {
+        display: inline-block; min-width: 2.5rem;
+        padding: .1rem .5rem; border-radius: .5rem; font-weight: 600;
+        }
+        .risk-green-soft  { background: #d7f5df; color: #0f5132; } /* 1 */
+        .risk-green-strong{ background: #aee9b9; color: #0f5132; } /* 2 */
+        .risk-yellow      { background: #fff3cd; color: #664d03; } /* 3 */
+        .risk-orange      { background: #ffe0b2; color: #7a3e00; } /* 4 */
+        .risk-red         { background: #fecaca; color: #7f1d1d; } /* 5 */
+        .risk-muted       { background: #e9ecef; color: #495057; }
+
+        /* ปรับระยะ icon ใน dropdown (แทน feather) */
+        .dropdown-item i { width: 1.1rem; text-align: center; }
+        .btn.active { border-color: #0d6efd; color: #0d6efd; }
+    </style>
+{% endblock extra_css %}
+{% block content %}
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+
+            {% block pagetitle %}
+                    {% include "partials/page-title.html" with pagetitle="Safety Reports" title="Safety Reports List" %}
+            {% endblock pagetitle %}
+
+           <div class="row">
+            <div class="col-lg-12">
+                <div class="card" id="hazardList">
+                <div class="card-header border-0">
+                    <div class="d-flex align-items-center">
+                    <h5 class="card-title mb-0 flex-grow-1">
+                        Hazard Logs
+                        <!-- current_event (static ไม่ต้องแสดง) -->
+                    </h5>
+                    <div class="flex-shrink-0">
+                        <div class="d-flex flex-wrap gap-2">
+                        <!-- ปุ่ม "ทั้งหมด" (ลิงก์ Django เดิม เปลี่ยนเป็นปุ่ม static) -->
+                        <button class="btn btn-secondary" data-filter="all">ทั้งหมด</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Event filter row (static) -->
+                <div class="card-body border border-dashed border-end-0 border-start-0">
+                    <div class="d-flex flex-wrap gap-2" id="eventFilters">
+                    <!-- ปุ่มกรองตามอีเวนต์ (เพิ่ม/ลดได้ตามต้องการ) -->
+                    <button class="btn btn-light" data-filter="อื่น ๆ">อื่น ๆ</button>
+                    <button class="btn btn-light" data-filter="Unlawful / Dangerous Goods">สิ่งของผิดกฎหมาย / Dangerous Goods</button>
+                    <button class="btn btn-light" data-filter="Night operation">การบินเวลากลางคืน</button>
+                    <button class="btn btn-light" data-filter="Deficient maintenance">Deficient maintenance</button>
+                    <button class="btn btn-light" data-filter="Weather">อันตรายจากสภาพอากาศ (Weather)</button>
+                    <button class="btn btn-light" data-filter="Loss of control">Loss of control</button>
+                    <button class="btn btn-light" data-filter="Gnd facilities">Gnd facilities / service</button>
+                    <button class="btn btn-light" data-filter="Gnd Collision">Gnd Collision</button>
+                    <button class="btn btn-light" data-filter="Runway Safety">Runway Safety</button>
+                    <button class="btn btn-light" data-filter="TAWS/CFIT">TAWS / CFIT</button>
+                    <button class="btn btn-light" data-filter="Undesired State">Undesired State (TEM)</button>
+                    <button class="btn btn-light" data-filter="FOD">FOD</button>
+                    <button class="btn btn-light" data-filter="Bird/Wildlife">Bird/Wildlife strike</button>
+                    <button class="btn btn-light" data-filter="Near miss">Near miss</button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive table-card mb-4 p-2" style="min-height: 300px;">
+                    <table class="table align-middle table-nowrap table-bordered table-striped table-hover mb-0" id="hazardTable">
+                        <colgroup>
+                        <col style="width: 6%;">
+                        <col style="width: 10%;">
+                        <col style="width: 24%;">
+                        <col style="width: 8%;">
+                        <col style="width: 6%;">
+                        <col style="width: 6%;">
+                        <col style="width: 8%;">
+                        <col style="width: 6%;">
+                        <col style="width: 6%;">
+                        <col style="width: 8%;">
+                        <col style="width: 12%;">
+                        </colgroup>
+                        <thead class="table-light text-muted" style="font-size:1.05em;">
+                        <tr>
+                            <th>#</th>
+                            <th>Code</th>
+                            <th>Event</th>
+                            <th>Status</th>
+                            <th>L</th>
+                            <th>S</th>
+                            <th>Init Risk</th>
+                            <th>L</th>
+                            <th>S</th>
+                            <th>Res Risk</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <!-- ===== ตัวอย่างข้อมูล static (เพิ่ม/ลดได้) ===== -->
+                        <!-- ใช้ data-event สำหรับกรอง -->
+                        <tr data-event="Near miss">
+                            <td>#0001</td>
+                            <td class="font-monospace">HZ-0001</td>
+                            <td>
+                            <span class="fw-medium link-primary">Near miss</span>
+                            <div class="text-muted small">เครื่องบินสองลำเข้าใกล้กันบริเวณ downwind</div>
+                            </td>
+                            <td><span class="badge bg-warning-subtle text-warning">Open</span></td>
+                            <td class="text-center">3</td>
+                            <td class="text-center">4</td>
+                            <td class="text-center"><span class="risk-chip risk-orange">4</span></td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">3</td>
+                            <td class="text-center"><span class="risk-chip risk-green-strong">2</span></td>
+                            <td>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View Item</a>
+                                <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
+
+                        <tr data-event="Weather">
+                            <td>#0002</td>
+                            <td class="font-monospace">HZ-0002</td>
+                            <td>
+                            <span class="fw-medium link-primary">อันตรายจากสภาพอากาศ (Weather)</span>
+                            <div class="text-muted small">ฝนหนักและลมกระโชกขณะ approach</div>
+                            </td>
+                            <td><span class="badge bg-warning-subtle text-warning">Open</span></td>
+                            <td class="text-center">4</td>
+                            <td class="text-center">4</td>
+                            <td class="text-center"><span class="risk-chip risk-red">5</span></td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center"><span class="risk-chip risk-green-strong">2</span></td>
+                            <td>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View Item</a>
+                                <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
+
+                        <tr data-event="Runway Safety">
+                            <td>#0003</td>
+                            <td class="font-monospace">HZ-0003</td>
+                            <td>
+                            <span class="fw-medium link-primary">Runway Safety (Incursion / Excursion)</span>
+                            <div class="text-muted small">รถบริการเข้าใกล้ทางวิ่งขณะ taxi</div>
+                            </td>
+                            <td><span class="badge bg-success-subtle text-success">Close</span></td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center"><span class="risk-chip risk-green-strong">2</span></td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center"><span class="risk-chip risk-green-soft">1</span></td>
+                            <td>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View Item</a>
+                                <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
+
+                        <tr data-event="FOD">
+                            <td>#0004</td>
+                            <td class="font-monospace">HZ-0004</td>
+                            <td>
+                            <span class="fw-medium link-primary">ความเสียหายจากวัสดุแปลกปลอม (FOD)</span>
+                            <div class="text-muted small">พบน็อตตกหล่นบนลานจอด</div>
+                            </td>
+                            <td><span class="badge bg-warning-subtle text-warning">Open</span></td>
+                            <td class="text-center">3</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center"><span class="risk-chip risk-green-soft">1</span></td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center"><span class="risk-chip risk-green-soft">1</span></td>
+                            <td>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View Item</a>
+                                <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
+
+                        <tr data-event="Bird/Wildlife">
+                            <td>#0005</td>
+                            <td class="font-monospace">HZ-0005</td>
+                            <td>
+                            <span class="fw-medium link-primary">Bird strike / Wildlife strike</span>
+                            <div class="text-muted small">พบฝูงนกใกล้เขตขึ้นลง</div>
+                            </td>
+                            <td><span class="badge bg-warning-subtle text-warning">Open</span></td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">3</td>
+                            <td class="text-center"><span class="risk-chip risk-green-strong">2</span></td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center"><span class="risk-chip risk-green-soft">1</span></td>
+                            <td>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View Item</a>
+                                <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
+
+                        <tr data-event="Unlawful / Dangerous Goods">
+                            <td>#0006</td>
+                            <td class="font-monospace">HZ-0006</td>
+                            <td>
+                            <span class="fw-medium link-primary">สิ่งของผิดกฎหมาย / Dangerous Goods</span>
+                            <div class="text-muted small">ต้องสงสัยว่ามีพัสดุอันตรายบนเครื่อง</div>
+                            </td>
+                            <td><span class="badge bg-warning-subtle text-warning">Open</span></td>
+                            <td class="text-center">3</td>
+                            <td class="text-center">5</td>
+                            <td class="text-center"><span class="risk-chip risk-orange">4</span></td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">3</td>
+                            <td class="text-center"><span class="risk-chip risk-green-yellow">3</span></td>
+                            <td>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View Item</a>
+                                <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                </div>
+                            </div>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                    <div class="noresult text-center d-none" id="noResult">
+                        <h5 class="mt-2">Sorry! No Result Found</h5>
+                        <p class="text-muted mb-0">We did not find any hazards for your filter.</p>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block extra_js %}
+<script>
+
+</script>
+{% endblock extra_js %}
