@@ -3,7 +3,7 @@ from django.db import models
 # from ckeditor.fields import RichTextField
 
 from .choices import RegionChoices
-
+from common.RTAFUser.models import Affiliation, Squadron
 
 class Event(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=120)
@@ -15,9 +15,22 @@ class Event(models.Model):
         return self.name
 
 
+class AircraftType(models.Model):
+    name = models.CharField(verbose_name="ชื่อ", max_length=120)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "2.1 ประเภทอากาศยาน"
+
+    def __str__(self):
+        return self.name
+
+
 class Aircraft(models.Model):
-    model = models.CharField(verbose_name="รุ่น", max_length=20)
-    name = models.CharField(verbose_name="ชื่อ", max_length=60)
+    name = models.CharField(verbose_name="แบบ บ.", max_length=60)
+    name_en = models.CharField(verbose_name="แบบ บ.(ENG)", max_length=120, blank=True, null=True)
+    affiliation_fk = models.ForeignKey("RTAFUser.Affiliation", verbose_name="กองบิน",related_name="aircrafts_fk",on_delete=models.CASCADE, blank=True, null=True)
+    squadron = models.ForeignKey("RTAFUser.Squadron", verbose_name="ฝูงบิน", related_name="aircrafts",on_delete=models.CASCADE, blank=True, null=True)
+    type = models.ManyToManyField("Data.AircraftType", verbose_name="ประเภท", related_name="aircrafts", blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "2. อากาศยาน"
@@ -30,7 +43,7 @@ class AircraftSystem(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=120)
 
     class Meta:
-        verbose_name = verbose_name_plural = "2. ระบบอากาศยาน"
+        verbose_name = verbose_name_plural = "3. ระบบอากาศยาน"
 
     def __str__(self):
         return self.name
@@ -40,7 +53,7 @@ class FlightPhase(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=120)
 
     class Meta:
-        verbose_name = verbose_name_plural = "3. ช่วงของการบิน"
+        verbose_name = verbose_name_plural = "4. ช่วงของการบิน"
 
     def __str__(self):
         return self.name
@@ -55,7 +68,7 @@ class Location(models.Model):
     longitude = models.FloatField(verbose_name="ลองจิจูด", null=True, blank=True)
     
     class Meta:
-        verbose_name = verbose_name_plural = "4. สถานที่"
+        verbose_name = verbose_name_plural = "5. สถานที่"
 
     def __str__(self):
         return self.name
@@ -66,7 +79,7 @@ class GroundSafetyCategory(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=120)
 
     class Meta:
-        verbose_name = verbose_name_plural = "5. สาขานิรภัย (ภาคพื้น)"
+        verbose_name = verbose_name_plural = "6. สาขานิรภัย (ภาคพื้น)"
         ordering = ['order',]
 
     def __str__(self):
@@ -77,8 +90,8 @@ class Keyword(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name = "6. คำสำคัญ"
-        verbose_name_plural = "6. คำสำคัญ"
+        verbose_name = "7. คำสำคัญ"
+        verbose_name_plural = "7. คำสำคัญ"
 
     def __str__(self):
         return self.name

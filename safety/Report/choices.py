@@ -1,11 +1,16 @@
 from django.db import models
 
+class MissionTypeChoices(models.TextChoices):
+    AVIATION = "A", "ภาคอากาศ"
+    GROUND = "G", "ภาคพื้น"
+
+
 class ReportTypeChoices(models.TextChoices):
     SIMPLE = 'S', 'รายงานขั้นต้น'
     HAZARD_GROUND = 'HG', 'รายงานอุบัติการณ์ภาคพื้น'
     HAZARD_AVIATION = 'HA', 'รายงานอากาศยานอุบัติการณ์'
     SAFETY_GROUND = 'SG', 'รายงานอุบัติเหตุภาคพื้น'
-    SAFETY_AVIATION = 'SA', 'รายงานากาศยานอุบัติเหตุ'
+    SAFETY_AVIATION = 'SA', 'รายงานอากาศยานอุบัติเหตุ'
     OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
 
 
@@ -16,15 +21,14 @@ class BaseReportTypeChoices(models.TextChoices):
     SAFETY_AVIATION = 'SA', 'รายงานนิรภัยอุบัติการณ์ (ภาคอากาศ)'
 
 
+
+
 class PriorityChoices(models.TextChoices):
     HIGH = "H", "เร่งด่วน"
     MEDIUM = "M", "ต้องติดตาม"
     LOW = "L", "ปกติ"
 
 
-class MissionTypeChoices(models.TextChoices):
-    AIR = "A", "ภาคอากาศ"
-    GROUND = "G", "ภาคพื้น"
 
 
 class ReportStatusChoices(models.IntegerChoices):

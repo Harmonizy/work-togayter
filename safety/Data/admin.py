@@ -8,6 +8,7 @@ from .models import (
     Aircraft,
     Location,
     Keyword,
+    AircraftType,
 )
 
 @admin.register(Event)
@@ -44,6 +45,7 @@ class GroundSafetyCategoryAdmin(admin.ModelAdmin):
 class AircraftAdmin(admin.ModelAdmin):
     list_display = ('name', )
     search_fields = ('name',)
+    filter_horizontal = ('type',) 
 
 @admin.register(FlightPhase)
 class FlightPhaseAdmin(admin.ModelAdmin):
@@ -52,6 +54,13 @@ class FlightPhaseAdmin(admin.ModelAdmin):
 
 @admin.register(Keyword)
 class KeywordAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    ordering = ('name',)
+    
+
+@admin.register(AircraftType)
+class AircraftTypeAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
     ordering = ('name',)

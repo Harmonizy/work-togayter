@@ -2,8 +2,8 @@ from django.contrib import admin
 
 from ..models.reports import (
     BaseReport,
-    # GroundReport,
-    # AviationReport,
+    GroundReport,
+    AviationReport,
     # SafetyReport,
     # SafetyReportAircraftSystem,
     # SafetyReportEvent,
@@ -77,6 +77,60 @@ class BaseReportAdmin(admin.ModelAdmin):
                 ImageAdminInline,
                 RecommendationAdminInline]
 
+
+@admin.register(GroundReport)
+class GroundReportAdmin(admin.ModelAdmin):
+    list_display = (
+        'base_report', 
+        'location', 
+        'category',
+        'get_title',
+        'get_report_type',
+        'get_event_date'
+    )
+    list_filter = ('category',)
+    search_fields = ('location', 'base_report__title')
+
+    def get_title(self, obj):
+        return obj.base_report.title
+    get_title.short_description = "ชื่อรายงาน"
+
+    def get_report_type(self, obj):
+        return obj.base_report.get_report_type_display()
+    get_report_type.short_description = "ประเภท"
+
+    def get_event_date(self, obj):
+        return obj.base_report.event_date
+    get_event_date.short_description = "วันที่เกิดเหตุ"
+
+
+@admin.register(AviationReport)
+class AviationReportAdmin(admin.ModelAdmin):
+    list_display = (
+        'base_report', 
+        'squadron', 
+        'aircraft',
+        'get_title',
+        'get_report_type',
+        'get_event_date'
+    )
+    list_filter = ('squadron', 'aircraft', 'system', 'flight_phase')
+    search_fields = ('base_report__title', 'squadron__name', 'aircraft__name')
+    filter_horizontal = ('system', 'flight_phase')
+
+    def get_title(self, obj):
+        return obj.base_report.title
+    get_title.short_description = "ชื่อรายงาน"
+
+    def get_report_type(self, obj):
+        return obj.base_report.get_report_type_display()
+    get_report_type.short_description = "ประเภท"
+
+    def get_event_date(self, obj):
+        return obj.base_report.event_date
+    get_event_date.short_description = "วันที่เกิดเหตุ"
+
+    
     # def get_inline_instances(self, request, obj=None):
     #     all_inlines = super().get_inline_instances(request, obj)
 
