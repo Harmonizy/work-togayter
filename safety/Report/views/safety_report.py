@@ -71,14 +71,9 @@ def list(request):
     return render(request, 'Report/safety-reports/list.html', context)
 
 
-class MobileHomeView(SuperAppLoginMixins, LoginRequiredMixin, TemplateView):
+class MobileHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'Report/safety-reports/mobile-home.html'
     
-    def get(self, request, *args, **kwargs):
-        context = {
-            "test": "test message"
-        }
-        return render(request, self.template_name, context)
 
 
 @login_required
