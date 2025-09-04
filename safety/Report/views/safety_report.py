@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 
 from .utils import card_data
 from ..models import BaseReport
-from ..choices import ReportStatusChoices
+from ..choices import ReportStatusChoices, ReportTypeChoices
 from ..rules import q_condition
 from common.RTAFAuth.views import SuperAppLoginMixins
 
@@ -60,9 +60,8 @@ def list(request):
     context = {
         'report_cards': report_cards,
         'base_reports': page_obj,
-
+        'ReportTypeChoices': ReportTypeChoices,
         "ReportStatusChoices": ReportStatusChoices,
-
         'search': search_query, 
         'date_range': date_range,
         'status': status_filter,

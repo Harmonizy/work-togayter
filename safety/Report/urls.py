@@ -20,6 +20,8 @@ main_urlpatterns = [
     path('safety-create/new-report/', safety_create.new_report, name='safety-create.new_report'),   
     path('safety-edit/edit-report/<int:report_id>/', safety_edit.edit_report, name='safety-edit.edit-report'),
     path("delete/<int:pk>/", safety_delete.delete_report, name="delete"),
+
+    # path('safety-create/create-report/<>', safety_create.create_report, name='safety_create.create_report'),
     
     # export
     path('word-export/safety-doc/<int:pk>/', word_export.safety_doc, name='word_export.safety_doc'),

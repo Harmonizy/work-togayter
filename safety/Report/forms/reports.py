@@ -19,9 +19,13 @@ class BaseReportForm(forms.ModelForm):
     class Meta:
         model = BaseReport
         fields = [
-            "affiliation", "event_date", "event_time",
             # "mission_type", 
-            "report_type", "title", "content", 
+            # "report_type", 
+            # "affiliation", 
+            "event_date", 
+            "event_time",
+            "title", 
+            "content", 
             # "keyword",
             "first_recommendation", "initial_action_taken", "anonymous", "comment"
         ]        
@@ -43,28 +47,28 @@ class BaseReportForm(forms.ModelForm):
 
         self.helper.layout = Layout(
             Row(
-                Column(
-                    Field(
-                        'report_type',
-                        css_class='form-group col-6 col-md-3 mb-0',
-                        hx_get=safety_form_partials_url,
-                        hx_target="#title-content-part",
-                        hx_swap="innerHTML",
-                        hx_trigger="change",
-                        hx_include="#id_base_form-affiliation"                        
-                    )
-                ),
-                Column(
-                    Field(
-                        'affiliation',
-                        css_class='form-group col-6 col-md-3 mb-0',
-                        hx_get=safety_form_partials_url,
-                        hx_target="#title-content-part",
-                        hx_swap="innerHTML",
-                        hx_trigger="change",
-                        hx_include="#id_base_form-report_type"                        
-                    )
-                ),
+                # Column(
+                #     Field(
+                #         'report_type',
+                #         css_class='form-group col-6 col-md-3 mb-0',
+                #         hx_get=safety_form_partials_url,
+                #         hx_target="#title-content-part",
+                #         hx_swap="innerHTML",
+                #         hx_trigger="change",
+                #         hx_include="#id_base_form-affiliation"                        
+                #     )
+                # ),
+                # Column(
+                #     Field(
+                #         'affiliation',
+                #         css_class='form-group col-6 col-md-3 mb-0',
+                #         hx_get=safety_form_partials_url,
+                #         hx_target="#title-content-part",
+                #         hx_swap="innerHTML",
+                #         hx_trigger="change",
+                #         hx_include="#id_base_form-report_type"                        
+                #     )
+                # ),
                 # Column('mission_type', css_class='form-group col-6 col-md-2 mb-0'),
                 Column('event_date', css_class='form-group col-6 col-md-3 mb-0'),
                 Column('event_time', css_class='form-group col-6 col-md-3 mb-0'),
