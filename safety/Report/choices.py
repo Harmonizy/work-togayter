@@ -5,7 +5,7 @@ class ReportTypeChoices(models.TextChoices):
     HAZARD_GROUND = 'HG', 'รายงานอุบัติการณ์ภาคพื้น'
     HAZARD_AVIATION = 'HA', 'รายงานอากาศยานอุบัติการณ์'
     SAFETY_GROUND = 'SG', 'รายงานอุบัติเหตุภาคพื้น'
-    SAFETY_AVIATION = 'SA', 'รายงานากาศยานอุบัติเหตุ'
+    SAFETY_AVIATION = 'SA', 'รายงานอากาศยานอุบัติเหตุ'
     OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
 
 
