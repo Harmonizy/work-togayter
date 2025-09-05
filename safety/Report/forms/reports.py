@@ -82,31 +82,6 @@ class BaseReportForm(forms.ModelForm):
         )
 
 
-class BaseReportTitleContentPartForm(forms.ModelForm):
-    content = content_field(400, content_example)
-    
-    class Meta:
-        model = BaseReport
-        fields = [
-            "title", "content"
-        ]        
-
-    def __init__(self, *args, **kwargs):         
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False  # ป้องกันซ้อน form
-        self.helper.layout = Layout(
-             
-                Row(
-                    Column('title', css_class='form-group col-md-12 mb-0'),
-                ),
-                Row(
-                    Column(
-                        Field('content'),
-                        css_class='form-group col-md-12 mb-0',
-                    ),
-                ),             
-        )
 
 
 class GroundReportForm(forms.ModelForm):

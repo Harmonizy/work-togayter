@@ -2,7 +2,6 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from safety.Report.views import safety_form_partials
 
 from .views import  safety_report, safety_overviews, safety_create,safety_edit, word_export, safety_delete , details
 # from .views import safety_create
@@ -38,7 +37,7 @@ main_urlpatterns = [
 
 
 partial_url_patterns = [
-    path('safety-form-partials/base-title-air-ground/', safety_form_partials.base_title_air_ground, name='safety-form-partials.base-title-air-ground'),
+    
 ]
 
 urlpatterns = main_urlpatterns + partial_url_patterns

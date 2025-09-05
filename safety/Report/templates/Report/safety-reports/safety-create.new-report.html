@@ -8,7 +8,6 @@
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
-<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js" integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm" crossorigin="anonymous"></script>
 
 <style>    
    
@@ -44,7 +43,7 @@
 
                 <div class="my-5">
                     <!-- จำเป็นต้องทำแบบนี้เพราะ มี javascript + sweetalert มาดัก submit ทำให้ค่าไม่ส่งไปกับ request.POST-->
-                     <input type="text" name="priority" id="priority-input">
+                     <input type="hidden" name="priority" id="priority-input">
 
                     <button type="submit" name="priority" value="L" class="btn btn-success">บันทึก (ปกติ)</button>
                     <button type="submit" name="priority" value="M" class="btn btn-warning">บันทึก (ต้องติดตาม)</button>

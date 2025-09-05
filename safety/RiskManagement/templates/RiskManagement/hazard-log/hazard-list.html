@@ -2,10 +2,8 @@
 {% load static %}
 {% load crispy_forms_tags partials %}
 {% load services_tags report_tags %}
-
 {% block title %}Safety Reports List{% endblock title %}
-{% block extra_css %}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% block extra_css %}    
     <link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
     <script src="{% static 'libs/htmx/htmx.min.js' %}"></script>
     <style>
@@ -51,27 +49,6 @@
                     </div>
                     </div>
                 </div>
-
-                {% comment %} <!-- Event filter row (static) -->
-                <div class="card-body border border-dashed border-end-0 border-start-0">
-                    <div class="d-flex flex-wrap gap-2" id="eventFilters">
-                    <!-- ปุ่มกรองตามอีเวนต์ (เพิ่ม/ลดได้ตามต้องการ) -->
-                    <button class="btn btn-light" data-filter="อื่น ๆ">อื่น ๆ</button>
-                    <button class="btn btn-light" data-filter="Unlawful / Dangerous Goods">สิ่งของผิดกฎหมาย / Dangerous Goods</button>
-                    <button class="btn btn-light" data-filter="Night operation">การบินเวลากลางคืน</button>
-                    <button class="btn btn-light" data-filter="Deficient maintenance">Deficient maintenance</button>
-                    <button class="btn btn-light" data-filter="Weather">อันตรายจากสภาพอากาศ (Weather)</button>
-                    <button class="btn btn-light" data-filter="Loss of control">Loss of control</button>
-                    <button class="btn btn-light" data-filter="Gnd facilities">Gnd facilities / service</button>
-                    <button class="btn btn-light" data-filter="Gnd Collision">Gnd Collision</button>
-                    <button class="btn btn-light" data-filter="Runway Safety">Runway Safety</button>
-                    <button class="btn btn-light" data-filter="TAWS/CFIT">TAWS / CFIT</button>
-                    <button class="btn btn-light" data-filter="Undesired State">Undesired State (TEM)</button>
-                    <button class="btn btn-light" data-filter="FOD">FOD</button>
-                    <button class="btn btn-light" data-filter="Bird/Wildlife">Bird/Wildlife strike</button>
-                    <button class="btn btn-light" data-filter="Near miss">Near miss</button>
-                    </div>
-                </div> {% endcomment %}
 
                 <div class="card-body">
                     <div class="table-responsive table-card mb-4 p-2" style="min-height: 300px;">
@@ -289,6 +266,12 @@
 {% endblock content %}
 {% block extra_js %}
 <script>
-
+$(document).ready(function() {
+    $('#eventFilters').select2({
+        placeholder: "เลือกเหตุการณ์",
+        allowClear: true,
+        width: '100%'  // Make it full width
+    });
+});
 </script>
 {% endblock extra_js %}
