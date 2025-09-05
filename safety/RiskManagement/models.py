@@ -8,9 +8,15 @@ class HazardCategory(models.Model):
     event = models.ForeignKey(Event, verbose_name="ชื่อเหตุการณ์", on_delete=models.CASCADE, related_name="hazard_logs")
     description = models.TextField("รายละเอียด")
 
+    class Meta:
+        verbose_name = verbose_name_plural = "1. หมวดหมู่ความเสี่ยง"
+
+    def __str__(self):
+        return f"{self.code}"
+
 
 class HazardLog(models.Model):
-
+    hazard_category = models.ForeignKey(HazardCategory, verbose_name="หมวดหมู่", on_delete=models.CASCADE, related_name="hazard_logs")
     code = models.CharField("รหัส", max_length=50, unique=True)
     affiliation = models.ForeignKey(Affiliation, verbose_name="หน่วยงาน", on_delete=models.CASCADE, related_name="hazard_logs")
     assign_to = models.ForeignKey(RTAFUser, verbose_name="ผู้รับผิดชอบ", on_delete=models.SET_NULL, null=True, blank=True)
@@ -33,7 +39,7 @@ class HazardLog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "1. ทะเบียนความเสี่ยง"
+        verbose_name = verbose_name_plural = "2. ทะเบียนความเสี่ยง"
 
     def __str__(self):
         return f"{self.code} - {self.title.name}"
@@ -53,7 +59,7 @@ class CAP(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "2. CAP"
+        verbose_name = verbose_name_plural = "3. CAP"
 
     def __str__(self):
         return f"{self.title} ({self.status})"
