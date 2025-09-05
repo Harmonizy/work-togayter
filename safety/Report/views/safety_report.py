@@ -26,9 +26,11 @@ def list(request):
     status_filter = request.GET.get('status', '').strip()
 
     reports = (BaseReport.objects.select_related("recorder", "affiliation", "recorder__rank")
-                                 .prefetch_related("file_attachment","image_attachment")
-                                 .filter(can_view_report(request.user))
-                                 .order_by('-updated_at'))
+                                 .prefetch_related("file_attachment", "image_attachment")
+                                 .order_by('-updated_at'))\
+                                 
+    if not request.user.is_superuser:
+        reports = reports.filter(affiliation=request.user.affiliation)
 
     report_cards = card_data(reports)
     
