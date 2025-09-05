@@ -11,6 +11,7 @@ from safety.Report.models import BaseReport, AviationReport, GroundReport
 # , SafetyReport, ObservationReport
 from .fields import  content_example, content_field, textarea_field, multi_select_widget, single_select_widget
 from ..models import BaseReport, Image, Recommendation, File
+from ..choices import ReportTypeChoices
 
 
 class BaseReportForm(forms.ModelForm):
@@ -20,8 +21,8 @@ class BaseReportForm(forms.ModelForm):
         model = BaseReport
         fields = [
             # "mission_type", 
-            # "report_type", 
-            # "affiliation", 
+            "report_type", 
+            "affiliation", 
             "event_date", 
             "event_time",
             "title", 
@@ -42,33 +43,18 @@ class BaseReportForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False  # ป้องกันซ้อน form
-
-        safety_form_partials_url = reverse('report:safety-form-partials.base-title-air-ground')
+        report_type = self.initial.get("report_type", "") 
+        affiliation = self.initial.get("affiliation", None)
+        
+        if report_type:
+            self.fields["report_type"].choices = [(choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type]
+        if affiliation:
+            self.fields['affiliation'].queryset = self.fields['affiliation'].queryset.filter(id=affiliation.id)
 
         self.helper.layout = Layout(
             Row(
-                # Column(
-                #     Field(
-                #         'report_type',
-                #         css_class='form-group col-6 col-md-3 mb-0',
-                #         hx_get=safety_form_partials_url,
-                #         hx_target="#title-content-part",
-                #         hx_swap="innerHTML",
-                #         hx_trigger="change",
-                #         hx_include="#id_base_form-affiliation"                        
-                #     )
-                # ),
-                # Column(
-                #     Field(
-                #         'affiliation',
-                #         css_class='form-group col-6 col-md-3 mb-0',
-                #         hx_get=safety_form_partials_url,
-                #         hx_target="#title-content-part",
-                #         hx_swap="innerHTML",
-                #         hx_trigger="change",
-                #         hx_include="#id_base_form-report_type"                        
-                #     )
-                # ),
+                Column('report_type', css_class='form-group col-6 col-md-3 mb-0',),
+                Column('affiliation',css_class='form-group col-6 col-md-3 mb-0',),
                 # Column('mission_type', css_class='form-group col-6 col-md-2 mb-0'),
                 Column('event_date', css_class='form-group col-6 col-md-3 mb-0'),
                 Column('event_time', css_class='form-group col-6 col-md-3 mb-0'),
@@ -164,6 +150,10 @@ class AviationReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        affiliation = self.initial.get("affiliation", None)
+        if affiliation:
+            self.fields['squadron'].queryset = self.fields['squadron'].queryset.filter(affiliation=affiliation)
+            self.fields['aircraft'].queryset = self.fields['aircraft'].queryset.filter(affiliation=affiliation)
 
         self.helper = FormHelper()
         self.helper.form_tag = False

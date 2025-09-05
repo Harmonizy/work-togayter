@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 
 from safety.Report.views import safety_form_partials
 
-from .views import  safety_report, safety_overviews, safety_create,safety_edit, word_export, safety_delete , details, hazard_log
+from .views import  safety_report, safety_overviews, safety_create,safety_edit, word_export, safety_delete , details
 # from .views import safety_create
 
 app_name = 'report'
@@ -33,7 +33,7 @@ main_urlpatterns = [
     path('mobile-home/', safety_report.MobileHomeView.as_view(), name='mobile_home'),
     path('mobile-create/', safety_report.mobile_create, name='mobile_create'),
 
-    path("hazard-log/list/", hazard_log.list, name="hazard_log"),
+    
 ]
 
 

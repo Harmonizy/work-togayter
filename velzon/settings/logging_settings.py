@@ -54,6 +54,11 @@ LOGGING = {
             'backupCount': 4,        
             'base_filename': os.path.join(BASE_DIR, 'logs', 'report_file'),
         },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'detailed',
+            'level': 'DEBUG',
+        }
     },
     'loggers': {
         'django.security.login_success': {
@@ -67,7 +72,7 @@ LOGGING = {
             'propagate': False,
         },
         'report': {
-            'handlers': ['report_file',],
+            'handlers': ['report_file', 'console'],
             'level': 'INFO',
             'propagate': False,
         },

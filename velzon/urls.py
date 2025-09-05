@@ -24,6 +24,9 @@ def redirect_by_screen_size(request):
 
 safe_urls = [
     path('', include('safety.Report.urls')),
+    path('risk-management/', include('safety.RiskManagement.urls')),
+    path('safety-dashboard/', include('safety.Dashboard.urls')),
+    path('safety-evaluate/', include('safety.Evaluate.urls')),
 ]
 
 
@@ -32,8 +35,6 @@ urlpatterns = [
     path('media/<path:path>/', serve_secure_media, name='secure_media'),
 
     path('redirect-by-size/', redirect_by_screen_size, name='redirect-by-size'),
-    path('safety-dashboard/', include('safety.Dashboard.urls')),
-    path('safety-evaluate/', include('safety.Evaluate.urls')),
 
     path('login/', AFLoginView.as_view(), name='account_login'),
     path('logout/', LogoutView.as_view(), name='account_logout'),
@@ -48,4 +49,4 @@ urlpatterns = [
 ] + safe_urls + debug_toolbar_urls()
 
 if settings.DEBUG:
-        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

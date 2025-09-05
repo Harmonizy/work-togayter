@@ -28,21 +28,27 @@
             {% include "partials/page-title.html" with pagetitle="รายงาน" pagetitle_url=safety_report_list_url title="สร้างรายงานใหม่" %}
 
 
-            <!-- ตรวจสอบ report_type -->
-            <p>ประเภทรายงาน: {{ report_type_label }}</p>
-
             <form id="reportForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% crispy base_form %}
+                {% if ground_form %}
+                    {% crispy ground_form %}
+                {% endif %}
+                {% if aviation_form %}
+                    {% crispy aviation_form %}
+                {% endif %}
 
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
 
                 <div class="my-5">
-                    <button type="submit" name="priority-L" class="btn btn-success">บันทึก (ปกติ)</button>
-                    <button type="submit" name="priority-M" class="btn btn-warning">บันทึก (ต้องติดตาม)</button>
-                    <button type="submit" name="priority-H" class="btn btn-danger">บันทึก (เร่งด่วน)</button>
+                    <!-- จำเป็นต้องทำแบบนี้เพราะ มี javascript + sweetalert มาดัก submit ทำให้ค่าไม่ส่งไปกับ request.POST-->
+                     <input type="text" name="priority" id="priority-input">
+
+                    <button type="submit" name="priority" value="L" class="btn btn-success">บันทึก (ปกติ)</button>
+                    <button type="submit" name="priority" value="M" class="btn btn-warning">บันทึก (ต้องติดตาม)</button>
+                    <button type="submit" name="priority" value="H" class="btn btn-danger">บันทึก (เร่งด่วน)</button>
                 </div>
             </form>
 
@@ -72,6 +78,8 @@ $(document).ready(function () {
         e.preventDefault();
         
         const form = this;
+        let priorityValue = $('button[type="submit"]:focus').val();
+
         Swal.fire({
             title: 'ยืนยันส่งข้อมูล?',
             icon: 'warning',
@@ -87,6 +95,11 @@ $(document).ready(function () {
         });
     });
     
+    $('button[name="priority"]').on('click', function() {
+        // Set the value of the hidden input to the clicked button's value
+        $('#priority-input').val($(this).val());
+    });
+
   $('.add-formset-btn').click(function () {
     const targetContainerSelector = $(this).data('target');
     const container = $(targetContainerSelector);

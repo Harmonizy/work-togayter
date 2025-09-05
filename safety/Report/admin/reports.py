@@ -42,14 +42,14 @@ class RecommendationAdminInline(admin.TabularInline):
 #     extra = 0
 
 
-# class GroundReportInline(admin.StackedInline):
-#     model = GroundReport
-#     extra = 0
+class GroundReportInline(admin.StackedInline):
+    model = GroundReport
+    extra = 0
 
 
-# class AviationReportInline(admin.StackedInline):
-#     model = AviationReport
-#     extra = 0
+class AviationReportInline(admin.StackedInline):
+    model = AviationReport
+    extra = 0
 
 
 # class SafetyReportInline(admin.StackedInline):
@@ -70,12 +70,28 @@ class BaseReportAdmin(admin.ModelAdmin):
     # autocomplete_fields = ('recorder')
 
     inlines = [ 
-            #    GroundReportInline,
-            #     AviationReportInline,
+               GroundReportInline,
+                AviationReportInline,
             #     SafetyReportInline,
                 FileAdminInline,
                 ImageAdminInline,
                 RecommendationAdminInline]
+    
+    def get_inline_instances(self, request, obj=None):
+        all_inlines = super().get_inline_instances(request, obj)
+
+        # Filter only the inlines that have related objects (or are not part of the ones you want to hide)
+        filtered_inlines = []
+        for inline in all_inlines:
+            model = inline.model
+            if model in (GroundReport, AviationReport):
+                if model.objects.filter(base_report = obj).exists():
+                    filtered_inlines.append(inline)
+            else:
+                # Always include other inlines
+                filtered_inlines.append(inline)
+
+        return filtered_inlines
 
 
 @admin.register(GroundReport)
@@ -130,20 +146,5 @@ class AviationReportAdmin(admin.ModelAdmin):
         return obj.base_report.event_date
     get_event_date.short_description = "วันที่เกิดเหตุ"
 
-    
-    # def get_inline_instances(self, request, obj=None):
-    #     all_inlines = super().get_inline_instances(request, obj)
 
-    #     # Filter only the inlines that have related objects (or are not part of the ones you want to hide)
-    #     filtered_inlines = []
-    #     for inline in all_inlines:
-    #         model = inline.model
-    #         if model in (GroundReport, AviationReport, SafetyReport):
-    #             if model.objects.filter(base_report = obj).exists():
-    #                 filtered_inlines.append(inline)
-    #         else:
-    #             # Always include other inlines
-    #             filtered_inlines.append(inline)
-
-    #     return filtered_inlines
     

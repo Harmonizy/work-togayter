@@ -11,7 +11,9 @@ from .utils import card_data
 from ..models import BaseReport
 from ..choices import ReportStatusChoices, ReportTypeChoices
 from ..rules import q_condition
+
 from common.RTAFAuth.views import SuperAppLoginMixins
+from common.RTAFUser.models import Affiliation
 
 
 
@@ -65,6 +67,7 @@ def list(request):
         'search': search_query, 
         'date_range': date_range,
         'status': status_filter,
+        'affiliation': Affiliation.objects.all().order_by('short_name'),
     }
 
     return render(request, 'Report/safety-reports/list.html', context)
@@ -73,7 +76,6 @@ def list(request):
 class MobileHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'Report/safety-reports/mobile-home.html'
     
-
 
 @login_required
 def mobile_create(request):

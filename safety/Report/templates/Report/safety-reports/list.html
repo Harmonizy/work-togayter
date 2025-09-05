@@ -237,58 +237,38 @@
         </div>
 
         <div class="modal-body">
-          <!-- Report Type -->
-          <div class="mb-3">
-            <label for="reportType" class="form-label">ประเภทการรายงาน</label>
-            <select class="form-select" id="reportType" name="report_type" required>
-              <option value="">-- เลือกประเภท --</option>
-              <option value="S">รายงานขั้นต้น</option>
-              <option value="HG">รายงานอุบัติการณ์ภาคพื้น</option>
-              <option value="HA">รายงานอากาศยานอุบัติการณ์</option>
-              <option value="SG">รายงานอุบัติเหตุภาคพื้น</option>
-              <option value="SA">รายงานอากาศยานอุบัติเหตุ</option>
-              <option value="O">สังเกตการณ์พฤติกรรม</option>
-            </select>
-          </div>
+            <div class="row">
+                <!-- Report Type -->
+                <div class="col-6 mb-3">
+                    <label for="reportType" class="form-label">ประเภทการรายงาน</label>
+                    <select class="form-select" id="reportType" name="report_type" required>
+                        <option value="">-- เลือกประเภท --</option>
+                        <option value="S" selected>รายงานขั้นต้น</option>
+                        <option value="HG">รายงานอุบัติการณ์ภาคพื้น</option>
+                        <option value="HA">รายงานอากาศยานอุบัติการณ์</option>
+                        <option value="SG">รายงานอุบัติเหตุภาคพื้น</option>
+                        <option value="SA">รายงานอากาศยานอุบัติเหตุ</option>
+                        <option value="O">สังเกตการณ์พฤติกรรม</option>
+                    </select>
+                </div>
 
-          <!-- Affiliation -->
-          <div class="mb-3">
-            <label for="affiliation" class="form-label">หน่วยงาน</label>
-            <select class="form-select" id="affiliation" name="affiliation" required>
-              <option value="">-- เลือกหน่วยงาน --</option>
-              {% comment %} <option value="042">กง.ทอ. - กรมการเงินทหารอากาศ</option>
-              <option value="007">กบ.ทอ. - กรมส่งกำลังบำรุงทหารอากาศ</option>
-              <option value="004">กพ.ทอ. - กรมกำลังพลทหารอากาศ</option>
-              <option value="010">กร.ทอ. - กรมกิจการพลเรือนทหารอากาศ</option>
-              <option value="005">ขว.ทอ. - กรมข่าวทหารอากาศ</option>
-              <option value="033">ขส.ทอ. - กรมขนส่งทหารอากาศ</option>
-              <option value="595">คปอ. - กองบัญชาการควบคุมการปฏิบัติทางอากาศ</option>
-              <option value="008">จร.ทอ. - กรมจเรทหารอากาศ</option>
-              <option value="032">ชย.ทอ. - กรมช่างโยธาทหารอากาศ</option>
-              <option value="028">ชอ. - กรมช่างอากาศ</option>
-              <option value="211">ทสส.ทอ. - กรมเทคโนโลยีสารสนเทศและการสื่อสารทหารอากาศ</option>
-              <option value="001">บก.ทอ. - กองบัญชาการกองทัพอากาศ</option> {% endcomment %}
-              <option value="015">บน.1 - กองบิน 1</option>
-              <option value="012">บน.2 - กองบิน 2</option>
-              <option value="016">บน.21 - กองบิน 21</option>
-              <option value="017">บน.23 - กองบิน 23</option>
-              <option value="066">บน.3 - กองบิน 3</option>
-              <option value="019">บน.4 - กองบิน 4</option>
-              <option value="020">บน.41 - กองบิน 41</option>
-              <option value="021">บน.46 - กองบิน 46</option>
-              <option value="126">บน.5 - กองบิน 5</option>
-              <option value="024">บน.56 - กองบิน 56</option>
-              <option value="013">บน.6 - กองบิน 6</option>
-              <option value="064">บน.7 - กองบิน 7</option>
-              <!-- ... you can continue adding all options in the same format ... -->
-              <option value="17">รร.การบิน</option>
-            </select>
-          </div>
+                <!-- Affiliation -->
+                <div class="col-6 mb-3">
+                    <label for="affiliation" class="form-label">หน่วยงาน</label>
+
+                    <select class="form-select" id="affiliation" name="affiliation" required>
+                        {% for aff in affiliation %}
+                        <option value="{{ aff.id }}" {% if aff.id == request.user.affiliation.id %}selected{% endif %}>{{ aff.short_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
         </div>
 
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-          <button type="submit" class="btn btn-primary">ดำเนินการต่อ</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+          <button type="submit" class="btn btn-primary">สร้างรายงานใหม่</button>
         </div>
       </form>
     </div>
