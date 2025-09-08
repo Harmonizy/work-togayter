@@ -102,7 +102,7 @@ class SaltAuthMixin:
                 "person_id": user_info.get("citizen_id", ""),
                 "af_id": user_info.get("airforce_id", ""),                
                 "position": mfa_data.get("user_position", ""),
-                "affiliation": Affiliation.objects.get_or_create(short_name=mfa_data.get("affiliation", ""))[0],
+                "affiliation": Affiliation.objects.get_or_create(short_name=mfa_data.get("user_orgname", ""))[0],
             }
         )
         print("User created or fetched:", user)
