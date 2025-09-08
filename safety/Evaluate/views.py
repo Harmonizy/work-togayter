@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import EvaluationQuestion
 
 
-def evaluate_main(request):
-    return render(request, 'Evaluate/evaluate-main.html')
+def evaluate_main(request, report_id):
+    return render(request, 'Evaluate/evaluate-main.html', {"report_id": report_id})
 
 
 @require_POST
@@ -67,11 +67,13 @@ def submit_evaluation(request):
     answers = data.get('answers', [])
     result_id = data.get('result_id')
     question_set_id = data.get('question_set_id')
+    report_id = request.GET.get('report_id') 
 
     # Dummy report association for now
     report_evaluation = BaseReportEvaluation.objects.create(
         question_set_id=question_set_id,
-        final_result_id=result_id
+        final_result_id=result_id,
+        report_id=report_id,
     )
 
     for idx, entry in enumerate(answers):
@@ -94,3 +96,4 @@ def submit_evaluation(request):
     return JsonResponse({'status': 'ok'})
 
 # path('api/submit-evaluation/', views.submit_evaluation, name='submit_evaluation')
+

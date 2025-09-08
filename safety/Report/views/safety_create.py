@@ -68,9 +68,14 @@ def new_report(request):
 
     if all(forms_valid):
         base_form.instance.report_type = report_type
-        base_report = save_new_report(base_form, image_formset, rec_formset, file_formset,request, priority, **addition_form)
+        base_report = save_new_report(base_form, image_formset, rec_formset, file_formset, request, priority, **addition_form)
         messages.success(request, f"บันทึกเหตุการณ์ {base_report} เรียบร้อยแล้ว")
-        return redirect("report:safety-report.list")
+        if request.POST.get("surveyCheck") == "1":
+            return redirect("evaluate:evaluate-main", report_id=base_report.id)
+        else:
+            return redirect("report:safety-report.list")
+
+
     
     messages.error(request, "กรุณาตรวจสอบข้อมูลให้ถูกต้อง")
     return render(request, "Report/safety-reports/safety-create.new-report.html", {
