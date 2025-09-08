@@ -1,14 +1,13 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 
-from safety.Data.models import Event
-from safety.RiskManagement.models import HazardLog
+from ..models import HazardLog
+from ..services.hazard_summary import get_hazard_summary_cards
 
-def list(request):
-    event = Event.objects.all()
+def list(request):    
     hazard_log = HazardLog.objects.all()
+    cards = get_hazard_summary_cards()
     context = {
-        'event': event,
-        'hazard_log': hazard_log,
-        
+        "cards": cards,
+        'hazard_log': hazard_log,        
     }
     return render(request, "RiskManagement/hazard-log/hazard-list.html", context)

@@ -22,13 +22,9 @@ class CAPInline(admin.TabularInline):
 @admin.register(HazardLog)
 class HazardLogAdmin(admin.ModelAdmin):
     list_display = (
-        "hazard_category", "code", "affiliation", "assign_to", "date", "status", "inspect",
-        "initial_likelihood", "initial_severity", "initial_risk_level",
-        "residual_likelihood", "residual_severity", "residual_risk_level",
-        "updated_at",
-    )
-    list_filter = ("hazard_category", "status", "inspect", "affiliation")
-    search_fields = ("code", "affiliation__name", "assign_to__first_name", "assign_to__last_name")
+        "category", "code", "affiliation", "status", "inspect", "initial_risk_level", "residual_risk_level",)
+    list_filter = ("category", "status", "inspect", "affiliation")
+    search_fields = ("code", "affiliation__name", "assign_to__first_name", "affiliation__short_name")
     date_hierarchy = "date"
     inlines = [CAPInline]
 
