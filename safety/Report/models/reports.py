@@ -49,7 +49,7 @@ class BaseReport(models.Model):
     updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด",auto_now=True)
     
     class Meta:
-        verbose_name = verbose_name_plural = "แบบรายงาน"
+        verbose_name = verbose_name_plural = "1. แบบรายงาน"
 
     def __str__(self):
         return self.title
@@ -98,7 +98,7 @@ class GroundReport(BaseAbsoluteURL, models.Model):
     category = models.ForeignKey(GroundSafetyCategory, verbose_name="สาขา", on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "ภาคพื้น"
+        verbose_name = verbose_name_plural = "2. ภาคพื้น"
 
 
 class AviationReport(BaseAbsoluteURL, models.Model):
@@ -110,7 +110,7 @@ class AviationReport(BaseAbsoluteURL, models.Model):
     flight_phase = models.ManyToManyField('Data.FlightPhase', verbose_name="ช่วงของการบิน", related_name='aviation_reports', blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "ภาคอากาศ"
+        verbose_name = verbose_name_plural = "3. ภาคอากาศ"
 
 # #========================================================================
 
