@@ -7,19 +7,19 @@
                 <!-- Dark Logo-->
                 <a href="{% url 'dashboards:dashboard'%}" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="{% static 'images/logo-sm.png'%}" alt="" height="22">
+                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="50">
                     </span>
                     <span class="logo-lg">
-                        <img src="{% static 'images/logo-dark.png'%}" alt="" height="17">
+                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="100">
                     </span>
                 </a>
                 <!-- Light Logo-->
                 <a href="{% url 'dashboards:dashboard'%}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{% static 'images/logo-sm.png'%}" alt="" height="22">
+                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="50">
                     </span>
                     <span class="logo-lg">
-                        <img src="{% static 'images/logo-light.png'%}" alt="" height="17">
+                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="100">
                     </span>
                 </a>
                 <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
@@ -27,7 +27,7 @@
                 </button>
             </div>
 
-            <div class="dropdown sidebar-user m-1 rounded">
+            {% comment %} <div class="dropdown sidebar-user m-1 rounded">
                 <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="d-flex align-items-center gap-2">
                         <img class="rounded header-profile-user" src="{% static 'images/users/avatar-1.jpg' %}" alt="Header Avatar">
@@ -50,13 +50,14 @@
                     <a class="dropdown-item" href="{% url 'pages:authentication.lockscreen_basic' %}"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
                     <a class="dropdown-item" href="{% url 'pages:authentication.logout_basic' %}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
                 </div>
-            </div>
+            </div> {% endcomment %}
 
             <div id="scrollbar">
                 <div class="container-fluid">
                     
                     <div id="two-column-menu">
                     </div>
+                    
                     <ul class="navbar-nav" id="navbar-nav">
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                         {% comment %} <li class="nav-item">
@@ -71,7 +72,8 @@
                                     </li>
                                 </ul>
                             </div>
-                        </li> <!-- end Reports Menu --> {% endcomment %}
+                        </li> {% endcomment %}
+
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarReports" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarReports">
@@ -91,26 +93,10 @@
                                     <li class="nav-item">
                                         <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
                                     </li>
-                                    {% comment %} 
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:maintenance' #}" class="nav-link" data-key="t-maintenance">Maintenance</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:flight_operations' #}" class="nav-link" data-key="t-flight-ops">Flight Operations</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:incidents' #}" class="nav-link" data-key="t-incidents">Incidents</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:audits' #}" class="nav-link" data-key="t-audits">Audits</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:custom' #}" class="nav-link" data-key="t-custom">Custom Reports</a>
-                                    </li> 
-                                    {% endcomment %}
                                 </ul>
                             </div>
-                        </li> <!-- end Reports Menu -->
+                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarRiskManagement" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarRiskManagement">
@@ -121,40 +107,11 @@
                                     <li class="nav-item">
                                         <a href="{% url 'risk-management:hazard_log' %}" class="nav-link" data-key="t-dashboard">ทะเบียนความเสี่ยง</a>
                                     </li> 
-                                     {% comment %} 
-                                    <li class="nav-item">
-                                        <a href="{% url 'report:safety-report.list' %}" class="nav-link" data-key="t-report">รายงานนิรภัย</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'evaluate:evaluate-main' %}" class="nav-link" data-key="t-evaluate">แบบประเมิน</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{% url 'risk-management:hazard_log' %}" class="nav-link" data-key="t-mobile">ทะเบียนความเสี่ยง</a>
-                                    </li>
-                                  
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:maintenance' #}" class="nav-link" data-key="t-maintenance">Maintenance</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:flight_operations' #}" class="nav-link" data-key="t-flight-ops">Flight Operations</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:incidents' #}" class="nav-link" data-key="t-incidents">Incidents</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:audits' #}" class="nav-link" data-key="t-audits">Audits</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{# url 'report:custom' #}" class="nav-link" data-key="t-custom">Custom Reports</a>
-                                    </li> 
-                                    {% endcomment %}
                                 </ul>
                             </div>
-                        </li> <!-- end Reports Menu -->
-                        <li class="nav-item">
+                        </li>
+
+                        {% comment %} <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarDashboards">
                                 <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
@@ -1183,7 +1140,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> {% endcomment %}
 
                     </ul>
                 </div>
