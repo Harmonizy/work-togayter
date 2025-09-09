@@ -6,15 +6,7 @@
 <script src="//unpkg.com/alpinejs" defer></script>
 <link rel="stylesheet" href="{% static 'Evaluate/evaluate-style.css' %}">
 {% endblock extra_css %}
-
-<style>
-    #qa-thread {
-        font-size: 1rem;
-    }
-    #qa-thread .btn {
-        min-width: 80px;
-    }
-</style>
+{% block content %}
 <!-- Evaluation SPA -->
 <div class="container py-4" x-data="evaluationFlow({{ report_id }})" x-init="init()">
     <h3 class="mb-4">Evaluation</h3>
@@ -181,3 +173,4 @@ function getCookie(name) {
     return cookieValue;
 }
 </script>
+{% endblock content %}
