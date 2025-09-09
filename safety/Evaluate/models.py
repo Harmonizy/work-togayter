@@ -2,6 +2,7 @@ from django.db import models
 
 from .choices import EvaluationAnswerChoices
 from safety.Report.models import BaseReport
+from common.RTAFUser.models import RTAFUser
 
 class ResultType(models.Model):
     code = models.CharField(max_length=2, primary_key=True)
@@ -59,6 +60,9 @@ class BaseReportEvaluation(models.Model):
     report = models.OneToOneField(BaseReport, on_delete=models.CASCADE, related_name='evaluation')
     question_set = models.ForeignKey(QuestionSet, related_name='evaluations', on_delete=models.CASCADE, null=True, blank=True)
     final_result = models.ForeignKey(EvaluationResult, null=True, blank=True, related_name='evaluations', on_delete=models.SET_NULL)
+    
+    evaluater = models.ForeignKey(RTAFUser, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="ผู้ประเมิน")
+    evaluated_at = models.DateTimeField(auto_now_add=True, verbose_name="วันที่ประเมิน", null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "4. การประเมินผล Report"

@@ -6,8 +6,9 @@
 <style>
   .section-title { font-weight: 700; }
   .meta-label { color:#6c757d; min-width: 160px; }
-  .attachment-img { max-height: 160px; object-fit: cover; }
+  .attachment-img { max-height: 160px; object-fit: cover; cursor: pointer; }
   .badge-status { font-size: 0.85rem; }
+  .modal-body img { max-height: 80vh; width: auto; }
 </style>
 {% endblock %}
 
@@ -194,16 +195,30 @@
 
       <!-- รูปภาพ -->
       <div class="card mb-4">
-        <div class="card-header"><span class="section-title">รูปภาพแนบ</span></div>
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="section-title">รูปภาพแนบ</span>
+          {% if images %}
+          <button type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#imageGalleryModal">
+            ดูภาพทั้งหมด ({{ images|length }})
+          </button>
+          {% endif %}
+        </div>
         <div class="card-body">
           {% if images %}
           <div class="row g-3">
             {% for img in images %}
             <div class="col-6 col-md-3">
               <div class="card h-100">
+                <!-- คลิกรูปเปิด popup (จะเริ่มที่สไลด์แรก) -->
+                <a href="#" data-bs-toggle="modal" data-bs-target="#imageGalleryModal" class="stretched-link"></a>
                 <img src="{{ img.image.url }}" class="card-img-top attachment-img" alt="image">
                 <div class="card-body p-2">
-                  <div class="small text-muted">{{ img.comment|default:"" }}</div>
+                  <div class="small text-muted text-truncate" title="{{ img.comment|default:'' }}">
+                    {{ img.comment|default:"" }}
+                  </div>
                   <div class="small text-muted">{{ img.created_at|date:"d/m/Y H:i" }}</div>
                 </div>
               </div>
@@ -252,4 +267,65 @@
     </div>
   </div>
 </div>
+
+<!-- Modal แกลเลอรีรูปภาพ (ใช้ครั้งเดียวต่อหน้า) -->
+{% if images %}
+<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h6 class="modal-title">รูปภาพแนบ — {{ base_report.title|truncatechars:80 }}</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body pt-0">
+        <div id="detailImagesCarousel" class="carousel slide" data-bs-ride="false">
+          <div class="carousel-inner">
+            {% for img in images %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <div class="d-flex justify-content-center">
+                <img src="{{ img.image.url }}" class="d-block img-fluid rounded" alt="image">
+              </div>
+              <div class="mt-2 small text-center text-light">
+                {{ img.comment|default:"" }} • {{ img.created_at|date:"d/m/Y H:i" }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Controls -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#detailImagesCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#detailImagesCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+
+          <!-- Indicators -->
+          <div class="carousel-indicators position-static mt-3">
+            {% for img in images %}
+              <button type="button"
+                      data-bs-target="#detailImagesCarousel"
+                      data-bs-slide-to="{{ forloop.counter0 }}"
+                      class="{% if forloop.first %}active{% endif %}"
+                      aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-label="Slide {{ forloop.counter }}">
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="{{ images.0.image.url }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm">
+          เปิดไฟล์ต้นฉบับ (ภาพแรก)
+        </a>
+        <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">ปิด</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}

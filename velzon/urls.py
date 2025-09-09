@@ -26,7 +26,8 @@ safe_urls = [
     path('', include('safety.Report.urls')),
     path('risk-management/', include('safety.RiskManagement.urls')),
     path('safety-dashboard/', include('safety.Dashboard.urls')),
-    path('safety-evaluate/', include('safety.Evaluate.urls')),
+    path('safety-evaluate/', include(('safety.Evaluate.urls', 'evaluate'), namespace='evaluate')),
+
 ]
 
 

@@ -16,7 +16,7 @@
     }
 </style>
 <!-- Evaluation SPA -->
-<div class="container py-4" x-data="evaluationFlow()" x-init="init()">
+<div class="container py-4" x-data="evaluationFlow({{ report_id }})" x-init="init()">
     <h3 class="mb-4">Evaluation</h3>
 
     <div id="qa-thread" class="border rounded p-3 bg-light" style="max-height: 70vh; overflow-y: auto;">
@@ -74,14 +74,15 @@
 
 
 <script>
-function evaluationFlow() {
+function evaluationFlow(reportId) {
     return {
         history: [],      // Stores previous Q&A
         current: null,    // Current question or result
         currentId: null,
         submitted: false,
         loading: false,
-        
+        reportId: reportId,
+
         init() {
             // Load first question (hardcoded or dynamic)
             this.currentId = 1; // Replace with dynamic value if needed
@@ -90,6 +91,7 @@ function evaluationFlow() {
         sendAnswer(answer) {
             // Save current question + answer to history
             this.history.push({
+                questionID: this.current.id,
                 question: this.current.text,
                 answer: answer
             });
@@ -98,6 +100,7 @@ function evaluationFlow() {
             this.loadNext(answer, this.currentId);
         },
         loadNext(answer, questionId) {
+            console.log(this.reportId);
             fetch('/safety-evaluate/api-next-question/', {
                 method: 'POST',
                 headers: {
@@ -128,14 +131,16 @@ function evaluationFlow() {
             if (this.submitted) return;
 
             const payload = {
+                report_id: this.reportId,
                 answers: this.history,
                 result_id: this.current?.id,
-                question_set_id: this.questionSetId  // Optional
+                question_set_id: 1 //this.questionSetId  // Optional
             };
 
             this.loading = true;
-
-            fetch('/safety-evaluate/api-next-question/', {
+            console.log('Submitting:', payload);     
+            console.log('===========================');     
+            fetch('/safety-evaluate/api-submit-evaluation/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
