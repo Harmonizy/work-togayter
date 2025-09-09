@@ -14,7 +14,7 @@ main_urlpatterns = [
     path('', safety_report.list, name='safety-report.home'),
     path('safety-report/list', safety_report.list, name='safety-report.list'),
     path('safety-overviews/main-page/<int:base_report_id>/', safety_overviews.main_page, name='safety-overviews.main-page'),
-    path("safety-report/detail/<int:pk>/", details.main_page, name="base-report.detail"),
+    path("safety-report/detail/<int:pk>/", details.main_page, name="safety-report.detail"),
 
     path('safety-create/new-report/', safety_create.new_report, name='safety-create.new_report'),   
     path('safety-edit/edit-report/<int:report_id>/', safety_edit.edit_report, name='safety-edit.edit-report'),
