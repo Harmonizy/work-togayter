@@ -15,14 +15,26 @@ from ..choices import ReportTypeChoices
 from common.Services.thaidate import thai_date
 
 
-def append_html_to_document(doc: Document, html_content: str) -> Document:
+def insert_html_at_paragraph(doc: Document, paragraph, html_content: str):
+    """แทน ##content## ด้วย HTML ที่ render เป็น paragraph ลงไปแทน"""
+    if not html_content:
+        return
+
+    # แปลง HTML → Document ชั่วคราว
     docx_stream = html2docx(html_content, title="My Document")
     temp_doc = Document(docx_stream)
-    
-    for para in temp_doc.paragraphs:
-        p = doc.add_paragraph()
+
+    # index ของ paragraph ที่มี ##content##
+    insert_index = doc.paragraphs.index(paragraph)
+
+    # ลบข้อความเดิมออก
+    paragraph.clear()
+
+    # แทรก paragraph จาก HTML (เรียงจากล่างขึ้นบนเพื่อให้ตำแหน่งถูกต้อง)
+    for para in reversed(temp_doc.paragraphs):
+        new_para = doc.add_paragraph()
         for run in para.runs:
-            r = p.add_run(run.text)
+            r = new_para.add_run(run.text)
             r.bold = run.bold
             r.italic = run.italic
             r.underline = run.underline
@@ -31,68 +43,52 @@ def append_html_to_document(doc: Document, html_content: str) -> Document:
             r.font.size = Pt(16)
             r.font.name = 'TH Sarabun New'
 
-    return temp_doc
+        # move new_para ไปที่ตำแหน่ง insert_index
+        p = doc.paragraphs[-1]._element
+        doc.paragraphs[insert_index]._element.addprevious(p)
 
 
-def get_safety_report_context(base_report, safety_report):
-    return {
-        '##title##': base_report.title or '',
-        '##fiscal-year##': str(base_report.fiscal_year),
-        '##event-date##': thai_date(base_report.event_date),
-        '##event-time##': base_report.event_time.strftime("%H:%M"),
-        '##squadron##': str(safety_report.squadron) if safety_report.squadron else '',
-        '##mission-type##': safety_report.get_mission_type_display() if safety_report.mission_type else '',
-        '##report-type##': safety_report.get_report_type_display() if safety_report.report_type else '',
-        '##aircraft##': str(safety_report.aircraft) if safety_report.aircraft else '',
-        '##damage-level##': safety_report.get_damage_level_display() if safety_report.damage_level else '',
-        '##injury-type##': safety_report.get_injury_type_display() if safety_report.injury_type else '',
-        '##location##': str(safety_report.location) if safety_report.location else '',
-        '##recorder##': base_report.recorder.get_full_name() if base_report.recorder else '',
-        '##date##': thai_date(date.today()),
-    }
+def replace_placeholders_in_paragraphs(doc, context, base_report=None):
+    # ใช้ copy list เพื่อไม่ให้กระทบตอน loop
+    paragraphs = list(doc.paragraphs)
 
-
-def get_aviation_incident_report_context(base_report, aviation_report):
-    return {
-        '##title##': base_report.title or '',
-        '##fiscal-year##': str(base_report.fiscal_year),
-        '##event-date##': thai_date(base_report.event_date) if base_report.event_date else '',
-        '##event-time##': base_report.event_time.strftime("%H:%M") if base_report.event_time else '',
-        '##squadron##': str(aviation_report.squadron) if getattr(aviation_report, 'squadron', None) else '',
-        '##aircraft##': str(aviation_report.aircraft) if getattr(aviation_report, 'aircraft', None) else '',
-        '##mission-type##': base_report.get_mission_type_display() if base_report.mission_type else '',
-        '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
-        '##location##': getattr(aviation_report, 'location', '') or '',
-        '##injury-type##': getattr(aviation_report, 'injury_type', '') or '',
-        '##damage-level##': getattr(aviation_report, 'damage_level', '') or '',
-        '##recorder##': base_report.recorder.get_full_name() if base_report.recorder else '',
-        '##date##': thai_date(date.today()),
-    }
-
-
-def get_ground_incident_report_context(base_report, ground_report):
-    return {
-        '##title##': base_report.title or '',
-        '##fiscal-year##': str(base_report.fiscal_year),
-        '##event-date##': thai_date(base_report.event_date),
-        '##event-time##': base_report.event_time.strftime("%H:%M"),
-        '##affiliation##': str(ground_report.affiliation) if ground_report.affiliation else '',
-        '##location##': ground_report.location or '',
-        '##category##': str(ground_report.category) if ground_report.category else '',
-        '##anonymous##': "ใช่" if ground_report.anonymous else "ไม่ใช่",
-        '##recorder##': base_report.recorder.get_full_name() if base_report.recorder else '',
-        '##date##': thai_date(date.today()),
-    }
-
-def replace_placeholders_in_paragraphs(doc, context):
-    for paragraph in doc.paragraphs:
+    for i, paragraph in enumerate(paragraphs):
         for key, value in context.items():
             if key in paragraph.text:
-                for run in paragraph.runs:
-                    print(key, " xx ", f"'{run.text}'")
-                    if key in run.text:
-                        print("**match**")
-                        run.text = run.text.replace(key, value)
+                if key == "##content##":
+                    # ลบข้อความ placeholder
+                    for run in paragraph.runs:
+                        if key in run.text:
+                            run.text = run.text.replace(key, "")
+
+                    # แทรก HTML แทนที่
+                    if base_report and base_report.content:
+                        docx_stream = html2docx(base_report.content, title="Content")
+                        temp_doc = Document(docx_stream)
+
+                        insert_index = i + 1 
+
+                        for para in reversed(temp_doc.paragraphs):
+                            new_para = doc.add_paragraph()
+                            for run in para.runs:
+                                r = new_para.add_run(run.text)
+                                r.bold = run.bold
+                                r.italic = run.italic
+                                r.underline = run.underline
+                                if run.font.color and run.font.color.rgb:
+                                    r.font.color.rgb = run.font.color.rgb
+                                r.font.size = Pt(16)
+                                r.font.name = 'TH Sarabun New'
+
+                            # move paragraph มาที่ตำแหน่ง insert_index
+                            p = doc.paragraphs[-1]._element
+                            doc.paragraphs[insert_index-1]._element.addnext(p)
+
+                else:
+                    # placeholder ปกติ
+                    for run in paragraph.runs:
+                        if key in run.text:
+                            run.text = run.text.replace(key, str(value))
 
 
 def docx_to_response(doc, filename):
@@ -110,13 +106,13 @@ def docx_to_response(doc, filename):
 @login_required
 def safety_doc(request, pk):
     base_report = BaseReport.objects.get(id=pk)
-    aviation_report = AviationReport.objects.filter(base_report=base_report).first()
-    ground_report = GroundReport.objects.filter(base_report=base_report).first()
+    aviation_report = AviationReport.objects.filter(base_report=base_report).first()  # why why why why why
+    ground_report = GroundReport.objects.filter(base_report=base_report).first()  # why why why why why
 
     BASE_TEMPLATE_DIR = os.path.join(settings.BASE_DIR, 'safety', 'Report', 'templates', 'Documents')
 
     report_type_to_template = {
-        ReportTypeChoices.SIMPLE: 'safety-report.docx',
+        ReportTypeChoices.SIMPLE: 'hazard-report.docx',
         ReportTypeChoices.HAZARD_GROUND: 'ground-hazard-report.docx',
         ReportTypeChoices.HAZARD_AVIATION: 'aviation-hazard-report.docx',
         ReportTypeChoices.SAFETY_GROUND: 'ground-safety-report.docx',
@@ -133,32 +129,35 @@ def safety_doc(request, pk):
         '##unit-short-name##': str(base_report.affiliation),
         '##title##': base_report.title or '',
         '##recorder##': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
+        '##position##': str(base_report.recorder.position) if not base_report.anonymous else '-',
         '##date##': thai_date(date.today()),
         '##mission-type##': base_report.get_mission_type_display() if base_report.mission_type else '',
         '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
-        
+        'Rank': "พลอากาศตรี",
+        'Name': "สุนทร สวัสดิ์",
+        'Position': "ผู้อำนวยการกองบิน ๔",
         '##fiscal-year##': str(base_report.fiscal_year),
         '##affiliation##': str(base_report.affiliation),
         '##event-date##': thai_date(base_report.event_date),
         '##event-time##': base_report.event_time.strftime("%H:%M") if base_report.event_time else '',
-        
-        '##content##': base_report.content,
+
+        '##content##': '',  # จะถูกแทนด้วย HTML
         '##first_recommendation##': base_report.first_recommendation,
         '##initial_action_taken##': base_report.initial_action_taken,
 
         '##status##': base_report.get_status_display(),
-        
         '##comment##': str(base_report.comment),
         '##created_at##': base_report.created_at,
         '##updated_at##': base_report.updated_at,
+
+        '##example##': 'ตัวอย่าง ข้อความ',
     }
 
     ground_context = {}
-
-    if hasattr(base_report,'ground_report'):      
-        ground_report = base_report.ground_report  
+    if hasattr(base_report, 'ground_report'):
+        ground_report = base_report.ground_report
         ground_context = {
-            '##location##': ground_report.location or  '',
+            '##location##': ground_report.location or '',
         }
         if ground_report and ground_report.category:
             ground_context['##category##'] = str(ground_report.category.name)
@@ -170,7 +169,6 @@ def safety_doc(request, pk):
         air_context['##aircraft##'] = str(aviation_report.aircraft.name) if aviation_report.aircraft else '-'
         air_context['##flight_phase##'] = ', '.join(str(phase.name) for phase in aviation_report.flight_phase.all())
 
-
     context = {**base_context, **ground_context, **air_context}
 
     print("=== CONTEXT ===")
@@ -178,9 +176,7 @@ def safety_doc(request, pk):
         print(f"{key}: {value}")
     print("=== CONTEXT ===")
 
-    replace_placeholders_in_paragraphs(doc, context)
-
-    if base_report.content:
-        append_html_to_document(doc, base_report.content)
+    # แทนค่าและจัดการ ##content##
+    replace_placeholders_in_paragraphs(doc, context, base_report)
 
     return docx_to_response(doc, f"file-{template_filename}")
