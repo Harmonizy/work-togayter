@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
 
 from .models import EvaluationQuestion
 
@@ -59,41 +60,43 @@ import json
 from .models import EvaluationQuestion, EvaluationAnswer, BaseReportEvaluation, EvaluationResult, QuestionSet
 
 @csrf_exempt
+@require_POST
 def submit_evaluation(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
     data = json.loads(request.body)
     answers = data.get('answers', [])
     result_id = data.get('result_id')
     question_set_id = data.get('question_set_id')
-    report_id = request.GET.get('report_id') 
-
-    # Dummy report association for now
-    report_evaluation = BaseReportEvaluation.objects.create(
-        question_set_id=question_set_id,
-        final_result_id=result_id,
-        report_id=report_id,
-    )
-
-    for idx, entry in enumerate(answers):
-        question_text = entry['question']
-        answer_value = entry['answer']
-
-        # Look up question by text (or add question ID to front-end for more precise match)
-        try:
-            question = EvaluationQuestion.objects.get(text=question_text, question_set_id=question_set_id)
-        except EvaluationQuestion.DoesNotExist:
-            continue  # Skip bad data
-
-        EvaluationAnswer.objects.create(
-            evaluation=report_evaluation,
-            question=question,
-            answer=answer_value,
-            order=idx + 1
+    report_id = data.get('report_id') 
+    print("===> report_id:"*10, report_id)
+    print(data)
+    with transaction.atomic():
+        report_evaluation = BaseReportEvaluation.objects.create(
+            question_set_id=question_set_id,
+            final_result_id=result_id,
+            report_id=report_id,
+            evaluater_id=request.user.id
         )
 
-    return JsonResponse({'status': 'ok'})
+        for idx, entry in enumerate(answers):
+            question_id = entry['questionID']
+            answer_value = entry['answer']
+
+            try:
+                question = EvaluationQuestion.objects.get(id = question_id)
+            except EvaluationQuestion.DoesNotExist:
+                continue  # Skip bad data
+
+            EvaluationAnswer.objects.create(
+                evaluation=report_evaluation,
+                question=question,
+                answer=answer_value,
+                order=idx + 1
+            )
+
+        return JsonResponse({'status': 'ok'})
+    
+    return JsonResponse({'status': 'error'}, status=400)
 
 # path('api/submit-evaluation/', views.submit_evaluation, name='submit_evaluation')
 

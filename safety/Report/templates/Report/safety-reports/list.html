@@ -175,8 +175,8 @@
                                                     </button>
 
                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                        <a class="dropdown-item" href="{% url 'report:safety-overviews.main-page' report.id %}">
-                                                            <i class="ri-eye-fill align-bottom me-2 text-primary"></i> View Item
+                                                        <a class="dropdown-item" href="{% url 'report:safety-report.detail' report.id %}">
+                                                            <i class="ri-eye-fill align-bottom me-2 text-primary"></i> View
                                                         </a>
 
                                                         <a class="dropdown-item" href="{% url 'report:safety-edit.edit-report' report.id %}">
