@@ -7,6 +7,7 @@ from common.RTAFUser.models import Affiliation, Squadron
 
 class Event(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=120)
+    # type = models.CharField(verbose_name="ประเภท", max_length=120, choices=EventTypeChoices.choices, blank=True, null=True)
     hazard_title = models.CharField(verbose_name="หัวข้อทะเบียนความเสี่ยง", max_length=120, blank=True, null=True)
 
     class Meta:
@@ -24,7 +25,7 @@ class AircraftType(models.Model):
 
     def __str__(self):
         return self.name
-
+    
 
 class Aircraft(models.Model):
     name = models.CharField(verbose_name="แบบ บ.", max_length=60)
@@ -58,7 +59,6 @@ class FlightPhase(models.Model):
     def __str__(self):
         return self.name
 
-
 class Location(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=255)
     region = models.CharField(verbose_name="ภูมิภาค", max_length=2, choices=RegionChoices.choices)
@@ -72,7 +72,7 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class GroundSafetyCategory(models.Model):
     order = models.PositiveIntegerField(verbose_name="ลำดับ", default=0)
@@ -90,8 +90,7 @@ class Keyword(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name = "7. คำสำคัญ"
-        verbose_name_plural = "7. คำสำคัญ"
+        verbose_name = verbose_name_plural = "7. คำสำคัญ"
 
     def __str__(self):
         return self.name
