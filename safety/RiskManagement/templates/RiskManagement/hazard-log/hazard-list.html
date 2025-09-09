@@ -159,13 +159,13 @@
 
                             {% for hazard in hazard_log %}
                             <tr data-event="Near miss">
-                                <td>{{ forloop.counter }}</td>
-                                <td class="font-monospace">{{ hazard.code }}</td>
+                                <td class="text-center">{{ forloop.counter }}</td>
+                                <td class="font-monospace text-center">{{ hazard.code }}</td>
                                 <td>
                                     <span class="fw-medium link-primary">{{ hazard.category.event }}</span>
-                                    <div class="text-muted small">{{ hazard.category.description }}</div>
+                                    <div class="text-muted small">{{ hazard.category.description|truncatechars:60 }}</div>
                                 </td>
-                                <td>{{ hazard.get_status_display }}</td>
+                                <td class="text-center">{{ hazard.affiliation }}</td>
                                 <td><span class="badge bg-warning-subtle text-warning">{{ hazard.get_inspect_display }}</span></td>
                                 <td class="text-center">{{ hazard.initial_likelihood }}</td>
                                 <td class="text-center">{{ hazard.initial_severity }}</td>
@@ -173,16 +173,19 @@
                                 <td class="text-center">{{ hazard.residual_likelihood }}</td>
                                 <td class="text-center">{{ hazard.residual_severity }}</td>
                                 <td class="text-center"><span class="risk-chip risk-green-strong">{{ hazard.residual_risk_level }}</span></td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View</a>
-                                        <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
-                                        </div>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group" aria-label="Action buttons">
+                                        <button type="button" class="btn btn-sm border text-primary p-2">
+                                            <i class="ri-eye-fill"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm border text-muted p-2">
+                                            <i class="ri-pencil-fill"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm border text-danger p-2">
+                                            <i class="ri-delete-bin-fill"></i>
+                                        </button>
                                     </div>
+
                                 </td>
                             </tr>
                             {% endfor %}

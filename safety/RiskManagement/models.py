@@ -66,7 +66,7 @@ class CAP(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "3. CAP"
+        verbose_name = verbose_name_plural = "3. Corrective Action Plan (CAP)"
 
     def __str__(self):
         return f"{self.title} ({self.status})"

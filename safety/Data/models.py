@@ -59,6 +59,7 @@ class FlightPhase(models.Model):
     def __str__(self):
         return self.name
 
+
 class Location(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=255)
     region = models.CharField(verbose_name="ภูมิภาค", max_length=2, choices=RegionChoices.choices)
