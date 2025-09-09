@@ -12,63 +12,69 @@ from safety.Report.models import BaseReport, AviationReport, GroundReport
 from .fields import  content_example, content_field, textarea_field, multi_select_widget, single_select_widget
 from ..models import BaseReport, Image, Recommendation, File
 from ..choices import ReportTypeChoices
+from common.RTAFUser.models.RTAFUser import Affiliation
 
 
 class BaseReportForm(forms.ModelForm):
     content = content_field(400, content_example)
-    
+
     class Meta:
         model = BaseReport
         fields = [
-            # "mission_type", 
-            "report_type", 
-            "affiliation", 
-            "event_date", 
-            "event_time",
-            "title", 
-            "content", 
-            # "keyword",
-            "first_recommendation", "initial_action_taken", "anonymous", "comment"
-        ]        
+            "report_type", "affiliation", "event_date", "event_time",
+            "title", "content", "first_recommendation", "initial_action_taken",
+            "anonymous", "comment"
+        ]
         widgets = {
             'event_date': forms.DateInput(attrs={'type': 'date', 'data-provider': 'flatpickr'}),
             'event_time': forms.TimeInput(attrs={'type': 'time'}),
-            # 'keyword': multi_select_widget,
             "anonymous": forms.CheckboxInput(attrs={"class": "form-check-input"}),
-            "first_recommendation" : textarea_field(),
-            "initial_action_taken" : textarea_field(),
+            "first_recommendation": textarea_field(),
+            "initial_action_taken": textarea_field(),
         }
 
-    def __init__(self, *args, **kwargs):         
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
         self.helper = FormHelper()
-        self.helper.form_tag = False  # ป้องกันซ้อน form
-        report_type = self.initial.get("report_type", "") 
-        affiliation = self.initial.get("affiliation", None)
-        
-        if report_type:
-            self.fields["report_type"].choices = [(choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type]
-        if affiliation:
-            self.fields['affiliation'].queryset = self.fields['affiliation'].queryset.filter(id=affiliation.id)
+        self.helper.form_tag = False
+
+        def as_pk(v):
+            return getattr(v, "pk", getattr(v, "id", v))
+
+        rt = self.initial.get("report_type") or getattr(self.instance, "report_type", None)
+        if rt not in (None, ""):
+            rt_str = str(rt)
+            self.fields["report_type"].choices = [
+                (c.value, c.label) for c in ReportTypeChoices if str(c.value) == rt_str
+            ]
+
+        affiliation_value = self.initial.get("affiliation")
+        if affiliation_value in (None, "") and getattr(self.instance, "pk", None):
+            affiliation_value = getattr(self.instance, "affiliation_id", None)
+
+        aff_pk = as_pk(affiliation_value)
+        if self.user and not getattr(self.user, "is_superuser", False):
+            self.fields["affiliation"].queryset = Affiliation.objects.filter(
+                pk=getattr(self.user, "affiliation_id", None)
+            )
+        elif aff_pk:
+            self.fields["affiliation"].queryset = Affiliation.objects.filter(pk=aff_pk)
+
+        if aff_pk:
+            self.initial.setdefault("affiliation", aff_pk)
 
         self.helper.layout = Layout(
             Row(
-                Column('report_type', css_class='form-group col-6 col-md-3 mb-0',),
-                Column('affiliation',css_class='form-group col-6 col-md-3 mb-0',),
-                # Column('mission_type', css_class='form-group col-6 col-md-2 mb-0'),
+                Column('report_type', css_class='form-group col-6 col-md-3 mb-0'),
+                Column('affiliation', css_class='form-group col-6 col-md-3 mb-0'),
                 Column('event_date', css_class='form-group col-6 col-md-3 mb-0'),
                 Column('event_time', css_class='form-group col-6 col-md-3 mb-0'),
             ),
-             Div(
-                Row(
-                    Column('title', css_class='form-group col-md-12 mb-0'),
-                ),
-                Row(
-                    Column(
-                        Field('content'),
-                        css_class='form-group col-md-12 mb-0',
-                    ),
-                ),
+            Div(
+                Row(Column('title', css_class='form-group col-md-12 mb-0')),
+                Row(Column(Field('content'), css_class='form-group col-md-12 mb-0')),
                 css_id="title-content-part",
                 css_class="my-wrapper-class",
             ),
@@ -76,7 +82,6 @@ class BaseReportForm(forms.ModelForm):
                 Column('first_recommendation', css_class='form-group col-md-6 mb-0'),
                 Column('initial_action_taken', css_class='form-group col-md-6 mb-0'),
             ),
-            # 'keyword',
             'comment',
             'anonymous',
         )

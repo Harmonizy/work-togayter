@@ -162,27 +162,27 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td class="font-monospace">{{ hazard.code }}</td>
                                 <td>
-                                    <span class="fw-medium link-primary">{{ hazard.event.name }}</span>
-                                    <div class="text-muted small">{{ hazard.event.hazard_title }}</div>
+                                    <span class="fw-medium link-primary">{{ hazard.category.event }}</span>
+                                    <div class="text-muted small">{{ hazard.category.description }}</div>
                                 </td>
                                 <td>{{ hazard.get_status_display }}</td>
-                                <td><span class="badge bg-warning-subtle text-warning">{{ hazard.get_investigation_type_display }}</span></td>
-                                <td class="text-center">3</td>
-                                <td class="text-center">4</td>
-                                <td class="text-center"><span class="risk-chip risk-orange">4</span></td>
-                                <td class="text-center">2</td>
-                                <td class="text-center">3</td>
-                                <td class="text-center"><span class="risk-chip risk-green-strong">2</span></td>
+                                <td><span class="badge bg-warning-subtle text-warning">{{ hazard.get_inspect_display }}</span></td>
+                                <td class="text-center">{{ hazard.initial_likelihood }}</td>
+                                <td class="text-center">{{ hazard.initial_severity }}</td>
+                                <td class="text-center"><span class="risk-chip risk-orange">{{ hazard.initial_risk_level }}</span></td>
+                                <td class="text-center">{{ hazard.residual_likelihood }}</td>
+                                <td class="text-center">{{ hazard.residual_severity }}</td>
+                                <td class="text-center"><span class="risk-chip risk-green-strong">{{ hazard.residual_risk_level }}</span></td>
                                 <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View Item</a>
-                                    <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">⋯</button>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="#"><i class="ri-eye-fill text-primary"></i> View</a>
+                                        <a class="dropdown-item" href="#"><i class="ri-pencil-fill text-muted"></i> Edit</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="#"><i class="ri-delete-bin-fill"></i> Remove</a>
+                                        </div>
                                     </div>
-                                </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -191,8 +191,8 @@
                         </table>
 
                         <div class="noresult text-center d-none" id="noResult">
-                            <h5 class="mt-2">Sorry! No Result Found</h5>
-                            <p class="text-muted mb-0">We did not find any hazards for your filter.</p>
+                            <h5 class="mt-2">Not Found</h5>
+                            <p class="text-muted mb-0">ไม่พบทะเบียนความเสี่ยงที่คุณมีสิทธิเข้าถึง</p>
                         </div>
                         </div>
                     </div>
