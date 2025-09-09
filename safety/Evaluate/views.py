@@ -6,10 +6,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 
 from .models import EvaluationQuestion
+from safety.Report.models.reports import BaseReport
 
 
 def evaluate_main(request, report_id):
-    return render(request, 'Evaluate/evaluate-main.html', {"report_id": report_id})
+    report = BaseReport.objects.get(id=report_id)
+    context = {"report": report, "report_id": report_id}
+    return render(request, 'Evaluate/evaluate-main.html', context)
 
 
 @require_POST

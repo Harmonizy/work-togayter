@@ -1,99 +1,200 @@
-  :root{
-    --vz-primary:#405189;
-    --vz-success:#0ab39c;
-    --vz-danger:#f06548;
-    --vz-warning:#f7b84b;
-    --vz-muted:#6c757d;
-    --vz-card-bg:#ffffff;
-    --vz-soft:#f3f6f9;
-    --vz-border:#e9edf2;
-    --vz-shadow:0 8px 24px rgba(28,39,60,.06);
-    --vz-radius:14px;
-  }
-  [data-bs-theme="dark"]{
-    --vz-card-bg:#1c1f2a;
-    --vz-soft:#141827;
-    --vz-border:#2a3042;
-    --vz-muted:#9aa6c6;
-    --vz-shadow:0 8px 24px rgba(0,0,0,.35);
-  }
-  .container.py-4{padding-top:1.25rem!important}
-  h3.mb-4{
-    color:var(--vz-primary);
-    font-weight:700;
-    letter-spacing:.2px;
-    display:flex; align-items:center; gap:.6rem;
-  }
-  h3.mb-4::before{
-    content:"";
-    width:.45rem; height:1.35rem; border-radius:999px;
-    background:linear-gradient(180deg,var(--vz-primary), rgba(64,81,137,.35));
-    box-shadow:0 4px 16px rgba(64,81,137,.25);
-  }
-  #qa-thread{
-    background:var(--vz-card-bg)!important;
-    border:1px solid var(--vz-border)!important;
-    border-radius:var(--vz-radius)!important;
-    box-shadow:var(--vz-shadow);
-    font-size:1rem;
-  }
-  #qa-thread .fw-bold.text-primary{
-    color:var(--vz-primary)!important;
-  }
-  #qa-thread > template + div, 
-  #qa-thread .mb-3{ 
-    border-bottom:1px dashed var(--vz-border);
-    padding-bottom:.75rem; margin-bottom:.75rem;
-  }
-  #qa-thread .mb-3:last-of-type{ border-bottom:0; margin-bottom:0; }
-  #qa-thread .btn{
-    min-width:110px; font-weight:600;
-    border-radius:12px; padding:.55rem 1rem;
-    box-shadow:0 6px 16px rgba(0,0,0,.06);
-    transition:transform .06s ease, box-shadow .2s ease, opacity .2s ease;
-  }
-  #qa-thread .btn:active{ transform:translateY(1px) scale(.99); }
-  #qa-thread .btn-success{
-    background:var(--vz-success)!important; border-color:var(--vz-success)!important;
-  }
-  #qa-thread .btn-danger{
-    background:var(--vz-danger)!important; border-color:var(--vz-danger)!important;
-  }
-  #qa-thread .text-success,
-  #qa-thread .text-danger{
-    display:inline-block; font-weight:600;
-    padding:.25rem .6rem; border-radius:999px;
-    background:var(--vz-soft);
-    border:1px solid var(--vz-border);
-  }
-  #qa-thread .spinner-border{
-    width:2rem; height:2rem; border-width:.2rem;
-  }
-  #qa-thread .text-center.my-3{ padding: .5rem 0 1rem; }
-  #qa-thread .alert{
-    border-radius:var(--vz-radius); border:1px solid var(--vz-border);
-    box-shadow:var(--vz-shadow); background:var(--vz-card-bg);
-  }
-  #qa-thread .alert-warning{
-    position:relative; padding-left:1rem;
-  }
-  #qa-thread .alert-warning::before{
-    content:""; position:absolute; inset:0 auto 0 0;
-    width:.35rem; border-radius:8px 0 0 8px; background:var(--vz-warning);
-  }
-  #qa-thread .alert-warning .alert-heading{
-    color:var(--vz-primary); font-weight:700;
-  }
-  #qa-thread .btn.btn-primary{
-    background:var(--vz-primary)!important; border-color:var(--vz-primary)!important;
-    border-radius:12px; font-weight:600; padding:.55rem 1rem;
-    box-shadow:0 10px 18px rgba(64,81,137,.18);
-  }
-  #qa-thread{ scrollbar-width:thin; scrollbar-color: var(--vz-border) transparent; }
-  #qa-thread::-webkit-scrollbar{ height:10px; width:10px; }
-  #qa-thread::-webkit-scrollbar-thumb{ background:var(--vz-border); border-radius:999px; }
-  #qa-thread::-webkit-scrollbar-track{ background:transparent; }
-  @media (max-width: 576px){
-    #qa-thread .btn{ min-width:100px; }
-  }
+/* ===========================
+   Evaluate — Elevated Velzon Look
+   (CSS เท่านั้น, ไม่แตะ HTML/JS)
+   =========================== */
+
+:root{
+  --vz-primary:#405189;
+  --vz-success:#0ab39c;
+  --vz-danger:#f06548;
+  --vz-warning:#f7b84b;
+  --vz-muted:#6c757d;
+
+  --vz-card-bg:#ffffff;
+  --vz-soft:#f4f7fb;
+  --vz-soft-2:#eef3f8;
+  --vz-border:#e9edf2;
+
+  --vz-glass:rgba(255,255,255,.5);
+  --vz-glass-brd:rgba(255,255,255,.35);
+
+  --vz-shadow:0 12px 28px rgba(28,39,60,.08);
+  --vz-shadow-2:0 8px 20px rgba(28,39,60,.06);
+  --vz-radius:16px;
+}
+
+[data-bs-theme="dark"]{
+  --vz-card-bg:#171a25;
+  --vz-soft:#0f1320;
+  --vz-soft-2:#12172a;
+  --vz-border:#283148;
+
+  --vz-glass:rgba(23,26,37,.55);
+  --vz-glass-brd:rgba(255,255,255,.08);
+
+  --vz-shadow:0 16px 32px rgba(0,0,0,.45);
+  --vz-shadow-2:0 8px 24px rgba(0,0,0,.36);
+  --vz-muted:#a8b2d6;
+}
+
+/* ===== พื้นหลังหน้าให้มีบรรยากาศนิด ๆ แต่ไม่กลบเนื้อหา ===== */
+body{
+  background:
+    radial-gradient(1200px 600px at -10% -10%, rgba(64,81,137,.06), transparent 60%),
+    radial-gradient(1000px 500px at 110% 0%, rgba(10,179,156,.08), transparent 55%),
+    radial-gradient(900px 480px at 120% 100%, rgba(247,184,75,.07), transparent 55%),
+    var(--vz-soft);
+}
+
+/* ===== จำกัดสcope เพื่อไม่รบกวนหน้าอื่น: เล็ง container ที่มี Alpine evaluationFlow ===== */
+[x-data^="evaluationFlow"]{
+  display:block;
+}
+
+/* ===== Title chip แบบพรีเมียม ===== */
+h3.mb-4{
+  color:var(--vz-primary);
+  font-weight:800;
+  letter-spacing:.2px;
+  display:flex; align-items:center; gap:.8rem;
+  margin-bottom:1.25rem!important;
+  position:relative;
+  isolation:isolate;
+}
+h3.mb-4::before{
+  content:"";
+  width:.5rem; height:1.6rem; border-radius:999px;
+  background:linear-gradient(180deg,var(--vz-primary), rgba(64,81,137,.4));
+  box-shadow:0 6px 18px rgba(64,81,137,.25);
+}
+h3.mb-4::after{
+  content:"";
+  position:absolute; left:0; bottom:-10px; width:160px; height:10px;
+  background:radial-gradient(40px 8px at 20% 50%, rgba(64,81,137,.22), transparent 70%),
+             radial-gradient(40px 8px at 70% 50%, rgba(10,179,156,.18), transparent 70%);
+  filter:blur(6px); opacity:.55; pointer-events:none;
+}
+
+/* ===== กล่อง QA Thread แบบ Glass Card + เนียนขึ้น ===== */
+#qa-thread{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.45)) !important;
+  backdrop-filter:saturate(1.2) blur(8px);
+  -webkit-backdrop-filter:saturate(1.2) blur(8px);
+  border:1px solid var(--vz-glass-brd)!important;
+  border-radius:var(--vz-radius)!important;
+  box-shadow:var(--vz-shadow);
+  overflow:hidden;
+}
+[data-bs-theme="dark"] #qa-thread{
+  background:
+    linear-gradient(180deg, rgba(23,26,37,.75), rgba(23,26,37,.55)) !important;
+}
+
+/* subtle edge highlight */
+#qa-thread::before{
+  content:"";
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.16), transparent 15%, transparent 85%, rgba(255,255,255,.08));
+  mix-blend-mode:soft-light; opacity:.65;
+}
+
+/* ===== แยกรายการ Q&A ให้เป็นบัตรเล็ก ๆ ในกล่องเดียว ===== */
+#qa-thread .mb-3{
+  background:var(--vz-card-bg);
+  border:1px solid var(--vz-border);
+  border-radius:14px;
+  padding: .85rem .9rem;
+  margin:.8rem 0;
+  box-shadow:var(--vz-shadow-2);
+  animation:eva-slide .35s ease both;
+}
+#qa-thread .mb-3 .fw-bold.text-primary{
+  color:var(--vz-primary)!important;
+  font-weight:700;
+}
+
+/* สลับความลึกเล็กน้อยให้รายการดูมี rhythm */
+#qa-thread .mb-3:nth-child(2n){ transform:translateZ(0) rotate(.02deg); }
+#qa-thread .mb-3:nth-child(3n){ transform:translateZ(0) rotate(-.02deg); }
+
+/* ===== ปุ่ม Yes/No and Primary ===== */
+#qa-thread .btn{
+  min-width:120px; font-weight:700;
+  border-radius:14px; padding:.6rem 1rem;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  transition:transform .06s ease, box-shadow .25s ease, opacity .2s ease;
+}
+#qa-thread .btn:hover{ box-shadow:0 10px 24px rgba(0,0,0,.12); }
+#qa-thread .btn:active{ transform:translateY(1px) scale(.99); }
+
+#qa-thread .btn-success{
+  background:var(--vz-success)!important; border-color:var(--vz-success)!important;
+}
+#qa-thread .btn-danger{
+  background:var(--vz-danger)!important; border-color:var(--vz-danger)!important;
+}
+#qa-thread .btn.btn-primary{
+  background:var(--vz-primary)!important; border-color:var(--vz-primary)!important;
+  box-shadow:0 14px 26px rgba(64,81,137,.25);
+}
+
+#qa-thread .text-success,
+#qa-thread .text-danger{
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-weight:700;
+  padding:.28rem .7rem; border-radius:999px;
+  background:var(--vz-soft-2);
+  border:1px solid var(--vz-border);
+}
+#qa-thread .text-success::before{ content:""; width:.5rem; height:.5rem; border-radius:999px; background:var(--vz-success);}
+#qa-thread .text-danger::before{ content:""; width:.5rem; height:.5rem; border-radius:999px; background:var(--vz-danger);}
+
+#qa-thread .text-center.my-3{ padding: .75rem 0 1rem; }
+#qa-thread .spinner-border{ width:2.1rem; height:2.1rem; border-width:.22rem; }
+
+#qa-thread .alert{
+  border-radius:var(--vz-radius);
+  border:1px solid var(--vz-border);
+  background:linear-gradient(180deg, var(--vz-card-bg), color-mix(in oklab, var(--vz-card-bg) 90%, var(--vz-soft)));
+  box-shadow:var(--vz-shadow);
+}
+#qa-thread .alert-warning{
+  position:relative; padding:1rem 1rem 1rem 1.25rem;
+}
+#qa-thread .alert-warning::before{
+  content:""; position:absolute; inset:0 auto 0 0; width:.35rem;
+  border-radius:12px 0 0 12px; 
+  background:linear-gradient(180deg, var(--vz-warning), color-mix(in oklab, var(--vz-warning), #fff 35%));
+  box-shadow:0 0 0 1px rgba(0,0,0,.02) inset;
+}
+#qa-thread .alert-warning .alert-heading{
+  color:var(--vz-primary); font-weight:800; letter-spacing:.2px;
+}
+
+#qa-thread{ scrollbar-width:thin; scrollbar-color: var(--vz-border) transparent; }
+#qa-thread::-webkit-scrollbar{ width:10px; height:10px; }
+#qa-thread::-webkit-scrollbar-thumb{ background:var(--vz-border); border-radius:999px; }
+#qa-thread::-webkit-scrollbar-track{ background:transparent; }
+
+@keyframes eva-slide{
+  from{opacity:0; transform:translateY(8px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important;}
+}
+
+@media (max-width:576px){
+  #qa-thread .btn{ min-width:108px; }
+  #qa-thread .mb-3{ padding:.7rem .75rem; }
+}
+
+
+.header-css {
+  font-family: 'Kanit', sans-serif;
+  margin-top: 70px;
+}
 

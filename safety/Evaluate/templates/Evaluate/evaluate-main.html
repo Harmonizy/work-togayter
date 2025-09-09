@@ -9,7 +9,8 @@
 {% block content %}
 <!-- Evaluation SPA -->
 <div class="container py-4" x-data="evaluationFlow({{ report_id }})" x-init="init()">
-    <h3 class="mb-4">Evaluation</h3>
+    <h3 class="mb-4 header-css">Evaluation</h3>
+    <h2 Class="mb-4">{{ report.title }} {{ report.get_report_type_display}} {{report.affiliation}}</h2>
 
     <div id="qa-thread" class="border rounded p-3 bg-light" style="max-height: 70vh; overflow-y: auto;">
         <template x-for="(entry, index) in history" :key="index">
@@ -36,8 +37,8 @@
             <div class="mb-3">
                 <div class="fw-bold text-primary" x-text="current.text"></div>
                 <div class="mt-2">
-                    <button @click="sendAnswer('Y')" class="btn btn-success me-2">Yes</button>
-                    <button @click="sendAnswer('N')" class="btn btn-danger">No</button>
+                    <button @click="sendAnswer('Y')" class="btn btn-success me-2">ใช่</button>
+                    <button @click="sendAnswer('N')" class="btn btn-danger">ไม่ใช่</button>
                 </div>
             </div>
         </template>
