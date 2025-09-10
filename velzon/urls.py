@@ -26,8 +26,9 @@ safe_urls = [
     path('', include('safety.Report.urls')),
     path('risk-management/', include('safety.RiskManagement.urls')),
     path('safety-dashboard/', include('safety.Dashboard.urls')),
-    path('safety-evaluate/', include(('safety.Evaluate.urls', 'evaluate'), namespace='evaluate')),
+    path('safety-evaluate/', include(('safety.Evaluate.urls'))),
 
+    path("select2/", include("django_select2.urls")),
 ]
 
 

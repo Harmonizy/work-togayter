@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from safety.Data.models import Event
 from common.RTAFUser.models.RTAFUser import RTAFUser, Affiliation
-from .choices import HazardLogStatusChoices, InspectChoices, CAPStatusChoices
+from .choices import HazardLogStatusChoices, HazardSourceChoices, InspectChoices, CAPStatusChoices, LikelihoodChoices, SeverityChoices
 
 class HazardCategory(models.Model):
     event = models.ForeignKey(Event, verbose_name="ชื่อเหตุการณ์", on_delete=models.CASCADE, related_name="hazard_categories")
@@ -29,14 +29,18 @@ class HazardLog(models.Model):
     status = models.CharField("สถานะ", max_length=1, choices=HazardLogStatusChoices.choices, default=HazardLogStatusChoices.OPEN, null=True, blank=True)
     inspect = models.CharField("การสอบสวน", max_length=1, choices=InspectChoices.choices, default=InspectChoices.START_INVESTIGATION, null=True, blank=True)
 
-    initial_likelihood = models.PositiveSmallIntegerField("โอกาสเริ่มต้น", validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True)
-    initial_severity = models.PositiveSmallIntegerField("ความรุนแรงเริ่มต้น", validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True)
-    initial_risk_level = models.PositiveSmallIntegerField("ระดับความเสี่ยงเริ่มต้น", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
+    initial_likelihood = models.IntegerField("โอกาสเริ่มต้น", choices=LikelihoodChoices.choices, default=LikelihoodChoices.POSSIBLE, null=True, blank=True)
+    initial_severity = models.IntegerField("ความรุนแรงเริ่มต้น", choices=SeverityChoices.choices, default=SeverityChoices.MODERATE, null=True, blank=True)
+    initial_risk_level = models.IntegerField("ระดับความเสี่ยงเริ่มต้น", validators=[MinValueValidator(0), MaxValueValidator(25)], null=True, blank=True)
 
-    residual_likelihood = models.PositiveSmallIntegerField("โอกาสหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True)
-    residual_severity = models.PositiveSmallIntegerField("ความรุนแรงหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True)
-    residual_risk_level = models.PositiveSmallIntegerField("ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
+    residual_likelihood = models.IntegerField("โอกาสหลังแก้ไข",choices=LikelihoodChoices.choices, default=LikelihoodChoices.POSSIBLE, null=True, blank=True)
+    residual_severity = models.IntegerField("ความรุนแรงหลังแก้ไข", choices=SeverityChoices.choices, default=SeverityChoices.MODERATE, null=True, blank=True)
+    residual_risk_level = models.IntegerField("ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(0), MaxValueValidator(25)], null=True, blank=True)
 
+    source = models.IntegerField(verbose_name="แหล่งที่มา", choices=HazardSourceChoices.choices, null=True, blank=True)
+    related_report = models.ForeignKey('Report.BaseReport', verbose_name="รายงานที่เกี่ยวข้อง", on_delete=models.SET_NULL, null=True, blank=True)
+    note = models.TextField("หมายเหตุ", null=True, blank=True)
+        
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
