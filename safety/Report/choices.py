@@ -21,14 +21,10 @@ class BaseReportTypeChoices(models.TextChoices):
     SAFETY_AVIATION = 'SA', 'รายงานนิรภัยอุบัติการณ์ (ภาคอากาศ)'
 
 
-
-
 class PriorityChoices(models.TextChoices):
     HIGH = "H", "เร่งด่วน"
     MEDIUM = "M", "ต้องติดตาม"
     LOW = "L", "ปกติ"
-
-
 
 
 class ReportStatusChoices(models.IntegerChoices):

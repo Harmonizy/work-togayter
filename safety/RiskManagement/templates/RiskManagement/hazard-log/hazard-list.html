@@ -41,17 +41,21 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card" id="hazardList">
-                    <div class="card-header border-0">
-                        <div class="d-flex align-items-center">
-                        <h5 class="card-title mb-0 flex-grow-1">
-                            Hazard Logs
-                            
-                        </h5>
-                        <div class="flex-shrink-0">
-                            <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-secondary" data-filter="all">ทั้งหมด</button>
+                        <div class="card-header border-0">
+                            <div class="d-flex align-items-center">
+                            <h5 class="card-title mb-0 flex-grow-1">
+                                Hazard Logs
+                                
+                            </h5>
+                            <div class="flex-shrink-0">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href={% url 'risk_management:hazard-log-create' %}>
+                                        <button class="btn btn-secondary">
+                                            <i class="ri-add-line align-bottom me-1"></i> สร้างทะเบียนความเสี่ยงใหม่
+                                        </button>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
 
@@ -160,7 +164,11 @@
                             {% for hazard in hazard_log %}
                             <tr data-event="Near miss">
                                 <td class="text-center">{{ forloop.counter }}</td>
-                                <td class="font-monospace text-center">{{ hazard.code }}</td>
+                                <td class="font-monospace text-center">
+                                    <a href={% url 'risk_management:hazard-detail' hazard.id %}>
+                                        {{ hazard.code }}
+                                    </a>
+                                </td>
                                 <td>
                                     <span class="fw-medium link-primary">{{ hazard.category.event }}</span>
                                     <div class="text-muted small">{{ hazard.category.description|truncatechars:60 }}</div>
@@ -175,9 +183,11 @@
                                 <td class="text-center"><span class="risk-chip risk-green-strong">{{ hazard.residual_risk_level }}</span></td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group" aria-label="Action buttons">
-                                        <button type="button" class="btn btn-sm border text-primary p-2">
-                                            <i class="ri-eye-fill"></i>
-                                        </button>
+                                        <a href={% url 'risk_management:hazard-detail' hazard.id %}>
+                                            <button type="button" class="btn btn-sm border text-primary p-2">
+                                                <i class="ri-eye-fill"></i>
+                                            </button>
+                                        </a>
                                         <button type="button" class="btn btn-sm border text-muted p-2">
                                             <i class="ri-pencil-fill"></i>
                                         </button>

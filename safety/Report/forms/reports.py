@@ -40,30 +40,13 @@ class BaseReportForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
-        def as_pk(v):
-            return getattr(v, "pk", getattr(v, "id", v))
-
-        rt = self.initial.get("report_type") or getattr(self.instance, "report_type", None)
-        if rt not in (None, ""):
-            rt_str = str(rt)
-            self.fields["report_type"].choices = [
-                (c.value, c.label) for c in ReportTypeChoices if str(c.value) == rt_str
-            ]
-
-        affiliation_value = self.initial.get("affiliation")
-        if affiliation_value in (None, "") and getattr(self.instance, "pk", None):
-            affiliation_value = getattr(self.instance, "affiliation_id", None)
-
-        aff_pk = as_pk(affiliation_value)
-        if self.user and not getattr(self.user, "is_superuser", False):
-            self.fields["affiliation"].queryset = Affiliation.objects.filter(
-                pk=getattr(self.user, "affiliation_id", None)
-            )
-        elif aff_pk:
-            self.fields["affiliation"].queryset = Affiliation.objects.filter(pk=aff_pk)
-
-        if aff_pk:
-            self.initial.setdefault("affiliation", aff_pk)
+        report_type = self.initial.get("report_type", "") 
+        affiliation = self.initial.get("affiliation", None)
+        
+        if report_type:
+            self.fields["report_type"].choices = [(choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type]
+        if affiliation:
+            self.fields['affiliation'].queryset = self.fields['affiliation'].queryset.filter(id=affiliation.id)
 
         self.helper.layout = Layout(
             Row(
