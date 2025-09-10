@@ -32,11 +32,16 @@ class EvaluationQuestionInline(admin.TabularInline):
 
 
 @admin.register(EvaluationQuestion)
-class EvaluationQuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'question_set')
+class EvaluationQuestionAdmin(admin.ModelAdmin):    
+    formfield_overrides = {
+        models.CharField: {'widget': forms.TextInput(attrs={'size':'100'})},
+        models.TextChoices: {'widget': forms.TextInput(attrs={'size':'100'})},
+    }
+    list_display = ('question_set', 'text', )
+    list_display_links = ('text',)
     search_fields = ('text',)
     autocomplete_fields = ['next_if_yes', 'next_if_no', 'result_if_yes', 'result_if_no']
-
+    save_as = True
 
 @admin.register(QuestionSet)
 class QuestionSetAdmin(admin.ModelAdmin):
@@ -46,6 +51,7 @@ class QuestionSetAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': forms.Textarea(attrs={'rows': 2, 'cols': 40})},
     }
+    
 
 
 class EvaluationAnswerInline(admin.TabularInline):

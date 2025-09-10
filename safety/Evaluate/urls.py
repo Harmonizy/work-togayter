@@ -5,6 +5,7 @@ from . import views
 app_name = 'evaluate'
 
 urlpatterns = [    
+    path('evaluate-main/<int:report_id>/<int:question_id>/', views.evaluate_main, name='evaluate-main'),
     path('evaluate-main/<int:report_id>/', views.evaluate_main, name='evaluate-main'),
     path('api-next-question/', views.get_next_question, name='get-next-question'),
     

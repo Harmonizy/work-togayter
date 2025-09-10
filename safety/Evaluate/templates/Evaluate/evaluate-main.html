@@ -8,7 +8,7 @@
 {% endblock extra_css %}
 {% block content %}
 <!-- Evaluation SPA -->
-<div class="container py-4" x-data="evaluationFlow({{ report_id }})" x-init="init()">
+<div class="container py-4" x-data="evaluationFlow({{ report.id }})" x-init="init()">
     <h3 class="mb-4 header-css">Evaluation</h3>
     <h2 Class="mb-4">{{ report.title }} {{ report.get_report_type_display}} {{report.affiliation}}</h2>
 
@@ -78,7 +78,7 @@ function evaluationFlow(reportId) {
 
         init() {
             // Load first question (hardcoded or dynamic)
-            this.currentId = 1; // Replace with dynamic value if needed
+            this.currentId = {{ question_set.start_question.id }}; // Replace with dynamic value if needed
             this.loadNext('', this.currentId);
         },
         sendAnswer(answer) {

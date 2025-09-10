@@ -5,13 +5,14 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 
-from .models import EvaluationQuestion
+from .models import EvaluationQuestion, QuestionSet
 from safety.Report.models.reports import BaseReport
 
 
-def evaluate_main(request, report_id):
+def evaluate_main(request, report_id, question_id=1):
     report = BaseReport.objects.get(id=report_id)
-    context = {"report": report, "report_id": report_id}
+    question_set = QuestionSet.objects.get(id=question_id)  # Assuming a default question set for simplicity
+    context = {"report": report, "question_set": question_set}
     return render(request, 'Evaluate/evaluate-main.html', context)
 
 
