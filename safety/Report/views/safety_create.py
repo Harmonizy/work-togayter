@@ -84,6 +84,3 @@ def new_report(request):
         "recommendation_formset": rec_formset,
         "file_formset": file_formset,
     })
-   
-  
-

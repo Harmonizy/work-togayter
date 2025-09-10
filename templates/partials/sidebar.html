@@ -87,9 +87,9 @@
                                     <li class="nav-item">
                                         <a href="{% url 'report:safety-report.list' %}" class="nav-link" data-key="t-report">รายงานนิรภัย</a>
                                     </li>
-                                    <li class="nav-item">
+                                    {% comment %} <li class="nav-item">
                                         <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
-                                    </li>
+                                    </li> {% endcomment %}
                                 </ul>
                             </div>
                         </li>
@@ -102,7 +102,7 @@
                             <div class="collapse menu-dropdown" id="sidebarRiskManagement">
                                 <ul class="nav nav-sm flex-column">
                                     <li class="nav-item">
-                                        <a href="{% url 'risk-management:hazard-log' %}" class="nav-link" data-key="t-dashboard">ทะเบียนความเสี่ยง</a>
+                                        <a href="{% url 'risk_management:hazard-log' %}" class="nav-link" data-key="t-dashboard">ทะเบียนความเสี่ยง</a>
                                     </li> 
                                 </ul>
                             </div>

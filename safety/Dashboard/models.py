@@ -1,7 +1,7 @@
 from django.db import models
 
 class EventCategory(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, verbose_name="ชื่อหมวดหมู่")
     color = models.CharField(max_length=7, blank=True, help_text="Hex color code (e.g. #ff0000)")
 
     class Meta:

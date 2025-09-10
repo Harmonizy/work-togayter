@@ -1,5 +1,4 @@
 {% extends "partials/base.html" %}
-
 {% load static %}
 {% load crispy_forms_tags %}
 
@@ -8,39 +7,30 @@
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
-{{form.media }}
-
-<style>    
-    .django-ckeditor-widget {
-        width: 100% !important;
-    }
+{{ form.media }}
+<style>
+  .django-ckeditor-widget { width: 100% !important; }
 </style>
 {% endblock extra_css %}
 
-
 {% block content %}
-
 <div class="main-content">
-    <div class="page-content">
-        <div class="container-fluid">
-            {% url 'risk_management:hazard-log' as safety_report_list_url %}
-            {% include "partials/page-title.html" with pagetitle="บันทึกอันตราย" pagetitle_url=safety_report_list_url title="สร้างบันทึกอันตรายใหม่" %}
+  <div class="page-content">
+    <div class="container-fluid">
+      {% url 'risk_management:hazard-log-list' as safety_report_list_url %}
+      {% include "partials/page-title.html" with pagetitle="บันทึกอันตราย" pagetitle_url=safety_report_list_url title="สร้างบันทึกอันตรายใหม่" %}
 
+      <form id="hazardLogForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% crispy form %}
+        <button type="submit" class="btn btn-primary">บันทึก</button>
+      </form>
 
-            <form id="hazardLogForm" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% crispy form %}
-               <button type="submit" class="btn btn-primary">บันทึก</button>               
-            </form>
-
-        </div>
-    </div>            
-    {% include "partials/footer.html" %}
+    </div>
+  </div>
+  {% include "partials/footer.html" %}
 </div>
-
 {% endblock %}
-
-{% comment %} {% block footer %}{% endblock footer %} {% endcomment %}
 
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -49,62 +39,39 @@
 {{ form.media.js }}
 
 <script>
-$(document).ready(function () {
-    // $('.js-example-basic-multiple').select2();
-    // $('.js-example-basic-single').select2();
+$(function () {
+  $('.js-example-basic-single').select2({
+    width: '100%',
+    placeholder: 'เลือกตัวเลือก',
+    allowClear: true
+  });
 
-       
-    $('select').select2();  
-    $('.django-select2').djangoSelect2({
-        minimumInputLength: 0,
-        placeholder: 'Select an option',
-    });
-        
+  $('.django-ckeditor-widget').addClass('w-100');
 
-    $('.django-ckeditor-widget').addClass('w-100');
+  // ยืนยันก่อน submit
+  $('#hazardLogForm').on('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    Swal.fire({
+      title: 'ยืนยันส่งข้อมูล?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก'
+    }).then((res) => { if (res.isConfirmed) form.submit(); });
+  });
 
-    $('#hazardLogForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        const form = this;
-
-        Swal.fire({
-            title: 'ยืนยันส่งข้อมูล?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'ยืนยัน',
-            cancelButtonText: 'ยกเลิก'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit(); // ส่ง form พร้อมค่าที่ถูกต้อง
-            }
-        });
-    });
-
-    function toggleRelatedReport() {
-            const sourceVal = $('#id_source').val();
-            if (sourceVal === '{{HazardSourceChoices.REPORT}}') {
-                $('#div_id_related_report').show();  // crispy-forms uses this ID format
-            } else {
-                $('#div_id_related_report').hide();
-                $('#id_related_report').val('');  // clear value if hiding
-            }
-        }
-
-        // Initial run
-        toggleRelatedReport();
-
-        // Bind change event
-        $('#id_source').change(function () {
-            toggleRelatedReport();
-        });
-    
-
+  function toggleRelatedReport() {
+    const sourceVal = $('#id_source').val();
+    if (sourceVal === '{{ HazardSourceChoices.REPORT }}') {
+      $('#div_id_related_report').show();
+    } else {
+      $('#div_id_related_report').hide();
+      $('#id_related_report').val(null).trigger('change');
+    }
+  }
+  toggleRelatedReport();
+  $('#id_source').on('change', toggleRelatedReport);
 });
 </script>
 {% endblock %}
-
-
-

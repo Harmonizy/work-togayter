@@ -1,0 +1,358 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}รายละเอียดรายงาน | {{ base_report.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .section-title { font-weight: 700; }
+  .meta-label { color:#6c757d; min-width: 160px; }
+  .attachment-img { max-height: 160px; object-fit: cover; cursor: pointer; }
+  .badge-status { font-size: 0.85rem; }
+  .modal-body img { max-height: 80vh; width: auto; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+
+      <!-- Header -->
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="mb-0">{{ base_report.title }}</h2>
+        <div class="d-flex gap-2 align-items-center">
+          <span class="badge text-bg-dark badge-status">ประเภท: {{ report_type_label }}</span>
+          {% if base_report.priority %}
+            <span class="badge text-bg-primary badge-status">ความสำคัญ: {{ base_report.get_priority_display }}</span>
+          {% endif %}
+          <span class="badge text-bg-secondary badge-status">ปีงบ: {{ base_report.fiscal_year }}</span>
+          <span class="badge text-bg-info badge-status">สถานะ: {{ base_report.get_status_display }}</span>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header"><span class="section-title">Corrective Action Plan (CAP)</span></div>
+        {% for caps in caps %}
+        <div class="card-body">
+            <div class="row gy-2">
+              <div>มาตรการที่ {{ forloop.counter }}</div>
+              <div class="col-12 col-md-6 d-flex">
+                <div class="meta-label me-2">หัวข้อ: </div>
+                <div>{{ caps.title }}</div>
+              </div>
+              <div class="col-12 col-md-6 d-flex">
+                <div class="meta-label me-2">รายละเอียด: </div>
+                <div>{{ caps.description }}</div>
+              </div>
+              <div class="col-12 col-md-6 d-flex">
+                <div class="meta-label me-2">สถานะ: </div>
+                <div>{{ caps.get_status_display }}</div>
+              </div>
+              <div class="col-12 col-md-6 d-flex">
+                <div class="meta-label me-2">วันครบกำหนด: </div>
+                <div>{{ caps.due_date }}</div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- ข้อมูลหลัก -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row gy-2">
+            <div class="col-12 col-md-6 d-flex">
+              <div class="meta-label me-2">หน่วยงาน:</div>
+              <div>{{ base_report.affiliation|default:"-" }}</div>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex">
+              <div class="meta-label me-2">วันที่/เวลาเกิดเหตุ:</div>
+              <div>{{ base_report.event_date|date:"d/m/Y" }} {{ base_report.event_time|time:"H:i" }}</div>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex">
+              <div class="meta-label me-2">ภารกิจ:</div>
+              <div>{{ base_report.get_mission_type_display|default:"-" }}</div>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex">
+              <div class="meta-label me-2">ประเภทรายงาน:</div>
+              <div>{{ report_type_label }}</div>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex">
+              <div class="meta-label me-2">ผู้บันทึก:</div>
+              <div>
+                {% if base_report.anonymous %}ไม่ระบุชื่อ{% else %}{{ base_report.recorder|default:"-" }}{% endif %}
+              </div>
+            </div>
+
+            <div class="col-12 d-flex">
+              <div class="meta-label me-2">คำแนะนำเบื้องต้น:</div>
+              <div>{{ base_report.first_recommendation|linebreaks|default:"-" }}</div>
+            </div>
+
+            <div class="col-12 d-flex">
+              <div class="meta-label me-2">การแก้ไขที่ดำเนินการ:</div>
+              <div>{{ base_report.initial_action_taken|linebreaks|default:"-" }}</div>
+            </div>
+
+            <div class="col-12 d-flex">
+              <div class="meta-label me-2">หมายเหตุ:</div>
+              <div>{{ base_report.comment|default:"-" }}</div>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex">
+              <div class="meta-label me-2">สร้างเมื่อ:</div>
+              <div>{{ base_report.created_at|date:"d/m/Y H:i" }}</div>
+            </div>
+            <div class="col-12 col-md-6 d-flex">
+              <div class="meta-label me-2">แก้ไขล่าสุด:</div>
+              <div>{{ base_report.updated_at|date:"d/m/Y H:i" }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- เนื้อหารายงาน -->
+      {% if base_report.content %}
+      <div class="card mb-4">
+        <div class="card-header"><span class="section-title">เนื้อหารายงาน</span></div>
+        <div class="card-body">
+          <div class="ck-content">
+            {{ base_report.content|safe }}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- ภาคอากาศ: เฉพาะ HA/SA -->
+      {% if is_aviation %}
+      <div class="card mb-4">
+        <div class="card-header"><span class="section-title">รายละเอียดภาคอากาศ</span></div>
+        <div class="card-body">
+          {% if aviation %}
+          <div class="row gy-2">
+            <div class="col-md-6 d-flex">
+              <div class="meta-label me-2">หน่วยบิน:</div>
+              <div>{{ aviation.squadron|default:"-" }}</div>
+            </div>
+            <div class="col-md-6 d-flex">
+              <div class="meta-label me-2">อากาศยาน:</div>
+              <div>{{ aviation.aircraft|default:"-" }}</div>
+            </div>
+            <div class="col-12 d-flex">
+              <div class="meta-label me-2">ระบบอากาศยาน:</div>
+              <div>
+                {% with systems=aviation.system.all %}
+                  {% if systems %}
+                    {% for s in systems %}<span class="badge text-bg-light me-1">{{ s.name }}</span>{% endfor %}
+                  {% else %}-{% endif %}
+                {% endwith %}
+              </div>
+            </div>
+            <div class="col-12 d-flex">
+              <div class="meta-label me-2">ช่วงของการบิน:</div>
+              <div>
+                {% with phases=aviation.flight_phase.all %}
+                  {% if phases %}
+                    {% for fp in phases %}<span class="badge text-bg-light me-1">{{ fp.name }}</span>{% endfor %}
+                  {% else %}-{% endif %}
+                {% endwith %}
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="text-muted">- ไม่มีข้อมูลภาคอากาศสำหรับรายงานนี้ -</div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- ภาคพื้น: เฉพาะ HG/SG -->
+      {% if is_ground %}
+      <div class="card mb-4">
+        <div class="card-header"><span class="section-title">รายละเอียดภาคพื้น</span></div>
+        <div class="card-body">
+          {% if ground %}
+          <div class="row gy-2">
+            <div class="col-md-6 d-flex">
+              <div class="meta-label me-2">สาขา:</div>
+              <div>{{ ground.category|default:"-" }}</div>
+            </div>
+            <div class="col-md-6 d-flex">
+              <div class="meta-label me-2">สถานที่โดยละเอียด:</div>
+              <div>{{ ground.location|default:"-" }}</div>
+            </div>
+          </div>
+          {% else %}
+          <div class="text-muted">- ไม่มีข้อมูลภาคพื้นสำหรับรายงานนี้ -</div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- คำแนะนำ -->
+      <div class="card mb-4">
+        <div class="card-header"><span class="section-title">คำแนะนำเพิ่มเติม</span></div>
+        <div class="card-body">
+          {% if recommends %}
+          <ul class="list-group">
+            {% for rec in recommends %}
+            <li class="list-group-item">
+              <div class="d-flex justify-content-between">
+                <div>
+                  {{ rec.note|linebreaks }}
+                  {% if rec.comment %}<div class="text-muted small">หมายเหตุ: {{ rec.comment }}</div>{% endif %}
+                </div>
+                <div class="text-end text-muted small">
+                  โดย: {{ rec.recorder|default:"-" }}<br>
+                  {{ rec.created_at|date:"d/m/Y H:i" }}
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="text-muted">- ไม่มีคำแนะนำ -</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- รูปภาพ -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="section-title">รูปภาพแนบ</span>
+          {% if images %}
+          <button type="button"
+                  class="btn btn-sm btn-outline-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#imageGalleryModal">
+            ดูภาพทั้งหมด ({{ images|length }})
+          </button>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if images %}
+          <div class="row g-3">
+            {% for img in images %}
+            <div class="col-6 col-md-3">
+              <div class="card h-100">
+                <!-- คลิกรูปเปิด popup (จะเริ่มที่สไลด์แรก) -->
+                <a href="#" data-bs-toggle="modal" data-bs-target="#imageGalleryModal" class="stretched-link"></a>
+                <img src="{{ img.image.url }}" class="card-img-top attachment-img" alt="image">
+                <div class="card-body p-2">
+                  <div class="small text-muted text-truncate" title="{{ img.comment|default:'' }}">
+                    {{ img.comment|default:"" }}
+                  </div>
+                  <div class="small text-muted">{{ img.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-muted">- ไม่มีรูปภาพ -</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ไฟล์แนบ -->
+      <div class="card mb-5">
+        <div class="card-header"><span class="section-title">ไฟล์แนบ</span></div>
+        <div class="card-body">
+          {% if files %}
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>ไฟล์</th>
+                  <th>หมายเหตุ</th>
+                  <th>ผู้อัพโหลด</th>
+                  <th>อัพโหลดเมื่อ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for f in files %}
+                <tr>
+                  <td><a href="{{ f.file.url }}" target="_blank" rel="noopener">{{ f.file.name|slice:"-60:" }}</a></td>
+                  <td>{{ f.comment|default:"-" }}</td>
+                  <td>{{ f.recorder|default:"-" }}</td>
+                  <td class="text-nowrap">{{ f.created_at|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-muted">- ไม่มีไฟล์แนบ -</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal แกลเลอรีรูปภาพ (ใช้ครั้งเดียวต่อหน้า) -->
+{% if images %}
+<div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h6 class="modal-title">รูปภาพแนบ — {{ base_report.title|truncatechars:80 }}</h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body pt-0">
+        <div id="detailImagesCarousel" class="carousel slide" data-bs-ride="false">
+          <div class="carousel-inner">
+            {% for img in images %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <div class="d-flex justify-content-center">
+                <img src="{{ img.image.url }}" class="d-block img-fluid rounded" alt="image">
+              </div>
+              <div class="mt-2 small text-center text-light">
+                {{ img.comment|default:"" }} • {{ img.created_at|date:"d/m/Y H:i" }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Controls -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#detailImagesCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#detailImagesCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+
+          <!-- Indicators -->
+          <div class="carousel-indicators position-static mt-3">
+            {% for img in images %}
+              <button type="button"
+                      data-bs-target="#detailImagesCarousel"
+                      data-bs-slide-to="{{ forloop.counter0 }}"
+                      class="{% if forloop.first %}active{% endif %}"
+                      aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-label="Slide {{ forloop.counter }}">
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="{{ images.0.image.url }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm">
+          เปิดไฟล์ต้นฉบับ (ภาพแรก)
+        </a>
+        <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">ปิด</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

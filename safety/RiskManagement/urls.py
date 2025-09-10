@@ -1,15 +1,16 @@
 from django.urls import path
 
-from .views import hazard_log, hazard_category
+from .views import hazard_log, hazard_category, hazard_detail
 
-app_name = 'risk-management'
+app_name = 'risk_management'
 
 main_urlpatterns = [    
     path("hazard-log/list/", hazard_log.list, name="hazard-log"),
-    path("hazard-category/list/", hazard_category.list, name="hazard-category.list"),
-    path("hazard-log/create/", hazard_log.create, name="hazard-log.create"),
-    #     path('hazard/create/', hazard_log_create, name='hazard_log_create'),
-    # path('hazard/<int:pk>/edit/', hazard_log_update, name='hazard_log_update'),
+    path("hazard-log/detail/<int:id>", hazard_detail.main, name="hazard-detail"),
+    path("hazard-log/create/", hazard_log.create, name="hazard-log-create"),
+    path("hazard-log/<int:pk>/", hazard_log.hazard_log_update, name="hazard-log-update"),
+
+    # path("hazard-log/category/", hazard_category.list, name="hazard-category.list"),
 ]
 
 partial_url_patterns = [
