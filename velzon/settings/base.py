@@ -31,9 +31,9 @@ LOCAL_APPS = [
     
     "safety.Data",
     "safety.Report",
-    "safety.RiskManagement",
     "safety.Evaluate",
     'safety.Dashboard',
+    "safety.RiskManagement",
 ]
 
 COMMON_APPS = [

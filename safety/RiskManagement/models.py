@@ -10,7 +10,7 @@ class HazardCategory(models.Model):
     description = models.TextField("รายละเอียด")
 
     class Meta:
-        verbose_name = verbose_name_plural = "1. หมวดหมู่ความเสี่ยง"
+        verbose_name = verbose_name_plural = "2. หมวดหมู่ความเสี่ยง"
 
     def __str__(self):
         return self.event.name
@@ -40,12 +40,12 @@ class HazardLog(models.Model):
     source = models.IntegerField(verbose_name="แหล่งที่มา", choices=HazardSourceChoices.choices, null=True, blank=True)
     related_report = models.ForeignKey('Report.BaseReport', verbose_name="รายงานที่เกี่ยวข้อง", on_delete=models.SET_NULL, null=True, blank=True)
     note = models.TextField("หมายเหตุ", null=True, blank=True)
-        
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "2. ทะเบียนความเสี่ยง"
+        verbose_name = verbose_name_plural = "1. ทะเบียนความเสี่ยง"
 
     def __str__(self):
         return f"{self.code} - {self.category.event.name}"
@@ -59,12 +59,12 @@ class HazardLog(models.Model):
 class CAP(models.Model):
 
     hazard_log = models.ForeignKey(HazardLog, verbose_name="Hazard Log", on_delete=models.CASCADE, related_name="caps")
-    title = models.CharField("หัวข้อ", max_length=255)
-    description = models.TextField("รายละเอียด", null=True, blank=True)
+    title = models.CharField(verbose_name="หัวข้อ", max_length=255)
+    description = models.TextField(verbose_name="รายละเอียด", null=True, blank=True)
 
-    status = models.CharField("สถานะ", max_length=2, choices=CAPStatusChoices.choices, default=CAPStatusChoices.PLANNING, null=True, blank=True)
+    status = models.CharField(verbose_name="สถานะ", max_length=2, choices=CAPStatusChoices.choices, default=CAPStatusChoices.PLANNING, null=True, blank=True)
 
-    due_date = models.DateField("วันครบกำหนด", null=True, blank=True)
+    due_date = models.DateField(verbose_name="วันครบกำหนด", null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
