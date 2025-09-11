@@ -23,6 +23,21 @@
       <form id="hazardLogForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% crispy form %}
+        <h4>Corrective Action Plans (CAPs)</h4>
+                            {{ formset.management_form }}
+
+                            <div id="formset-container">
+                                {% for form in formset %}
+                                <div class="formset-form border p-2 mb-2">
+                                    {% crispy form %}
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <button type="button" id="add-form" class="btn btn-sm btn-outline-success mb-3">
+                                + เพิ่มแผนปฏิบัติการ
+                            </button>
+
         <button type="submit" class="btn btn-primary">บันทึก</button>
       </form>
 
@@ -47,6 +62,68 @@ $(function () {
   });
 
   $('.django-ckeditor-widget').addClass('w-100');
+
+      let container = $('#formset-container');
+    let totalForms = $('#id_caps-TOTAL_FORMS'); // Replace 'caps' with your actual formset prefix
+
+    $('#add-form').click(function () {
+        let formCount = parseInt(totalForms.val());
+        let newForm = container.children('.formset-form:first').clone(true);
+
+        // Clear input values
+        newForm.find(':input').each(function () {
+            let name = $(this).attr('name');
+            if (name) {
+                let newName = name.replace(/-\d+-/, `-${formCount}-`);
+                let newId = `id_${newName}`;
+                $(this).attr({'name': newName, 'id': newId});
+                if ($(this).is(':checkbox') || $(this).is(':radio')) {
+                    $(this).prop('checked', false);
+                } else {
+                    $(this).val('');
+                }
+            }
+        });
+
+        // Update labels `for` attributes if needed
+        newForm.find('label').each(function () {
+            let newFor = $(this).attr('for')?.replace(/-\d+-/, `-${formCount}-`);
+            if (newFor) $(this).attr('for', newFor);
+        });
+
+        // Append new form and increase TOTAL_FORMS
+        container.append(newForm);
+        totalForms.val(formCount + 1);
+    });
+
+    container.on('click', '.remove-form', function () {
+        let forms = container.children('.formset-form');
+        if (forms.length > 1) {
+            $(this).closest('.formset-form').remove();
+
+            // Re-index form inputs to maintain Django's formset naming
+            let forms = container.children('.formset-form');
+            totalForms.val(forms.length);
+
+            forms.each(function (i) {
+                $(this).find(':input, label').each(function () {
+                    updateAttr($(this), 'name', i);
+                    updateAttr($(this), 'id', i);
+                    updateAttr($(this), 'for', i);
+                });
+            });
+
+            function updateAttr(elem, attr, index) {
+                let value = elem.attr(attr);
+                if (value) {
+                    let updated = value.replace(/caps-(\d+)-/, `caps-${index}-`);
+                    elem.attr(attr, updated);
+                }
+            }
+        } else {
+            alert("ต้องมีอย่างน้อย 1 แผนปฏิบัติการ");
+        }
+    });
 
   // ยืนยันก่อน submit
   $('#hazardLogForm').on('submit', function(e) {

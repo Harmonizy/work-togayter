@@ -1,14 +1,14 @@
 from django import forms
+from django.forms.models import inlineformset_factory
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
 
-from .models import HazardLog
+
+from .models import HazardLog, CAP
 from safety.Report.forms.fields import content_field
-from safety.Report.models import BaseReport
-from common.RTAFUser.models import RTAFUser, Affiliation
 
 single_select_widget = forms.Select(attrs={'class': 'form-control js-example-basic-single'})
-
 
 class HazardLogForm(forms.ModelForm):
     description = content_field(300, "รายละเอียดของอันตราย...")
@@ -66,3 +66,42 @@ class HazardLogForm(forms.ModelForm):
             ),
             'note',
         )
+
+
+
+
+class CAPForm(forms.ModelForm):
+    description = content_field(300, "รายละเอียดการดำเนินการ...")
+    class Meta:
+        model = CAP
+        fields = ['order', 'title', 'description', 'status', 'due_date',]
+        widgets = {
+            'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เช่น ดำเนินการอบรม'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False  # Inline formset handled in outer form
+        self.helper.layout = Layout(
+            Row(
+                Column('order', css_class='col-md-1'),
+                Column('title', css_class='col-md-7'),
+                Column('status', css_class='col-md-2'),
+                Column('due_date', css_class='col-md-2'),
+            ),
+            Row(
+                Column('description', css_class='col-md-12'),
+            ),
+        )
+
+
+CAPFormSet = inlineformset_factory(
+    parent_model=HazardLog,
+    model=CAP,
+    form=CAPForm,
+    extra=1,           # how many empty forms to show
+    can_delete=True    # allow deleting CAPs in the form
+)

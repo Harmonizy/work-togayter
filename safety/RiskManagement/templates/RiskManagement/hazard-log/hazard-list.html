@@ -188,9 +188,11 @@
                                                 <i class="ri-eye-fill"></i>
                                             </button>
                                         </a>
-                                        <button type="button" class="btn btn-sm border text-muted p-2">
-                                            <i class="ri-pencil-fill"></i>
-                                        </button>
+                                        <a href={% url 'risk_management:hazard-edit.update' hazard.id %}>
+                                            <button type="button" class="btn btn-sm border text-muted p-2">
+                                                <i class="ri-pencil-fill"></i>
+                                            </button>
+                                        </a>
                                         <button type="button" class="btn btn-sm border text-danger p-2">
                                             <i class="ri-delete-bin-fill"></i>
                                         </button>

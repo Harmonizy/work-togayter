@@ -31,11 +31,11 @@ class HazardLog(models.Model):
 
     initial_likelihood = models.IntegerField("โอกาสเริ่มต้น", choices=LikelihoodChoices.choices, default=LikelihoodChoices.POSSIBLE, null=True, blank=True)
     initial_severity = models.IntegerField("ความรุนแรงเริ่มต้น", choices=SeverityChoices.choices, default=SeverityChoices.MODERATE, null=True, blank=True)
-    initial_risk_level = models.IntegerField("ระดับความเสี่ยงเริ่มต้น", validators=[MinValueValidator(0), MaxValueValidator(25)], null=True, blank=True)
+    initial_risk_level = models.IntegerField("ระดับความเสี่ยงเริ่มต้น", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
 
     residual_likelihood = models.IntegerField("โอกาสหลังแก้ไข",choices=LikelihoodChoices.choices, default=LikelihoodChoices.POSSIBLE, null=True, blank=True)
     residual_severity = models.IntegerField("ความรุนแรงหลังแก้ไข", choices=SeverityChoices.choices, default=SeverityChoices.MODERATE, null=True, blank=True)
-    residual_risk_level = models.IntegerField("ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(0), MaxValueValidator(25)], null=True, blank=True)
+    residual_risk_level = models.IntegerField("ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
 
     source = models.IntegerField(verbose_name="แหล่งที่มา", choices=HazardSourceChoices.choices, null=True, blank=True)
     related_report = models.ForeignKey('Report.BaseReport', verbose_name="รายงานที่เกี่ยวข้อง", on_delete=models.SET_NULL, null=True, blank=True)
@@ -51,13 +51,13 @@ class HazardLog(models.Model):
         return f"{self.code} - {self.category.event.name}"
     
     def save(self, *args, **kwargs):
-        self.initial_risk_level = (self.initial_likelihood or 0) * (self.initial_severity or 0)
-        self.residual_risk_level = (self.residual_likelihood or 0) * (self.residual_severity or 0)
+        self.initial_risk_level = (self.initial_likelihood or 1) * (self.initial_severity or 1)
+        self.residual_risk_level = (self.residual_likelihood or 1) * (self.residual_severity or 1)
         super().save(*args, **kwargs)
 
 
 class CAP(models.Model):
-
+    order = models.PositiveIntegerField(verbose_name="ลำดับ", default=1)
     hazard_log = models.ForeignKey(HazardLog, verbose_name="Hazard Log", on_delete=models.CASCADE, related_name="caps")
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
     description = models.TextField(verbose_name="รายละเอียด", null=True, blank=True)
@@ -71,6 +71,7 @@ class CAP(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = "3. Corrective Action Plan (CAP)"
+        ordering = ['order', 'due_date']
 
     def __str__(self):
         return f"{self.title} ({self.status})"
