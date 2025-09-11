@@ -5,6 +5,7 @@ from .models import HazardCategory, HazardLog, CAP
 @admin.register(HazardCategory)
 class HazardCategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "event", "short_description")
+    list_display_links = ("id", "event")
     search_fields = ("event__name", "description")
 
     def short_description(self, obj):
