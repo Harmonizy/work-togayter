@@ -40,7 +40,7 @@ def new_report(request):
             initial_form = {'affiliation': affiliation} if affiliation else {}
             context["aviation_form"] = AviationReportForm(prefix="aviation", initial=initial_form)
 
-        return render(request, "Report/safety-reports/safety-create.new-report.html", context)
+        return render(request, "Report/safety-reports/report-create.html", context)
 
     # in case request.method == "POST":
     print("Processing POST request for new report")
@@ -78,7 +78,7 @@ def new_report(request):
 
     
     messages.error(request, "กรุณาตรวจสอบข้อมูลให้ถูกต้อง")
-    return render(request, "Report/safety-reports/safety-create.new-report.html", {
+    return render(request, "Report/safety-reports/report-create.html", {
         "base_form": base_form,
         "image_formset": image_formset,
         "recommendation_formset": rec_formset,

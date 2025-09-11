@@ -66,7 +66,7 @@ class EvaluationAnswerInline(admin.TabularInline):
 
 @admin.register(BaseReportEvaluation)
 class BaseReportEvaluationAdmin(admin.ModelAdmin):
-    list_display = ('report', 'question_set', 'final_result')
+    list_display = ('report', 'question_set', 'final_result', 'evaluator')
     search_fields = ('report__title',)
     # autocomplete_fields = ['report', 'current_question', 'final_result']
     inlines = [EvaluationAnswerInline]

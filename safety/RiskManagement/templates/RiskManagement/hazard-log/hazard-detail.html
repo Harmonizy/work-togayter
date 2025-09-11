@@ -17,58 +17,71 @@
   <div class="page-content">
     <div class="container-fluid">
         {% block pagetitle %}
-            {% include "partials/page-title.html" with pagetitle="Hazard Detail" title="Hazard Detail" %}
+            {% include "partials/page-title.html" with pagetitle="Hazard Log" title="Hazard Detail" %}
         {% endblock pagetitle %}
 
         <div class="card-body border border-dashed border-end-0 border-start-0">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card" id="hazardList">
-                        <div class="card-header border-0">                        
-                            <h4 class="mb-4">📋 รายละเอียด Hazard Log</h4>
+                        <div class="card-header border-0">
+                            <h4 class="mb-4">รายละเอียด Hazard Log</h4>
                             <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <strong>หมวดหมู่:</strong> {{ hazard_log.category }}
+                                <div class="col-md-8">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <strong>หมวดหมู่:</strong> {{ hazard_log.category }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>รหัส:</strong> {{ hazard_log.code }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>หน่วยงาน:</strong> {{ hazard_log.affiliation }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>ผู้รับผิดชอบ:</strong> {{ hazard_log.assign_to }}
+                                        </div>                                
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <strong>รายละเอียด:</strong><br>
+                                            {{ hazard_log.description }}
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <strong>วันที่เกิดเหตุ:</strong> {{ hazard_log.date }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>สถานที่เกิดเหตุ:</strong> {{ hazard_log.location }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>สถานะ:</strong> {{ hazard_log.get_status_display }}
+                                        </div>
+                                        <div class="col-md-3">
+                                            <strong>การสอบสวน:</strong> {{ hazard_log.get_inspect_display }}
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <div class="col-md-4">
-                                    <strong>รหัส:</strong> {{ hazard_log.code }}
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <img src="{% static 'images/risk-matrix/5-5.jpg' %}" class="img-fluid" style="width:120px;" alt="Residual Risk Matrix">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <img src="{% static 'images/risk-matrix/2-1.jpg' %}" class="img-fluid" style="width:120px;" alt="Residual Risk Matrix">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <strong>หน่วยงาน:</strong> {{ hazard_log.affiliation }}
-                                </div>
-                                <div class="col-md-4">
-                                    <strong>ผู้รับผิดชอบ:</strong> {{ hazard_log.assign_to }}
-                                </div>                                
                             </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <strong>รายละเอียด:</strong><br>
-                                    {{ hazard_log.description }}
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <strong>วันที่เกิดเหตุ:</strong> {{ hazard_log.date }}
-                                </div>
-                                <div class="col-md-3">
-                                    <strong>สถานที่เกิดเหตุ:</strong> {{ hazard_log.location }}
-                                </div>
-                                <div class="col-md-3">
-                                    <strong>สถานะ:</strong> {{ hazard_log.get_status_display }}
-                                </div>
-                                <div class="col-md-3">
-                                    <strong>การสอบสวน:</strong> {{ hazard_log.get_inspect_display }}
-                                </div>
-                            </div>
-
-
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <div class="card-body border border-dashed rounded shadow-sm">
-                                        <h5>⚠️ ความเสี่ยงเริ่มต้น</h5>
+                                        <h5>ความเสี่ยงเริ่มต้น</h5>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <strong>โอกาส:</strong> {{ hazard_log.get_initial_likelihood_display }}
@@ -84,7 +97,7 @@
                                 </div>                                
                                 <div class="col-md-6">
                                     <div class="card-body border border-dashed rounded shadow-sm">                                    
-                                        <h5>✅ ความเสี่ยงหลังแก้ไข</h5>
+                                        <h5>ความเสี่ยงหลังแก้ไข</h5>
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <strong>โอกาส:</strong> {{ hazard_log.get_residual_likelihood_display }}
@@ -131,8 +144,8 @@
                     <div class="card" id="hazardList">
                         <div class="card-header border-0">   
 
-                            <h4 class="mb-3">🛠️ Corrective Action Plans (CAPs)</h4>
-                            {% for cap in hazard_log.caps.all %}
+                            <h4 class="mb-3">Collective Action Plans (CAPs)</h4>
+                            {% for cap in caps %}
                                 <div class="card mb-3">
                                     <div class="card-body">
                                         <div class="row mb-2">

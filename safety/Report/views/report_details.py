@@ -1,12 +1,13 @@
-# safety/Report/views/details.py
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Prefetch
+
 from ..models.reports import BaseReport, AviationReport, GroundReport
 from ..models.attachments import Image, File, Recommendation
 from ..choices import ReportTypeChoices
 
+from safety.Evaluate.models import BaseReportEvaluation, EvaluationAnswer
+
 def _expect_flags(report_type: str):
-    """ map ชนิดรายงาน -> ธงว่าควรคาดหวัง child แบบไหน """
     return {
         "is_ground": report_type in (ReportTypeChoices.SAFETY_GROUND, ReportTypeChoices.HAZARD_GROUND),
         "is_aviation": report_type in (ReportTypeChoices.SAFETY_AVIATION, ReportTypeChoices.HAZARD_AVIATION),
@@ -26,13 +27,29 @@ def main_page(request, pk: int):
         pk=pk
     )
 
-    # ดึง child ถ้ามี
-    aviation = AviationReport.objects.select_related('base_report', 'squadron', 'aircraft')\
-        .prefetch_related('system', 'flight_phase')\
-        .filter(base_report=base_report).first()
+    aviation = (AviationReport.objects
+                .select_related('base_report', 'squadron', 'aircraft')
+                .prefetch_related('system', 'flight_phase')
+                .filter(base_report=base_report)
+                .first())
 
-    ground = GroundReport.objects.select_related('base_report', 'category')\
-        .filter(base_report=base_report).first()
+    ground = (GroundReport.objects
+            .select_related('base_report', 'category')
+            .filter(base_report=base_report)
+            .first())
+
+    evaluation = (BaseReportEvaluation.objects
+                .select_related('final_result__type', 'question_set', 'evaluator', 'report')
+                .prefetch_related(
+                    Prefetch(
+                        'answers',
+                        queryset=EvaluationAnswer.objects
+                                .select_related('question')
+                                .order_by('order')
+                    )
+                )
+                .filter(report=base_report)
+                .first())
 
     flags = _expect_flags(base_report.report_type)
 
@@ -43,10 +60,13 @@ def main_page(request, pk: int):
         "images": base_report.image_attachment.all(),
         "files": base_report.file_attachment.all(),
         "recommends": base_report.recommendation_attachment.all(),
-        # helper สำหรับ template
+
+        "evaluation": evaluation,
+        "eval_answers": evaluation.answers.all() if evaluation else [],
+
         "report_type_label": base_report.get_report_type_display(),
         **flags,
         "missing_ground": flags["is_ground"] and not ground,
         "missing_aviation": flags["is_aviation"] and not aviation,
     }
-    return render(request, "Report/safety-reports/report_detail.html", context)
+    return render(request, "Report/safety-reports/report-detail.html", context)
