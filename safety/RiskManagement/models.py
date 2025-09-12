@@ -41,7 +41,7 @@ class HazardLog(models.Model):
     residual_risk_level = models.IntegerField(verbose_name="ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
 
     source = models.IntegerField(verbose_name="แหล่งที่มา", choices=HazardSourceChoices.choices, null=True, blank=True)
-    related_report = models.ForeignKey('Report.BaseReport', verbose_name="รายงานที่เกี่ยวข้อง", on_delete=models.SET_NULL, null=True, blank=True)
+    related_report = models.ForeignKey('Report.BaseReport', verbose_name="รายงานที่เกี่ยวข้อง", related_name="hazard_log", on_delete=models.SET_NULL, null=True, blank=True)
     note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

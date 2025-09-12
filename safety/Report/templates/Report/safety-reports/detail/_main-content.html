@@ -1,0 +1,46 @@
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row gy-3">
+                <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">หน่วยงาน:</div>
+                  <div>{{ base_report.affiliation|default:"-" }}</div>
+                </div>
+                <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">วันที่/เวลาเกิดเหตุ:</div>
+                  <div>{{ base_report.event_date|date:"d/m/Y" }} {{ base_report.event_time|time:"H:i" }}</div>
+                </div>
+                <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">ภารกิจ:</div>
+                  <div>{{ base_report.get_mission_type_display|default:"-" }}</div>
+                </div>
+                <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">ประเภทรายงาน:</div>
+                  <div>{{ report_type_label }}</div>
+                </div>
+                <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">ผู้บันทึก:</div>
+                  <div>{% if base_report.anonymous %}ไม่ระบุชื่อ{% else %}{{ base_report.recorder|default:"-" }}{% endif %}</div>
+                </div>
+                <div class="col-12 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">คำแนะนำเบื้องต้น:</div>
+                  <div>{{ base_report.first_recommendation|linebreaks|default:"-" }}</div>
+                </div>
+                <div class="col-12 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">การแก้ไขที่ดำเนินการ:</div>
+                  <div>{{ base_report.initial_action_taken|linebreaks|default:"-" }}</div>
+                </div>
+                <div class="col-12 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">หมายเหตุ:</div>
+                  <div>{{ base_report.comment|default:"-" }}</div>
+                </div>
+                <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">สร้างเมื่อ:</div>
+                  <div>{{ base_report.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
+                <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+                  <div class="meta-label me-md-2">แก้ไขล่าสุด:</div>
+                  <div>{{ base_report.updated_at|date:"d/m/Y H:i" }}</div>
+                </div>
+              </div>
+            </div>
+          </div>

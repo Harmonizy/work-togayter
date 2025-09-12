@@ -12,8 +12,9 @@ from .models import (
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("name", "hazard_title")
-    search_fields = ("name", "hazard_title")
+    # list_display = ("name", "hazard_title")
+    # search_fields = ("name", "hazard_title")
+    pass
 
 
 @admin.register(AircraftType)
