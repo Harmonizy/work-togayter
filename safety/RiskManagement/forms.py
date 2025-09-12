@@ -5,6 +5,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
 
 from .models import HazardLog, CAP
+from .choices import HazardSourceChoices
+from safety.Report.models import BaseReport
 from safety.Report.forms.fields import content_field
 
 single_select_widget = forms.Select(attrs={'class': 'form-control js-example-basic-single'})
@@ -34,6 +36,14 @@ class HazardLogForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        initial = kwargs.get('initial', {})
+        if 'related_report_id' in initial:
+            base_report = BaseReport.objects.get(id = initial['related_report_id'])
+            self.fields['related_report'].initial = initial['related_report_id']
+            self.fields['source'].initial = HazardSourceChoices.REPORT
+            self.fields['title'].initial = base_report.title
+            self.fields['description'].initial = base_report.content
+            
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
@@ -65,6 +75,7 @@ class HazardLogForm(forms.ModelForm):
             ),
             'note',
         )
+
 
 
 class CAPForm(forms.ModelForm):

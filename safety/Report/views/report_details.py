@@ -69,4 +69,4 @@ def main_page(request, pk: int):
         "missing_ground": flags["is_ground"] and not ground,
         "missing_aviation": flags["is_aviation"] and not aviation,
     }
-    return render(request, "Report/safety-reports/report-detail.html", context)
+    return render(request, "Report/safety-reports/detail/report-detail.html", context)

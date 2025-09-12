@@ -41,6 +41,30 @@ def create(request):
     return render(request, "RiskManagement/hazard-log/hazard-log-form.html", context)
 
 
+def create_by_report(request, report_id):
+    if request.method == "POST":
+        form = HazardLogForm(request.POST)
+        formset = CAPFormSet(request.POST)
+        if form.is_valid():
+            form.save()
+            # formset.save()
+            return redirect("risk_management:hazard-log")  
+        else:
+            print(form.errors)
+    else:
+        form = HazardLogForm(initial={"related_report_id": report_id})
+        formset = CAPFormSet()
+
+    context = {
+        "form": form,
+        'formset': formset,
+        "title": "เพิ่มรายการอันตราย",
+        "HazardSourceChoices": HazardSourceChoices,
+    }
+    return render(request, "RiskManagement/hazard-log/hazard-log-form.html", context)
+
+
+
 @require_POST
 def delete(request, pk):
     hazard = get_object_or_404(HazardLog, pk=pk)

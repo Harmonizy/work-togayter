@@ -8,7 +8,7 @@ from common.RTAFUser.models import Affiliation, Squadron
 class Event(models.Model):
     name = models.CharField(verbose_name="ชื่อ", max_length=120)
     # type = models.CharField(verbose_name="ประเภท", max_length=120, choices=EventTypeChoices.choices, blank=True, null=True)
-    hazard_title = models.CharField(verbose_name="หัวข้อทะเบียนความเสี่ยง", max_length=120, blank=True, null=True)
+    # hazard_title = models.CharField(verbose_name="หัวข้อทะเบียนความเสี่ยง", max_length=120, blank=True, null=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "1. เหตุการณ์"
