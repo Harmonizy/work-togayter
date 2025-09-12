@@ -70,8 +70,6 @@ class BaseReportForm(forms.ModelForm):
         )
 
 
-
-
 class GroundReportForm(forms.ModelForm):
     class Meta:
         model = GroundReport

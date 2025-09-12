@@ -81,7 +81,7 @@ def list(request):
         'affiliation': Affiliation.objects.all().order_by('short_name'),
     }
 
-    return render(request, 'Report/safety-reports/list.html', context)
+    return render(request, 'Report/safety-reports/report-list.html', context)
 
 
 class MobileHomeView(LoginRequiredMixin, TemplateView):

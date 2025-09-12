@@ -5,23 +5,45 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 
-from .models import EvaluationQuestion
+
+from .models import EvaluationQuestion, EvaluationAnswer, BaseReportEvaluation, QuestionSet
 from safety.Report.models.reports import BaseReport
 
 
-def evaluate_main(request, report_id):
+def evaluate_main(request, report_id, question_id=1):
     report = BaseReport.objects.get(id=report_id)
-    context = {"report": report, "report_id": report_id}
+    question_set = QuestionSet.objects.get(id=question_id)  # Assuming a default question set for simplicity
+    context = {"report": report, "question_set": question_set}
     return render(request, 'Evaluate/evaluate-main.html', context)
 
 
 @require_POST
-@csrf_exempt
+def get_current_question(request):
+    try:
+        data = json.loads(request.body)
+        question_id = data['question_id'] 
+    except (KeyError, json.JSONDecodeError):
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+    try:
+        question = EvaluationQuestion.objects.get(id=question_id)
+    except EvaluationQuestion.DoesNotExist:
+        raise Http404
+
+    return JsonResponse({
+        'type': 'question',
+        'id': question.id,
+        'text': question.text,
+    })
+
+
+@require_POST
 def get_next_question(request):
     try:
         data = json.loads(request.body)
         question_id = data['question_id']
         answer = data['answer'] 
+        print("===> answer:"*10, answer)   
     except (KeyError, json.JSONDecodeError):
         return JsonResponse({'error': 'Invalid request'}, status=400)
 
@@ -57,12 +79,8 @@ def get_next_question(request):
         return JsonResponse({'type': 'end', 'message': 'No next question or result.'})
 
 
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-import json
-from .models import EvaluationQuestion, EvaluationAnswer, BaseReportEvaluation, EvaluationResult, QuestionSet
 
-@csrf_exempt
+
 @require_POST
 def submit_evaluation(request):
 
@@ -78,7 +96,7 @@ def submit_evaluation(request):
             question_set_id=question_set_id,
             final_result_id=result_id,
             report_id=report_id,
-            evaluater_id=request.user.id
+            evaluator_id=request.user.id
         )
 
         for idx, entry in enumerate(answers):

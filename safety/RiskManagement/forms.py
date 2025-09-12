@@ -4,7 +4,6 @@ from django.forms.models import inlineformset_factory
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
 
-
 from .models import HazardLog, CAP
 from safety.Report.forms.fields import content_field
 
@@ -16,7 +15,7 @@ class HazardLogForm(forms.ModelForm):
 
     class Meta:
         model = HazardLog
-        fields = '__all__'
+        exclude = ['code', 'serial_number']
         widgets = {
             'category': single_select_widget,
             'affiliation': single_select_widget,
@@ -30,7 +29,7 @@ class HazardLogForm(forms.ModelForm):
             'residual_severity': single_select_widget,
             'source': single_select_widget,
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เช่น RISK0001'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เช่น อาคารซ่อมบำรุง โซน A'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -47,10 +46,10 @@ class HazardLogForm(forms.ModelForm):
                 Column('assign_to', css_class='form-group col-md-3 mb-0'),
                 Column('date', css_class='form-group col-md-3 mb-0'),
             ),
-            
             Row(
-                Column('code', css_class='form-group col-md-3 mb-0'),
-                Column('location', css_class='form-group col-md-12 mb-0')),
+                Column('title', css_class='form-group col-md-6 mb-0'),
+                Column('location', css_class='form-group col-md-6 mb-0'),
+            ),
             'description',
             Row(
                 Column('inspect', css_class='form-group col-md-2 mb-0'),
@@ -68,13 +67,11 @@ class HazardLogForm(forms.ModelForm):
         )
 
 
-
-
 class CAPForm(forms.ModelForm):
     description = content_field(300, "รายละเอียดการดำเนินการ...")
     class Meta:
         model = CAP
-        fields = ['order', 'title', 'description', 'status', 'due_date',]
+        fields = ['order', 'title', 'description', 'status', 'due_date']
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เช่น ดำเนินการอบรม'}),
@@ -84,7 +81,7 @@ class CAPForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.form_tag = False  # Inline formset handled in outer form
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
                 Column('order', css_class='col-md-1'),
@@ -102,6 +99,6 @@ CAPFormSet = inlineformset_factory(
     parent_model=HazardLog,
     model=CAP,
     form=CAPForm,
-    extra=1,           # how many empty forms to show
-    can_delete=True    # allow deleting CAPs in the form
+    extra=1,
+    can_delete=True
 )

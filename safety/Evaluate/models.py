@@ -36,8 +36,10 @@ class QuestionSet(models.Model):
 
     class Meta:
         verbose_name =  verbose_name_plural = "2. ชุดคำถาม"
+
     def __str__(self):
         return self.name
+    
 
 
 class EvaluationQuestion(models.Model):
@@ -57,15 +59,26 @@ class EvaluationQuestion(models.Model):
 
 
 class BaseReportEvaluation(models.Model):
-    report = models.OneToOneField(BaseReport, on_delete=models.CASCADE, related_name='evaluation')
+    report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='evaluation')
     question_set = models.ForeignKey(QuestionSet, related_name='evaluations', on_delete=models.CASCADE, null=True, blank=True)
     final_result = models.ForeignKey(EvaluationResult, null=True, blank=True, related_name='evaluations', on_delete=models.SET_NULL)
     
-    evaluater = models.ForeignKey(RTAFUser, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="ผู้ประเมิน")
+    evaluator = models.ForeignKey(RTAFUser, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="ผู้ประเมิน")
     evaluated_at = models.DateTimeField(auto_now_add=True, verbose_name="วันที่ประเมิน", null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "4. การประเมินผล Report"
+        indexes = [
+            models.Index(fields=['report', 'question_set', 'evaluator']),
+            models.Index(fields=['-evaluated_at']),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['report', 'question_set', 'evaluator'],
+                name='uniq_report_qset_evaluator',
+                nulls_distinct=False,
+            ),
+        ]
     def __str__(self):
         return f"Evaluation for {self.report}"
 

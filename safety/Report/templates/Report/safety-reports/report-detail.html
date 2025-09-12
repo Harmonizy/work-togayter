@@ -166,7 +166,84 @@
       </div>
       {% endif %}
 
-      <!-- คำแนะนำ -->
+      <!-- ===================== ผลการประเมิน (Evaluate) ===================== -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="section-title">ผลการประเมิน</span>
+        </div>
+
+        <div class="card-body">
+          {% if evaluation %}
+            <div class="row gy-2 mb-3">
+              <div class="col-12 col-md-6 d-flex">
+                <div class="meta-label me-2">ผลลัพธ์สุดท้าย:</div>
+                <div>
+                  {% if evaluation.final_result %}
+                    <strong>{{ evaluation.final_result.name }}</strong>
+                    {% if evaluation.final_result.english_name %}
+                      <span class="text-muted">({{ evaluation.final_result.english_name }})</span>
+                    {% endif %}
+                    {% if evaluation.final_result.type %}
+                      <span class="badge text-bg-dark ms-2">
+                        ประเภท: {{ evaluation.final_result.type.name }} ({{ evaluation.final_result.type.code }})
+                      </span>
+                    {% endif %}
+                    {% if evaluation.final_result.description %}
+                      <div class="small text-muted mt-1">{{ evaluation.final_result.description }}</div>
+                    {% endif %}
+                  {% else %}
+                    <span class="text-muted">-</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6 d-flex">
+                <div class="meta-label me-2">ผู้ประเมิน/เวลา:</div>
+                <div>
+                  {{ evaluation.evaluator|default:"-" }} • {{ evaluation.evaluated_at|date:"d/m/Y H:i" }}
+                  {% if evaluation.question_set %}
+                    <div class="small text-muted">ชุดคำถาม: {{ evaluation.question_set.name }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            {% if eval_answers %}
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th style="width:70px">ลำดับ</th>
+                      <th>คำถาม</th>
+                      <th style="width:120px" class="text-center">คำตอบ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for answer in eval_answers %}
+                    <tr>
+                      <td class="text-center">{{ answer.order }}</td>
+                      <td>{{ answer.question.text }}</td>
+                      <td class="text-center">
+                        {% if answer.answer == 'y' %}
+                          <span class="badge text-bg-success">ใช่</span>
+                        {% else %}
+                          <span class="badge text-bg-secondary">ไม่ใช่</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-muted">- ไม่มีรายการคำถาม/คำตอบ -</div>
+            {% endif %}
+          {% else %}
+            <div class="text-muted">ไม่มีการประเมิน</div>
+          {% endif %}
+        </div>
+      </div>
+
       <div class="card mb-4">
         <div class="card-header"><span class="section-title">คำแนะนำเพิ่มเติม</span></div>
         <div class="card-body">
@@ -212,7 +289,6 @@
             {% for img in images %}
             <div class="col-6 col-md-3">
               <div class="card h-100">
-                <!-- คลิกรูปเปิด popup (จะเริ่มที่สไลด์แรก) -->
                 <a href="#" data-bs-toggle="modal" data-bs-target="#imageGalleryModal" class="stretched-link"></a>
                 <img src="{{ img.image.url }}" class="card-img-top attachment-img" alt="image">
                 <div class="card-body p-2">
@@ -268,7 +344,7 @@
   </div>
 </div>
 
-<!-- Modal แกลเลอรีรูปภาพ (ใช้ครั้งเดียวต่อหน้า) -->
+<!-- Modal แกลเลอรีรูปภาพ -->
 {% if images %}
 <div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -293,7 +369,6 @@
             {% endfor %}
           </div>
 
-          <!-- Controls -->
           <button class="carousel-control-prev" type="button" data-bs-target="#detailImagesCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon"></span>
             <span class="visually-hidden">Previous</span>
@@ -303,7 +378,6 @@
             <span class="visually-hidden">Next</span>
           </button>
 
-          <!-- Indicators -->
           <div class="carousel-indicators position-static mt-3">
             {% for img in images %}
               <button type="button"

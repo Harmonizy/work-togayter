@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views.decorators.http import require_POST
 
 from ..models import HazardLog
 from ..choices import HazardSourceChoices
@@ -22,7 +24,7 @@ def create(request):
         formset = CAPFormSet(request.POST)
         if form.is_valid():
             form.save()
-            formset.save()
+            # formset.save()
             return redirect("risk_management:hazard-log")  
         else:
             print(form.errors)
@@ -37,3 +39,12 @@ def create(request):
         "HazardSourceChoices": HazardSourceChoices,
     }
     return render(request, "RiskManagement/hazard-log/hazard-log-form.html", context)
+
+
+@require_POST
+def delete(request, pk):
+    hazard = get_object_or_404(HazardLog, pk=pk)
+    code = hazard.code
+    hazard.delete()  
+    messages.success(request, f"ลบทะเบียนความเสี่ยง {code} เรียบร้อย")
+    return redirect("risk_management:hazard-log")

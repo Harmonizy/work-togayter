@@ -62,4 +62,4 @@ def edit_report(request, report_id):
         'file_formset': file_formset,
         'report': report,
     }
-    return render(request, 'Report/safety-reports/safety-edit.edit-report.html', context)
+    return render(request, 'Report/safety-reports/report-edit.html', context)
