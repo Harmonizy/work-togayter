@@ -444,7 +444,7 @@ Pass an array of objects:
 
 **Type:** `Boolean` **Default:** `true`
 
-**Input types affected:** `text`
+**Input types affected:** `text`, `select-multiple`, `select-one`
 
 **Usage:** Whether duplicate inputted/chosen items are allowed
 
@@ -917,7 +917,7 @@ example.passedElement.element.addEventListener(
 
 ### addItem
 
-**Payload:** `id, value, label, customProperties, groupValue, keyCode`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -925,7 +925,7 @@ example.passedElement.element.addEventListener(
 
 ### removeItem
 
-**Payload:** `id, value, label, customProperties, groupValue`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-one`, `select-multiple`
 
@@ -933,7 +933,7 @@ example.passedElement.element.addEventListener(
 
 ### highlightItem
 
-**Payload:** `id, value, label, groupValue`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-multiple`
 
@@ -941,7 +941,7 @@ example.passedElement.element.addEventListener(
 
 ### unhighlightItem
 
-**Payload:** `id, value, label, groupValue`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `text`, `select-multiple`
 
@@ -949,7 +949,7 @@ example.passedElement.element.addEventListener(
 
 ### choice
 
-**Payload:** `choice`
+**Payload:** `id, highlighted, labelClass, labelDescription, customProperties, disabled, active, label, placeholder, value, groupValue, element, keyCode`
 
 **Input types affected:** `select-one`, `select-multiple`
 
@@ -1088,13 +1088,13 @@ choices.disable();
 
 **Usage:** Hide choices list dropdown.
 
-### setChoices(choicesArrayOrFetcher?: (InputChoice | InputGroup)[] | ((instance: Choices) => (InputChoice | InputGroup)[] | Promise<(InputChoice | InputGroup)[]>), value?: string | null, label?: string, replaceChoices?: boolean): this | Promise<this>;
+### setChoices(choicesArrayOrFetcher?: (InputChoice | InputGroup)[] | ((instance: Choices) => (InputChoice | InputGroup)[] | Promise<(InputChoice | InputGroup)[]>), value?: string | null, label?: string, replaceChoices?: boolean = false, clearSearchFlag?: boolean = false, replaceItems?: boolean = false): this | Promise<this>;
 
 **Input types affected:** `select-one`, `select-multiple`
 
 **Usage:** Set choices of select input via an array of objects (or function that returns array of object or promise of it), a value field name and a label field name.
 
-This behaves the similar as passing items via the `choices` option but can be called after initialising Choices. This can also be used to add groups of choices (see example 3); Optionally pass a true `replaceChoices` value to remove any existing choices. Optionally pass a `customProperties` object to add additional data to your choices (useful when searching/filtering etc). Passing an empty array as the first parameter, and a true `replaceChoices` is the same as calling `clearChoices` (see below).
+This behaves the similar as passing items via the `choices` option but can be called after initialising Choices. This can also be used to add groups of choices (see example 3); Optionally pass a true `replaceChoices` value to remove any existing choices. Optionally pass a true `replaceItems` value to remove any items, if false choices for selected items are preserved. Optionally pass a `customProperties` object to add additional data to your choices (useful when searching/filtering etc). Passing an empty array as the first parameter, and a true `replaceChoices` is the same as calling `clearChoices` (see below).
 
 **Example 1:**
 
@@ -1168,11 +1168,13 @@ example.setChoices(
 );
 ```
 
-### clearChoices();
+### clearChoices(clearOptions: boolean = true, clearItems: boolean = false);
 
 **Input types affected:** `select-one`, `select-multiple`
 
-**Usage:** Clear all choices from select. Does **not** reset the search state.
+**Usage:** Clear all choices from select including any selected items. Does **not** reset the search state.
+- `clearOptions` If true, clears the backing options from the `<select>` element
+- `clearItems` If false, preserves selected items instead of clearing them
 
 ### getValue(valueOnly?: boolean): string[] | EventChoice[] | EventChoice | string;
 
@@ -1298,6 +1300,8 @@ e2e (End-to-end) tests are implemented using playwright, which requires installi
 `npx playwright install-deps `
 
 For JetBrain IDE's the `Test automation` plugin is recommended:
+https://plugins.jetbrains.com/plugin/20175-test-automation
+For usage see:
 https://www.jetbrains.com/help/phpstorm/playwright.html
 
 ### NPM tasks
@@ -1326,6 +1330,12 @@ The pre-built bundles these features set, and tree shaking uses the non-used par
 **Default:** `full`
 
 Fuse.js support a `full`/`basic` profile. `full` adds additional logic operations, which aren't used by default with Choices. The `null` option drops Fuse.js as a dependency and instead uses a simple prefix only search feature.
+
+#### CHOICES_SEARCH_KMP
+**Values:** `1` / `0`
+**Default:** `0`
+
+If `CHOICES_SEARCH_FUSE` is `null`, this enables an `indexOf`-like [Knuth–Morris–Pratt algorithm](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm). Useful for very large data sets, without fuzzy searching.
 
 #### CHOICES_CAN_USE_DOM
 **Values:** `1` / `0`

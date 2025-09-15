@@ -3,7 +3,7 @@ import { PipelineProcessor, PipelineProcessorProps, ProcessorType } from '../pro
 interface StorageExtractorProps extends PipelineProcessorProps {
     storage: Storage<any>;
 }
-declare class StorageExtractor extends PipelineProcessor<Promise<StorageResponse>, StorageExtractorProps> {
+declare class StorageExtractor extends PipelineProcessor<StorageResponse, StorageExtractorProps> {
     get type(): ProcessorType;
     _process(opts: any): Promise<StorageResponse>;
 }

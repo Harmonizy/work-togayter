@@ -16,7 +16,7 @@ class HazardCategoryAdmin(admin.ModelAdmin):
 class CAPInline(admin.TabularInline):
     model = CAP
     extra = 0
-    fields = ("title", "status", "due_date")
+    fields = ("order", "title", "status", "due_date")
     show_change_link = True
 
 

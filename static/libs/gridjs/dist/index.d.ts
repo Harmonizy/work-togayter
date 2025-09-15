@@ -11,5 +11,5 @@ import Cell from './src/cell';
 import { useConfig } from './src/hooks/useConfig';
 import { useStore } from './src/hooks/useStore';
 import useSelector from './src/hooks/useSelector';
-import { useTranslator } from 'src/i18n/language';
+import { useTranslator } from './src/i18n/language';
 export { Grid, ID, Row, Cell, className, html, Config, PluginPosition, h, createElement, Component, createRef, useEffect, useRef, useStore, useConfig, useState, useSelector, useTranslator, };

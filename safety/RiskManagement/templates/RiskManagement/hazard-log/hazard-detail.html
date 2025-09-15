@@ -1,5 +1,6 @@
 {% extends "partials/base.html" %}
 {% load static %}
+{% load risk_tags %}
 {% block title %}รายละเอียดรายงาน | {{ base_report.title }}{% endblock %}
 
 {% block extra_css %}
@@ -9,6 +10,7 @@
   .attachment-img { max-height: 160px; object-fit: cover; cursor: pointer; }
   .badge-status { font-size: 0.85rem; }
   .modal-body img { max-height: 80vh; width: auto; }
+
 </style>
 {% endblock %}
 
@@ -66,16 +68,12 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <img src="{% static 'images/risk-matrix/5-5.jpg' %}" class="img-fluid" style="width:120px;" alt="Residual Risk Matrix">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <img src="{% static 'images/risk-matrix/2-1.jpg' %}" class="img-fluid" style="width:120px;" alt="Residual Risk Matrix">
-                                        </div>
-                                    </div>
+                                <div class="col-md-4 text-end d-flex justify-content-end align-items-top">
+                                    {% risk_box hazard_log.initial_risk_level "ก่อนแก้ไข" %}
+                                    {% risk_box hazard_log.residual_risk_level "หลังแก้ไข" %}                             
                                 </div>
+
+
                             </div>
 
                             <div class="row mb-3">

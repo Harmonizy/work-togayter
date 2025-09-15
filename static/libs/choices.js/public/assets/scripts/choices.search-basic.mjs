@@ -1,4 +1,4 @@
-/*! choices.js v11.0.2 | © 2024 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+/*! choices.js v11.1.0 | © 2025 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -81,6 +81,20 @@ var EventType = {
     highlightItem: 'highlightItem',
     highlightChoice: 'highlightChoice',
     unhighlightItem: 'unhighlightItem',
+};
+
+var KeyCodeMap = {
+    TAB_KEY: 9,
+    SHIFT_KEY: 16,
+    BACK_KEY: 46,
+    DELETE_KEY: 8,
+    ENTER_KEY: 13,
+    A_KEY: 65,
+    ESC_KEY: 27,
+    UP_KEY: 38,
+    DOWN_KEY: 40,
+    PAGE_UP_KEY: 33,
+    PAGE_DOWN_KEY: 34,
 };
 
 var ObjectsInConfig = ['fuseOptions', 'classNames'];
@@ -739,11 +753,15 @@ var stringToHtmlClass = function (input) {
     }
     return undefined;
 };
-var mapInputToChoice = function (value, allowGroup) {
+var mapInputToChoice = function (value, allowGroup, allowRawString) {
+    if (allowRawString === void 0) { allowRawString = true; }
     if (typeof value === 'string') {
+        var sanitisedValue = sanitise(value);
+        var userValue = allowRawString || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
         var result_1 = mapInputToChoice({
             value: value,
-            label: value,
+            label: userValue,
+            selected: true,
         }, false);
         return result_1;
     }
@@ -848,7 +866,9 @@ var WrappedSelect = /** @class */ (function (_super) {
             score: 0,
             rank: 0,
             value: option.value,
-            label: option.innerHTML,
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option
+            // This attribute is text for the label indicating the meaning of the option. If the `label` attribute isn't defined, its value is that of the element text content (ie `innerText`).
+            label: option.label,
             element: option,
             active: true,
             // this returns true if nothing is selected on initial load, which will break placeholder support
@@ -1224,7 +1244,7 @@ var Store = /** @class */ (function () {
          * Get highlighted items from store
          */
         get: function () {
-            return this.items.filter(function (item) { return !item.disabled && item.active && item.highlighted; });
+            return this.items.filter(function (item) { return item.active && item.highlighted; });
         },
         enumerable: false,
         configurable: true
@@ -1251,7 +1271,7 @@ var Store = /** @class */ (function () {
     });
     Object.defineProperty(Store.prototype, "searchableChoices", {
         /**
-         * Get choices that can be searched (excluding placeholders)
+         * Get choices that can be searched (excluding placeholders or disabled choices)
          */
         get: function () {
             return this.choices.filter(function (choice) { return !choice.disabled && !choice.placeholder; });
@@ -2741,7 +2761,6 @@ var templates = {
         inp.autocomplete = 'off';
         inp.autocapitalize = 'off';
         inp.spellcheck = false;
-        inp.setAttribute('role', 'textbox');
         inp.setAttribute('aria-autocomplete', 'list');
         if (placeholderValue) {
             inp.setAttribute('aria-label', placeholderValue);
@@ -3125,11 +3144,15 @@ var Choices = /** @class */ (function () {
         if (this.dropdown.isActive) {
             return this;
         }
+        if (preventInputFocus === undefined) {
+            // eslint-disable-next-line no-param-reassign
+            preventInputFocus = !this._canSearch;
+        }
         requestAnimationFrame(function () {
             _this.dropdown.show();
             var rect = _this.dropdown.element.getBoundingClientRect();
             _this.containerOuter.open(rect.bottom, rect.height);
-            if (!preventInputFocus && _this._canSearch) {
+            if (!preventInputFocus) {
                 _this.input.focus();
             }
             _this.passedElement.triggerEvent(EventType.showDropdown);
@@ -3259,13 +3282,14 @@ var Choices = /** @class */ (function () {
      * }], 'value', 'label', false);
      * ```
      */
-    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices, clearSearchFlag) {
+    Choices.prototype.setChoices = function (choicesArrayOrFetcher, value, label, replaceChoices, clearSearchFlag, replaceItems) {
         var _this = this;
         if (choicesArrayOrFetcher === void 0) { choicesArrayOrFetcher = []; }
         if (value === void 0) { value = 'value'; }
         if (label === void 0) { label = 'label'; }
         if (replaceChoices === void 0) { replaceChoices = false; }
         if (clearSearchFlag === void 0) { clearSearchFlag = true; }
+        if (replaceItems === void 0) { replaceItems = false; }
         if (!this.initialisedOK) {
             this._warnChoicesInitFailed('setChoices');
             return this;
@@ -3276,10 +3300,6 @@ var Choices = /** @class */ (function () {
         if (typeof value !== 'string' || !value) {
             throw new TypeError("value parameter must be a name of 'value' field in passed objects");
         }
-        // Clear choices if needed
-        if (replaceChoices) {
-            this.clearChoices();
-        }
         if (typeof choicesArrayOrFetcher === 'function') {
             // it's a choices fetcher function
             var fetcher_1 = choicesArrayOrFetcher(this);
@@ -3289,7 +3309,9 @@ var Choices = /** @class */ (function () {
                 return new Promise(function (resolve) { return requestAnimationFrame(resolve); })
                     .then(function () { return _this._handleLoadingState(true); })
                     .then(function () { return fetcher_1; })
-                    .then(function (data) { return _this.setChoices(data, value, label, replaceChoices); })
+                    .then(function (data) {
+                    return _this.setChoices(data, value, label, replaceChoices, clearSearchFlag, replaceItems);
+                })
                     .catch(function (err) {
                     if (!_this.config.silent) {
                         console.error(err);
@@ -3313,6 +3335,10 @@ var Choices = /** @class */ (function () {
             if (clearSearchFlag) {
                 _this._isSearching = false;
             }
+            // Clear choices if needed
+            if (replaceChoices) {
+                _this.clearChoices(true, replaceItems);
+            }
             var isDefaultValue = value === 'value';
             var isDefaultLabel = label === 'label';
             choicesArrayOrFetcher.forEach(function (groupOrChoice) {
@@ -3328,7 +3354,11 @@ var Choices = /** @class */ (function () {
                     if (!isDefaultLabel || !isDefaultValue) {
                         choice = __assign(__assign({}, choice), { value: choice[value], label: choice[label] });
                     }
-                    _this._addChoice(mapInputToChoice(choice, false));
+                    var choiceFull = mapInputToChoice(choice, false);
+                    _this._addChoice(choiceFull);
+                    if (choiceFull.placeholder && !_this._hasNonChoicePlaceholder) {
+                        _this._placeholderValue = unwrapStringForEscaped(choiceFull.label);
+                    }
                 }
             });
             _this.unhighlightAll();
@@ -3354,7 +3384,7 @@ var Choices = /** @class */ (function () {
             var existingItems = {};
             if (!deselectAll) {
                 _this._store.items.forEach(function (choice) {
-                    if (choice.id && choice.active && choice.selected && !choice.disabled) {
+                    if (choice.id && choice.active && choice.selected) {
                         existingItems[choice.value] = true;
                     }
                 });
@@ -3410,13 +3440,29 @@ var Choices = /** @class */ (function () {
         }
         return this;
     };
-    Choices.prototype.clearChoices = function () {
+    Choices.prototype.clearChoices = function (clearOptions, clearItems) {
         var _this = this;
+        if (clearOptions === void 0) { clearOptions = true; }
+        if (clearItems === void 0) { clearItems = false; }
+        if (clearOptions) {
+            if (clearItems) {
+                this.passedElement.element.replaceChildren('');
+            }
+            else {
+                this.passedElement.element.querySelectorAll(':not([selected])').forEach(function (el) {
+                    el.remove();
+                });
+            }
+        }
+        this.itemList.element.replaceChildren('');
+        this.choiceList.element.replaceChildren('');
+        this._clearNotice();
         this._store.withTxn(function () {
-            _this._store.choices.forEach(function (choice) {
-                if (!choice.selected) {
-                    _this._store.dispatch(removeChoice(choice));
-                }
+            var items = clearItems ? [] : _this._store.items;
+            _this._store.reset();
+            items.forEach(function (item) {
+                _this._store.dispatch(addChoice(item));
+                _this._store.dispatch(addItem(item));
             });
         });
         // @todo integrate with Store
@@ -3425,17 +3471,10 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype.clearStore = function (clearOptions) {
         if (clearOptions === void 0) { clearOptions = true; }
+        this.clearChoices(clearOptions, true);
         this._stopSearch();
-        if (clearOptions) {
-            this.passedElement.element.replaceChildren('');
-        }
-        this.itemList.element.replaceChildren('');
-        this.choiceList.element.replaceChildren('');
-        this._store.reset();
         this._lastAddedChoiceId = 0;
         this._lastAddedGroupId = 0;
-        // @todo integrate with Store
-        this._searcher.reset();
         return this;
     };
     Choices.prototype.clearInput = function () {
@@ -3517,7 +3556,7 @@ var Choices = /** @class */ (function () {
                 var dropdownItem = choice.choiceEl || _this._templates.choice(config, choice, config.itemSelectText, groupLabel);
                 choice.choiceEl = dropdownItem;
                 fragment.appendChild(dropdownItem);
-                if (!choice.disabled && (isSearching || !choice.selected)) {
+                if (isSearching || !choice.selected) {
                     selectableChoices = true;
                 }
                 return index < choiceLimit;
@@ -3556,7 +3595,7 @@ var Choices = /** @class */ (function () {
                 renderChoices(renderableChoices(activeChoices), false, undefined);
             }
         }
-        if (!selectableChoices) {
+        if (!selectableChoices && (isSearching || !fragment.children.length || !config.renderSelectedChoices)) {
             if (!this._notice) {
                 this._notice = {
                     text: resolveStringFunction(isSearching ? config.noResultsText : config.noChoicesText),
@@ -3591,26 +3630,26 @@ var Choices = /** @class */ (function () {
         };
         // new items
         items.forEach(addItemToFragment);
-        var addItems = !!fragment.childNodes.length;
-        if (this._isSelectOneElement && this._hasNonChoicePlaceholder) {
+        var addedItems = !!fragment.childNodes.length;
+        if (this._isSelectOneElement) {
             var existingItems = itemList.children.length;
-            if (addItems || existingItems > 1) {
+            if (addedItems || existingItems > 1) {
                 var placeholder = itemList.querySelector(getClassNamesSelector(config.classNames.placeholder));
                 if (placeholder) {
                     placeholder.remove();
                 }
             }
-            else if (!existingItems) {
-                addItems = true;
+            else if (!addedItems && !existingItems && this._placeholderValue) {
+                addedItems = true;
                 addItemToFragment(mapInputToChoice({
                     selected: true,
                     value: '',
-                    label: config.placeholderValue || '',
+                    label: this._placeholderValue,
                     placeholder: true,
                 }, false));
             }
         }
-        if (addItems) {
+        if (addedItems) {
             itemList.append(fragment);
             if (config.shouldSortItems && !this._isSelectOneElement) {
                 items.sort(config.sorter);
@@ -3721,9 +3760,7 @@ var Choices = /** @class */ (function () {
             _this._removeItem(itemToRemove);
             _this._triggerChange(itemToRemove.value);
             if (_this._isSelectOneElement && !_this._hasNonChoicePlaceholder) {
-                var placeholderChoice = _this._store.choices
-                    .reverse()
-                    .find(function (choice) { return !choice.disabled && choice.placeholder; });
+                var placeholderChoice = (_this.config.shouldSort ? _this._store.choices.reverse() : _this._store.choices).find(function (choice) { return choice.placeholder; });
                 if (placeholderChoice) {
                     _this._addItem(placeholderChoice);
                     _this.unhighlightAll();
@@ -3812,6 +3849,7 @@ var Choices = /** @class */ (function () {
     };
     Choices.prototype._loadChoices = function () {
         var _a;
+        var _this = this;
         var config = this.config;
         if (this._isTextElement) {
             // Assign preset items from passed object first
@@ -3820,7 +3858,7 @@ var Choices = /** @class */ (function () {
             if (this.passedElement.value) {
                 var elementItems = this.passedElement.value
                     .split(config.delimiter)
-                    .map(function (e) { return mapInputToChoice(e, false); });
+                    .map(function (e) { return mapInputToChoice(e, false, _this.config.allowHtmlUserInput); });
                 this._presetChoices = this._presetChoices.concat(elementItems);
             }
             this._presetChoices.forEach(function (choice) {
@@ -3886,8 +3924,12 @@ var Choices = /** @class */ (function () {
         var maxItemCount = config.maxItemCount, maxItemText = config.maxItemText;
         if (!config.singleModeForMultiSelect && maxItemCount > 0 && maxItemCount <= this._store.items.length) {
             this.choiceList.element.replaceChildren('');
+            this._notice = undefined;
             this._displayNotice(typeof maxItemText === 'function' ? maxItemText(maxItemCount) : maxItemText, NoticeTypes.addChoice);
             return false;
+        }
+        if (this._notice && this._notice.type === NoticeTypes.addChoice) {
+            this._clearNotice();
         }
         return true;
     };
@@ -3901,15 +3943,13 @@ var Choices = /** @class */ (function () {
         }
         if (canAddItem) {
             var foundChoice = this._store.choices.find(function (choice) { return config.valueComparer(choice.value, value); });
-            if (this._isSelectElement) {
-                // for exact matches, do not prompt to add it as a custom choice
-                if (foundChoice) {
+            if (foundChoice) {
+                if (this._isSelectElement) {
+                    // for exact matches, do not prompt to add it as a custom choice
                     this._displayNotice('', NoticeTypes.addChoice);
                     return false;
                 }
-            }
-            else if (this._isTextElement && !config.duplicateItemsAllowed) {
-                if (foundChoice) {
+                if (!config.duplicateItemsAllowed) {
                     canAddItem = false;
                     notice = resolveNoticeFunction(config.uniqueItemText, value);
                 }
@@ -4063,7 +4103,15 @@ var Choices = /** @class */ (function () {
         var wasPrintableChar = event.key.length === 1 ||
             (event.key.length === 2 && event.key.charCodeAt(0) >= 0xd800) ||
             event.key === 'Unidentified';
-        if (!this._isTextElement && !hasActiveDropdown) {
+        /*
+          We do not show the dropdown if focusing out with esc or navigating through input fields.
+          An activated search can still be opened with any other key.
+         */
+        if (!this._isTextElement &&
+            !hasActiveDropdown &&
+            keyCode !== KeyCodeMap.ESC_KEY &&
+            keyCode !== KeyCodeMap.TAB_KEY &&
+            keyCode !== KeyCodeMap.SHIFT_KEY) {
             this.showDropdown();
             if (!this.input.isFocussed && wasPrintableChar) {
                 /*
@@ -4079,19 +4127,19 @@ var Choices = /** @class */ (function () {
             }
         }
         switch (keyCode) {
-            case 65 /* KeyCodeMap.A_KEY */:
+            case KeyCodeMap.A_KEY:
                 return this._onSelectKey(event, this.itemList.element.hasChildNodes());
-            case 13 /* KeyCodeMap.ENTER_KEY */:
+            case KeyCodeMap.ENTER_KEY:
                 return this._onEnterKey(event, hasActiveDropdown);
-            case 27 /* KeyCodeMap.ESC_KEY */:
+            case KeyCodeMap.ESC_KEY:
                 return this._onEscapeKey(event, hasActiveDropdown);
-            case 38 /* KeyCodeMap.UP_KEY */:
-            case 33 /* KeyCodeMap.PAGE_UP_KEY */:
-            case 40 /* KeyCodeMap.DOWN_KEY */:
-            case 34 /* KeyCodeMap.PAGE_DOWN_KEY */:
+            case KeyCodeMap.UP_KEY:
+            case KeyCodeMap.PAGE_UP_KEY:
+            case KeyCodeMap.DOWN_KEY:
+            case KeyCodeMap.PAGE_DOWN_KEY:
                 return this._onDirectionKey(event, hasActiveDropdown);
-            case 8 /* KeyCodeMap.DELETE_KEY */:
-            case 46 /* KeyCodeMap.BACK_KEY */:
+            case KeyCodeMap.DELETE_KEY:
+            case KeyCodeMap.BACK_KEY:
                 return this._onDeleteKey(event, this._store.items, this.input.isFocussed);
         }
     };
@@ -4172,13 +4220,7 @@ var Choices = /** @class */ (function () {
                 if (!_this._canCreateItem(value)) {
                     return;
                 }
-                var sanitisedValue = sanitise(value);
-                var userValue = _this.config.allowHtmlUserInput || sanitisedValue === value ? value : { escaped: sanitisedValue, raw: value };
-                _this._addChoice(mapInputToChoice({
-                    value: userValue,
-                    label: userValue,
-                    selected: true,
-                }, false), true, true);
+                _this._addChoice(mapInputToChoice(value, false, _this.config.allowHtmlUserInput), true, true);
                 addedItem = true;
             }
             _this.clearInput();
@@ -4196,6 +4238,7 @@ var Choices = /** @class */ (function () {
         if (hasActiveDropdown) {
             event.stopPropagation();
             this.hideDropdown(true);
+            this._stopSearch();
             this.containerOuter.element.focus();
         }
     };
@@ -4205,8 +4248,8 @@ var Choices = /** @class */ (function () {
         if (hasActiveDropdown || this._isSelectOneElement) {
             this.showDropdown();
             this._canSearch = false;
-            var directionInt = keyCode === 40 /* KeyCodeMap.DOWN_KEY */ || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ ? 1 : -1;
-            var skipKey = event.metaKey || keyCode === 34 /* KeyCodeMap.PAGE_DOWN_KEY */ || keyCode === 33 /* KeyCodeMap.PAGE_UP_KEY */;
+            var directionInt = keyCode === KeyCodeMap.DOWN_KEY || keyCode === KeyCodeMap.PAGE_DOWN_KEY ? 1 : -1;
+            var skipKey = event.metaKey || keyCode === KeyCodeMap.PAGE_DOWN_KEY || keyCode === KeyCodeMap.PAGE_UP_KEY;
             var nextEl = void 0;
             if (skipKey) {
                 if (directionInt > 0) {
@@ -4371,17 +4414,18 @@ var Choices = /** @class */ (function () {
         var containerOuter = this.containerOuter;
         var blurWasWithinContainer = target && containerOuter.element.contains(target);
         if (blurWasWithinContainer && !this._isScrollingOnIe) {
-            var targetIsInput = target === this.input.element;
-            if (this._isTextElement || this._isSelectMultipleElement) {
-                if (targetIsInput) {
-                    containerOuter.removeFocusState();
-                    this.hideDropdown(true);
+            if (target === this.input.element) {
+                containerOuter.removeFocusState();
+                this.hideDropdown(true);
+                if (this._isTextElement || this._isSelectMultipleElement) {
                     this.unhighlightAll();
                 }
             }
-            else {
+            else if (target === this.containerOuter.element) {
+                // Remove the focus state when the past outerContainer was the target
                 containerOuter.removeFocusState();
-                if (targetIsInput || (target === containerOuter.element && !this._canSearch)) {
+                // Also close the dropdown if search is disabled
+                if (!this._canSearch) {
                     this.hideDropdown(true);
                 }
             }
@@ -4470,6 +4514,10 @@ var Choices = /** @class */ (function () {
             return;
         }
         this._store.dispatch(removeItem$1(item));
+        var notice = this._notice;
+        if (notice && notice.type === NoticeTypes.noChoices) {
+            this._clearNotice();
+        }
         this.passedElement.triggerEvent(EventType.removeItem, this._getChoiceForOutput(item));
     };
     Choices.prototype._addChoice = function (choice, withEvents, userTriggered) {
@@ -4479,8 +4527,7 @@ var Choices = /** @class */ (function () {
             throw new TypeError('Can not re-add a choice which has already been added');
         }
         var config = this.config;
-        if ((this._isSelectElement || !config.duplicateItemsAllowed) &&
-            this._store.choices.find(function (c) { return config.valueComparer(c.value, choice.value); })) {
+        if (!config.duplicateItemsAllowed && this._store.choices.find(function (c) { return config.valueComparer(c.value, choice.value); })) {
             return;
         }
         // Generate unique id, in-place update is required so chaining _addItem works as expected
@@ -4686,7 +4733,7 @@ var Choices = /** @class */ (function () {
             throw new TypeError("".concat(caller, " called for an element which has multiple instances of Choices initialised on it"));
         }
     };
-    Choices.version = '11.0.2';
+    Choices.version = '11.1.0';
     return Choices;
 }());
 

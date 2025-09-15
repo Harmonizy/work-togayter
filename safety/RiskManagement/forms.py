@@ -37,7 +37,7 @@ class HazardLogForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         initial = kwargs.get('initial', {})
-        if 'related_report_id' in initial:
+        if initial and 'related_report_id' in initial:
             base_report = BaseReport.objects.get(id = initial['related_report_id'])
             self.fields['related_report'].initial = initial['related_report_id']
             self.fields['source'].initial = HazardSourceChoices.REPORT
