@@ -26,15 +26,16 @@ def list(request):
     status_filter = request.GET.get('status', '').strip()
 
     reports = (BaseReport.objects
-            .select_related("recorder", "affiliation", "recorder__rank")
-            .prefetch_related("file_attachment", "image_attachment")
-            .order_by('-updated_at'))
+                            .select_related("recorder", "affiliation", "recorder__rank")
+                            .prefetch_related("file_attachment", "image_attachment")
+                            .order_by('-updated_at')
+    )
 
     # กรองตามสิทธิ์แบบ if/else ธรรมดา
     if request.user.is_superuser or request.user.groups.filter(name="SafetyCenterOfficer").exists():
         pass
     elif request.user.groups.filter(name="SafetyOfficer").exists():
-        if getattr(request.user, "affiliation_id", None):
+        if getattr(request.user, "affiliation_id", None):  # <------ เขียนแบบนี้แปลว่าอะไร
             reports = reports.filter(affiliation_id=request.user.affiliation_id)
         else:
             reports = reports.filter(recorder=request.user)

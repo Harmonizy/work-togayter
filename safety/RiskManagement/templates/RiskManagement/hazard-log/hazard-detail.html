@@ -5,12 +5,7 @@
 
 {% block extra_css %}
 <style>
-  .section-title { font-weight: 700; }
-  .meta-label { color:#6c757d; min-width: 160px; }
-  .attachment-img { max-height: 160px; object-fit: cover; cursor: pointer; }
-  .badge-status { font-size: 0.85rem; }
-  .modal-body img { max-height: 80vh; width: auto; }
-
+  
 </style>
 {% endblock %}
 
@@ -27,9 +22,9 @@
                 <div class="col-lg-12">
                     <div class="card" id="hazardList">
                         <div class="card-header border-0">
-                            <h4 class="mb-4">รายละเอียด Hazard Log</h4>
                             <div class="row mb-3">
                                 <div class="col-md-8">
+                                    <h4 class="mb-4">รายละเอียด Hazard Log</h4>
                                     <div class="row mb-3">
                                         <div class="col-md-4">
                                             <strong>หมวดหมู่:</strong> {{ hazard_log.category }}
@@ -163,24 +158,16 @@
                                     <div class="card-body">
                                         <div class="row mb-2">
                                             <div class="col-md-8">
-                                                <h5>{{ cap.order }}. {{ cap.title }}</h5>
+                                                <h5>{{ cap.order }}. {{ cap.title }} (<strong>กำหนด:</strong> {{ cap.due_date }})</h5>
                                             </div>
                                             <div class="col-md-4 text-md-end">
-                                                <span class="badge bg-secondary">{{ cap.get_status_display }}</span>
+                                                {% cap_status_badge cap.status %}
                                             </div>
                                         </div>
                                         <div class="row mb-2">
                                             <div class="col-md-12">
                                                 <strong>รายละเอียด:</strong><br>
-                                                {{ cap.description|linebreaksbr }}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <strong>วันครบกำหนด:</strong> {{ cap.due_date }}
-                                            </div>
-                                            <div class="col-md-6 text-md-end text-muted">
-                                                <small>สร้างเมื่อ: {{ cap.created_at|date:"d M Y" }}</small>
+                                                {{ cap.description|default_if_none:"ไม่มีรายละเอียด" |linebreaksbr }}
                                             </div>
                                         </div>
                                     </div>

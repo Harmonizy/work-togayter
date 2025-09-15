@@ -1,5 +1,6 @@
 {% extends "partials/base.html" %}
 {% load static %}
+{% load evaluate_tags %}
 {% block title %}รายละเอียดรายงาน | {{ base_report.title }}{% endblock %}
 
 {% block extra_css %}
@@ -10,7 +11,6 @@
 <div class="main-content">
   <div class="page-content">
     <div class="container-fluid">
-
       <!-- Header (แถบเหลือง) -->
       {% include "Report/safety-reports/detail/_banner_header.html" with base_report=base_report %}
 
@@ -49,8 +49,6 @@
                   <div>{% with phases=aviation.flight_phase.all %}{% if phases %}{% for fp in phases %}<span class="badge text-bg-light me-1 mb-1">{{ fp.name }}</span>{% endfor %}{% else %}-{% endif %}{% endwith %}</div>
                 </div>
               </div>
-              {% else %}
-              <div class="text-muted">- ไม่มีข้อมูลภาคอากาศสำหรับรายงานนี้ -</div>
               {% endif %}
             </div>
           </div>
@@ -66,8 +64,6 @@
                 <div class="col-md-6 d-flex flex-column flex-md-row"><div class="meta-label me-md-2">สาขา:</div><div>{{ ground.category|default:"-" }}</div></div>
                 <div class="col-md-6 d-flex flex-column flex-md-row"><div class="meta-label me-md-2">สถานที่โดยละเอียด:</div><div>{{ ground.location|default:"-" }}</div></div>
               </div>
-              {% else %}
-              <div class="text-muted">- ไม่มีข้อมูลภาคพื้นสำหรับรายงานนี้ -</div>
               {% endif %}
             </div>
           </div>
@@ -77,6 +73,9 @@
           <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
               <span class="section-title">ผลการประเมิน</span>
+              <div class="ms-auto text-end">
+                  {% select_questionset_for_evaluation base_report.id %}
+              </div>
             </div>
             <div class="card-body">
               {% if evaluation %}
@@ -123,7 +122,11 @@
                   <div class="text-muted">- ไม่มีรายการคำถาม/คำตอบ -</div>
                 {% endif %}
               {% else %}
-                <div class="text-muted">ไม่มีการประเมิน</div>
+              <div class="row gy-2 mb-3">
+                <div class="col-9">
+                  <div class="text-muted">ไม่มีการประเมิน </div>
+                </div>
+                
               {% endif %}
             </div>
           </div>

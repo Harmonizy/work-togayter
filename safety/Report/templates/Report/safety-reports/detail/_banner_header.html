@@ -7,19 +7,30 @@
             </div>
             <div>
               <h2 class="mb-1" style="line-height:1.25;">{{ base_report.title }}</h2>
+              
+              {% if base_report.priority %}
+                <span class="badge bg-primary fs-6">ความสำคัญ: {{ base_report.get_priority_display }}</span>
+              {% endif %}
+
+              <span class="badge bg-secondary fs-6">ปี: {{ base_report.fiscal_year }}</span>
+              <span class="badge bg-info text-dark fs-6">สถานะ: {{ base_report.get_status_display }}</span>
             </div>
           </div>
           <div class="d-flex gap-2 align-items-center flex-wrap">
-            {% if not  base_report.hazard_log.all.exists %}
-              <a href="{% url 'risk_management:hazard-log.create-by-report' base_report.id %}" >สร้าง Harzard - log</a>
+            {% if not base_report.hazard_log.all.exists %}
+              <button class="btn btn-outline-primary"
+                      onclick="window.location.href='{% url 'risk_management:hazard-log.create-by-report' base_report.id %}'">
+                สร้าง Harzard - log
+              </button>
             {% else %}
-              <a href="{% url 'risk_management:hazard-detail' base_report.hazard_log.all.first.id %}" >ดู Harzard - log ของ Report</a>
-            {%endif %}
-            {% if base_report.priority %}
-              <span class="badge text-bg-primary badge-status">ความสำคัญ: {{ base_report.get_priority_display }}</span>
+              <button class="btn btn-outline-secondary"
+                      onclick="window.location.href='{% url 'risk_management:hazard-detail' base_report.hazard_log.all.first.id %}'">
+                ดู Harzard - log ของ Report
+              </button>
             {% endif %}
-            <span class="badge text-bg-secondary badge-status">ปี: {{ base_report.fiscal_year }}</span>
-            <span class="badge text-bg-info badge-status">สถานะ: {{ base_report.get_status_display }}</span>
+
           </div>
+
+
         </div>
       </div>
