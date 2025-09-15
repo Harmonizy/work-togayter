@@ -1,25 +1,26 @@
 import { PipelineProcessor, ProcessorType } from './processor';
 import { EventEmitter } from '../util/eventEmitter';
-interface PipelineEvents<T> {
-    updated: (processor: PipelineProcessor<any, any>) => void;
+interface PipelineEvents<R> {
+    updated: <T, P>(processor: PipelineProcessor<T, P>) => void;
     afterRegister: () => void;
     propsUpdated: () => void;
-    afterProcess: (prev: T) => void;
-    error: (prev: T) => void;
+    afterProcess: (prev: R) => void;
+    error: <T>(prev: T) => void;
 }
-declare class Pipeline<T, P = unknown> extends EventEmitter<PipelineEvents<T>> {
+declare class Pipeline<R> extends EventEmitter<PipelineEvents<R>> {
     private readonly _steps;
     private cache;
     private lastProcessorIndexUpdated;
-    constructor(steps?: PipelineProcessor<any, any>[]);
+    constructor(steps?: PipelineProcessor<unknown, unknown>[]);
     clearCache(): void;
-    register(processor: PipelineProcessor<any, any>, priority?: number): void;
-    unregister(processor: PipelineProcessor<any, any>): void;
+    register<T, P>(processor: PipelineProcessor<T, P>, priority?: number): PipelineProcessor<T, P>;
+    tryRegister<T, P>(processor: PipelineProcessor<T, P>, priority?: number): PipelineProcessor<T, P> | undefined;
+    unregister<T, P>(processor: PipelineProcessor<T, P>): void;
     private addProcessorByPriority;
-    get steps(): PipelineProcessor<T, P>[];
-    getStepsByType(type: ProcessorType): PipelineProcessor<T, P>[];
+    get steps(): PipelineProcessor<unknown, unknown>[];
+    getStepsByType(type: ProcessorType): PipelineProcessor<unknown, unknown>[];
     private getSortedProcessorTypes;
-    process(data?: T): Promise<T>;
+    process(data?: R): Promise<R>;
     private findProcessorIndexByID;
     private setLastProcessorIndex;
     private processorPropsUpdated;

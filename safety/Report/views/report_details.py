@@ -18,38 +18,41 @@ def _expect_flags(report_type: str):
 def main_page(request, pk: int):
     base_report = get_object_or_404(
         BaseReport.objects
-        .prefetch_related(
-            Prefetch('image_attachment', queryset=Image.objects.order_by('-created_at')),
-            Prefetch('file_attachment', queryset=File.objects.order_by('-created_at')),
-            Prefetch('recommendation_attachment', queryset=Recommendation.objects.order_by('-created_at')),
-        )
-        .select_related('affiliation', 'recorder'),
+                        .prefetch_related(
+                            Prefetch('image_attachment', queryset=Image.objects.order_by('-created_at')),
+                            Prefetch('file_attachment', queryset=File.objects.order_by('-created_at')),
+                            Prefetch('recommendation_attachment', queryset=Recommendation.objects.order_by('-created_at')),
+                        )
+                        .select_related('affiliation', 'recorder'),
         pk=pk
     )
 
     aviation = (AviationReport.objects
-                .select_related('base_report', 'squadron', 'aircraft')
-                .prefetch_related('system', 'flight_phase')
-                .filter(base_report=base_report)
-                .first())
+                        .select_related('base_report', 'squadron', 'aircraft')
+                        .prefetch_related('system', 'flight_phase')
+                        .filter(base_report=base_report)
+                        .first()
+    )
 
     ground = (GroundReport.objects
-            .select_related('base_report', 'category')
-            .filter(base_report=base_report)
-            .first())
+                        .select_related('base_report', 'category')
+                        .filter(base_report=base_report)
+                        .first()
+    )
 
     evaluation = (BaseReportEvaluation.objects
-                .select_related('final_result__type', 'question_set', 'evaluator', 'report')
-                .prefetch_related(
-                    Prefetch(
-                        'answers',
-                        queryset=EvaluationAnswer.objects
-                                .select_related('question')
-                                .order_by('order')
-                    )
-                )
-                .filter(report=base_report)
-                .first())
+                        .select_related('final_result__type', 'question_set', 'evaluator', 'report')
+                        .prefetch_related(
+                            Prefetch(
+                                'answers',
+                                queryset=EvaluationAnswer.objects
+                                                    .select_related('question')
+                                                    .order_by('order')
+                            )
+                        )
+                        .filter(report=base_report)
+                        .first()
+    )
 
     flags = _expect_flags(base_report.report_type)
 
@@ -66,7 +69,9 @@ def main_page(request, pk: int):
 
         "report_type_label": base_report.get_report_type_display(),
         **flags,
-        "missing_ground": flags["is_ground"] and not ground,
-        "missing_aviation": flags["is_aviation"] and not aviation,
+        "missing_ground": flags["is_ground"] and not ground,  # <-----  คืออะไร
+        "missing_aviation": flags["is_aviation"] and not aviation,   # <-----  คืออะไร
     }
+    # is_aviation ต่าง กับ aviation อย่างไร
+    # ทำนองเดียวกับ is_ground ต่าง กับ ground อย่างไร
     return render(request, "Report/safety-reports/detail/report-detail.html", context)

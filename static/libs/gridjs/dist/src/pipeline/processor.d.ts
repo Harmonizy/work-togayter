@@ -11,16 +11,16 @@ export declare enum ProcessorType {
     Sort = 7,
     Limit = 8
 }
-interface PipelineProcessorEvents<T, P> {
-    propsUpdated: (processor: PipelineProcessor<T, P>) => void;
+interface PipelineProcessorEvents {
+    propsUpdated: <T, P>(processor: PipelineProcessor<T, P>) => void;
     beforeProcess: (...args: any[]) => void;
     afterProcess: (...args: any[]) => void;
 }
 export interface PipelineProcessorProps {
 }
-export declare abstract class PipelineProcessor<T, P extends Partial<PipelineProcessorProps>> extends EventEmitter<PipelineProcessorEvents<T, P>> {
+export declare abstract class PipelineProcessor<T, P extends Partial<PipelineProcessorProps>> extends EventEmitter<PipelineProcessorEvents> {
     readonly id: ID;
-    private readonly _props;
+    private _props;
     abstract get type(): ProcessorType;
     protected abstract _process(...args: any[]): T | Promise<T>;
     protected validateProps?(...args: any[]): void;

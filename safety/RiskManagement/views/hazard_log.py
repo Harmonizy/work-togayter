@@ -18,51 +18,35 @@ def list(request):
     return render(request, "RiskManagement/hazard-log/hazard-list.html", context)
 
 
-def create(request):
+def handle_create(request, initial_data=None):
     if request.method == "POST":
         form = HazardLogForm(request.POST)
         formset = CAPFormSet(request.POST)
         if form.is_valid():
             form.save()
             # formset.save()
-            return redirect("risk_management:hazard-log")  
+            return redirect("risk_management:hazard-log")
         else:
             print(form.errors)
     else:
-        form = HazardLogForm()
+        form = HazardLogForm(initial=initial_data)
         formset = CAPFormSet()
 
     context = {
         "form": form,
-        'formset': formset,
+        "formset": formset,
         "title": "เพิ่มรายการอันตราย",
         "HazardSourceChoices": HazardSourceChoices,
     }
     return render(request, "RiskManagement/hazard-log/hazard-create.html", context)
 
 
+def create(request):
+    return handle_create(request)
+
+
 def create_by_report(request, report_id):
-    if request.method == "POST":
-        form = HazardLogForm(request.POST)
-        formset = CAPFormSet(request.POST)
-        if form.is_valid():
-            form.save()
-            # formset.save()
-            return redirect("risk_management:hazard-log")  
-        else:
-            print(form.errors)
-    else:
-        form = HazardLogForm(initial={"related_report_id": report_id})
-        formset = CAPFormSet()
-
-    context = {
-        "form": form,
-        'formset': formset,
-        "title": "เพิ่มรายการอันตราย",
-        "HazardSourceChoices": HazardSourceChoices,
-    }
-    return render(request, "RiskManagement/hazard-log/hazard-log-form.html", context)
-
+    return handle_create(request, initial_data={"related_report_id": report_id})
 
 
 @require_POST

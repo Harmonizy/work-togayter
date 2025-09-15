@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Max
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.urls import reverse
 
 from safety.Data.models import Event
 from common.RTAFUser.models.RTAFUser import RTAFUser, Affiliation
@@ -52,6 +53,9 @@ class HazardLog(models.Model):
 
     def __str__(self):
         return f"{self.code} - {self.category.event.name}"
+    
+    def get_absolute_url(self):
+        return reverse("risk_management:hazard-detail", kwargs={"id": self.pk})
     
     def save(self, *args, **kwargs):
         if self.id is None and not self.code:

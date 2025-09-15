@@ -5,3 +5,7 @@ Website: https://themesbrand.com/
 Contact: support@themesbrand.com
 File: Custom Css File
 */
+.menu-divider {
+  border-top: 1px solid #ccc;
+  margin: 0.5rem -1rem 0.5rem 0.5rem;
+}

@@ -27,6 +27,7 @@ export interface Config {
     header?: Header;
     from: HTMLElement;
     storage: Storage<any>;
+    processingThrottleMs: number;
     pipeline: Pipeline<Tabular>;
     autoWidth: boolean;
     width: string;

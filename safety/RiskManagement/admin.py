@@ -16,14 +16,13 @@ class HazardCategoryAdmin(admin.ModelAdmin):
 class CAPInline(admin.TabularInline):
     model = CAP
     extra = 0
-    fields = ("title", "status", "due_date")
+    fields = ("order", "title", "status", "due_date")
     show_change_link = True
 
 
 @admin.register(HazardLog)
 class HazardLogAdmin(admin.ModelAdmin):
-    list_display = (
-        "category", "code", "affiliation", "status", "inspect", "initial_risk_level", "residual_risk_level",)
+    list_display = ("category", "code", "affiliation", "status", "inspect", "initial_risk_level", "residual_risk_level",)
     list_filter = ("category", "status", "inspect", "affiliation")
     search_fields = ("code", "affiliation__name", "assign_to__first_name", "affiliation__short_name")
     date_hierarchy = "date"

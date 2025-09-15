@@ -1,5 +1,6 @@
 {% extends "partials/base.html" %}
 {% load static %}
+{% load evaluate_tags %}
 {% block title %}รายละเอียดรายงาน | {{ base_report.title }}{% endblock %}
 
 {% block extra_css %}
@@ -9,9 +10,8 @@
 {% block content %}
 <div class="main-content" style="font-size: 1rem;">
   <div class="page-content">
-    <div class="container-fluid fs-base"><!-- use CSS class instead of inline font-size -->
-
-      {# Header (แถบเหลือง) #}
+    <div class="container-fluid">
+      <!-- Header (แถบเหลือง) -->
       {% include "Report/safety-reports/detail/_banner_header.html" with base_report=base_report %}
 
       <div class="row g-4">
@@ -109,6 +109,9 @@
           <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
               <span class="section-title">ผลการประเมิน</span>
+              <div class="ms-auto text-end">
+                  {% select_questionset_for_evaluation base_report.id %}
+              </div>
             </div>
             <div class="card-body">
               {% if evaluation %}
@@ -177,7 +180,11 @@
                   <div class="text-muted">- ไม่มีรายการคำถาม/คำตอบ -</div>
                 {% endif %}
               {% else %}
-                <div class="text-muted">ไม่มีการประเมิน</div>
+              <div class="row gy-2 mb-3">
+                <div class="col-9">
+                  <div class="text-muted">ไม่มีการประเมิน </div>
+                </div>
+                
               {% endif %}
             </div>
           </div>
