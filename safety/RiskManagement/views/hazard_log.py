@@ -38,7 +38,7 @@ def create(request):
         "title": "เพิ่มรายการอันตราย",
         "HazardSourceChoices": HazardSourceChoices,
     }
-    return render(request, "RiskManagement/hazard-log/hazard-log-form.html", context)
+    return render(request, "RiskManagement/hazard-log/hazard-create.html", context)
 
 
 def create_by_report(request, report_id):

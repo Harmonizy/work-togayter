@@ -32,12 +32,12 @@ class HazardLog(models.Model):
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=HazardLogStatusChoices.choices, default=HazardLogStatusChoices.OPEN, null=True, blank=True)
     inspect = models.CharField(verbose_name="การสอบสวน", max_length=1, choices=InspectChoices.choices, default=InspectChoices.START_INVESTIGATION, null=True, blank=True)
 
-    initial_likelihood = models.IntegerField(verbose_name="โอกาสเริ่มต้น", choices=LikelihoodChoices.choices, default=LikelihoodChoices.POSSIBLE, null=True, blank=True)
-    initial_severity = models.IntegerField(verbose_name="ความรุนแรงเริ่มต้น", choices=SeverityChoices.choices, default=SeverityChoices.MODERATE, null=True, blank=True)
+    initial_likelihood = models.IntegerField(verbose_name="โอกาสเริ่มต้น", choices=LikelihoodChoices.choices, default=LikelihoodChoices.RARE, null=True, blank=True)
+    initial_severity = models.IntegerField(verbose_name="ความรุนแรงเริ่มต้น", choices=SeverityChoices.choices, default=SeverityChoices.MINOR, null=True, blank=True)
     initial_risk_level = models.IntegerField(verbose_name="ระดับความเสี่ยงเริ่มต้น", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
 
-    residual_likelihood = models.IntegerField(verbose_name="โอกาสหลังแก้ไข",choices=LikelihoodChoices.choices, default=LikelihoodChoices.POSSIBLE, null=True, blank=True)
-    residual_severity = models.IntegerField(verbose_name="ความรุนแรงหลังแก้ไข", choices=SeverityChoices.choices, default=SeverityChoices.MODERATE, null=True, blank=True)
+    residual_likelihood = models.IntegerField(verbose_name="โอกาสหลังแก้ไข",choices=LikelihoodChoices.choices, null=True, blank=True)
+    residual_severity = models.IntegerField(verbose_name="ความรุนแรงหลังแก้ไข", choices=SeverityChoices.choices, null=True, blank=True)
     residual_risk_level = models.IntegerField(verbose_name="ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
 
     source = models.IntegerField(verbose_name="แหล่งที่มา", choices=HazardSourceChoices.choices, null=True, blank=True)

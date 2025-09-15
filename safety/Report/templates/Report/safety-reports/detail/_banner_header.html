@@ -16,10 +16,10 @@
               <a href="{% url 'risk_management:hazard-detail' base_report.hazard_log.all.first.id %}" >ดู Harzard - log ของ Report</a>
             {%endif %}
             {% if base_report.priority %}
-              <span class="badge text-bg-primary badge-status">ความสำคัญ: {{ base_report.get_priority_display }}</span>
+              <span class="text-bg-primary badge-status">ความสำคัญ: {{ base_report.get_priority_display }}</span>
             {% endif %}
-            <span class="badge text-bg-secondary badge-status">ปี: {{ base_report.fiscal_year }}</span>
-            <span class="badge text-bg-info badge-status">สถานะ: {{ base_report.get_status_display }}</span>
+            <span class="text-bg-secondary badge-status">ปี: {{ base_report.fiscal_year }}</span>
+            <span class="text-bg-info badge-status">สถานะ: {{ base_report.get_status_display }}</span>
           </div>
         </div>
       </div>

@@ -27,8 +27,8 @@ class HazardLogForm(forms.ModelForm):
             'inspect': single_select_widget,
             'initial_likelihood': single_select_widget,
             'initial_severity': single_select_widget,
-            'residual_likelihood': single_select_widget,
-            'residual_severity': single_select_widget,
+            # 'residual_likelihood': single_select_widget,
+            # 'residual_severity': single_select_widget,
             'source': single_select_widget,
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เช่น อาคารซ่อมบำรุง โซน A'}),
@@ -65,14 +65,14 @@ class HazardLogForm(forms.ModelForm):
                 Column('inspect', css_class='form-group col-md-2 mb-0'),
                 Column('initial_likelihood', css_class='form-group col-md-2 mb-0'),
                 Column('initial_severity', css_class='form-group col-md-2 mb-0'),
-                Column('source', css_class='form-group col-md-2 mb-0'),
-                Column('related_report', css_class='form-group col-md-4 mb-0'),
-            ),
-            Row(
                 Column('status', css_class='form-group col-md-2 mb-0'),
-                Column('residual_likelihood', css_class='form-group col-md-2 mb-0'),
-                Column('residual_severity', css_class='form-group col-md-2 mb-0'),
+                Column('source', css_class='form-group col-md-2 mb-0'),
+                Column('related_report', css_class='form-group col-md-2 mb-0'),
             ),
+            # Row(
+            #     # Column('residual_likelihood', css_class='form-group col-md-2 mb-0'),
+            #     # Column('residual_severity', css_class='form-group col-md-2 mb-0'),
+            # ),
             'note',
         )
 
