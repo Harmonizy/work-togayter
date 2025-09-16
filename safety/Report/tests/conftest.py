@@ -14,6 +14,21 @@ from ...Data.tests.conftest import category1, category2, aircraft, aircraft_boei
 
 
 @pytest.fixture
+def base_payload(affiliation):
+    payload = {
+        "base_form-report_type": "hazard_ground",
+        "base_form-affiliation": str(affiliation.id),
+        "base_form-title": "Unit test report", 
+        "base_form-content": "Auto content from test",
+        # "base_form-event_date": "2025-09-16",    
+
+        "priority": "L",
+    }
+
+    return payload
+
+
+@pytest.fixture
 def base_report(user):
     br = BaseReport.objects.create(
         id=1,
