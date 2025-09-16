@@ -11,7 +11,8 @@
 <div class="main-content" style="font-size: 1rem;">
   <div class="page-content">
     <div class="container-fluid">
-      <!-- Header (แถบเหลือง) -->
+
+      {# ===== Header (แถบเหลือง) ===== #}
       {% include "Report/safety-reports/detail/_banner_header.html" with base_report=base_report %}
 
       <div class="row g-4">
@@ -105,14 +106,15 @@
           </div>
           {% endif %}
 
-          {# ผลการประเมิน #}
+          {# ผลการประเมิน (Fixed closing tags + consistent layout) #}
           <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
               <span class="section-title">ผลการประเมิน</span>
-              <div class="ms-auto text-end">
-                  {% select_questionset_for_evaluation base_report.id %}
+              <div class="ms-auto">
+                {% select_questionset_for_evaluation base_report.id %}
               </div>
             </div>
+
             <div class="card-body">
               {% if evaluation %}
                 <div class="row gy-2 mb-3">
@@ -180,18 +182,18 @@
                   <div class="text-muted">- ไม่มีรายการคำถาม/คำตอบ -</div>
                 {% endif %}
               {% else %}
-              <div class="row gy-2 mb-3">
-                <div class="col-9">
-                  <div class="text-muted">ไม่มีการประเมิน </div>
+                <div class="row gy-2 mb-0">
+                  <div class="col-12">
+                    <div class="text-muted">ไม่มีการประเมิน</div>
+                  </div>
                 </div>
-                
               {% endif %}
             </div>
           </div>
 
           {# คำแนะนำเพิ่มเติม #}
           <div class="card mb-4">
-            <div class="card-header"><span class="section-title">คำแนะนำเพิ่มเติม</span></div>
+            <div class="card-header section-title">คำแนะนำเพิ่มเติม</div>
             <div class="card-body">
               {% if recommends %}
               <ul class="list-group">
@@ -224,7 +226,7 @@
         <div class="col-lg-3 order-2">
 
           {# คำสำคัญ #}
-          <div class="card sidebar-card mb-4">
+          <div class="card mb-4">
             <div class="card-header section-title">คำสำคัญ (Keywords)</div>
             <div class="card-body">
               {% with kws=base_report.keywords.all %}
@@ -240,24 +242,23 @@
           </div>
 
           {# รูปภาพ #}
-          <div class="card sidebar-card mb-4">
+          <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center section-title">
+              <span>รูปภาพ</span>
+              {% if images %}
+                <a href="#" class="small" data-bs-toggle="modal" data-bs-target="#imageGalleryModal">
+                  ดูทั้งหมด ({{ images|length }})
+                </a>
+              {% endif %}
+            </div>
             <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-2 section-title">
-                รูปภาพ
-                {% if images %}
-                  <a href="#" class="small" data-bs-toggle="modal" data-bs-target="#imageGalleryModal">
-                    ดูทั้งหมด ({{ images|length }})
-                  </a>
-                {% endif %}
-              </div>
-
               {% if images %}
                 <div class="row row-cols-3 row-cols-sm-4 row-cols-lg-3 g-2">
                   {% for img in images|slice:":6" %}
                   <div class="col">
                     <img
                       src="{{ img.image.url }}"
-                      class="thumb w-100"
+                      class="thumb w-100 img-fluid"
                       alt="image"
                       data-bs-toggle="modal"
                       data-bs-target="#imageGalleryModal">
@@ -274,9 +275,9 @@
           </div>
 
           {# ไฟล์แนบ #}
-          <div class="card sidebar-card mb-4">
+          <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center section-title">
-              ไฟล์แนบ (Attachments)
+              <span>ไฟล์แนบ (Attachments)</span>
             </div>
             <div class="card-body">
               {% if files %}
@@ -285,7 +286,9 @@
                   <li class="list-group-item px-0 d-flex align-items-start justify-content-between">
                     <div class="me-2">
                       <div class="text-truncate-1">
-                        <a href="{{ f.file.url }}" target="_blank" rel="noopener">{{ f.file.name|slice:"-50:" }}</a>
+                        <a href="{{ f.file.url }}" target="_blank" rel="noopener">
+                          {{ f.file.name|slice:"-60:" }}
+                        </a>
                       </div>
                       {% if f.comment %}
                         <div class="small text-muted text-truncate-1">{{ f.comment }}</div>
@@ -309,7 +312,7 @@
   </div>
 </div>
 
-{# Modal แกลเลอรีรูปภาพ #}
+{# ===== Modal แกลเลอรีรูปภาพ ===== #}
 {% if images %}
 <div class="modal fade" id="imageGalleryModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">

@@ -52,7 +52,7 @@
     <div class="col-lg-8">
       <div class="card">
         <div id="qa-thread" class="border rounded p-3 bg-light"
-             style="max-height:70vh; overflow-y:auto;">
+            style="max-height:70vh; overflow-y:auto;">
           <!-- History -->
           <template x-for="(entry, index) in history" :key="index">
             <div class="mb-3">
@@ -93,13 +93,22 @@
               <p class="mb-3" x-text="current.description"></p>
 
               <div class="position-sticky bg-white pt-2 mt-2"
-                   style="bottom:0; border-top:1px dashed rgba(0,0,0,.1);">
+                  style="bottom:0; border-top:1px dashed rgba(0,0,0,.1);">
                 <div class="d-flex justify-content-end">
                   <button class="btn btn-primary" @click="submitAnswers()" x-show="!submitted">
                     บันทึกผลการประเมิน
                   </button>
                 </div>
-                <div class="text-success mt-2 fw-semibold" x-show="submitted">บันทึกเรียบร้อย</div>
+                <div class="row">
+                  <div class="col-3">
+                    <a href="{% url 'report:safety-report.detail' report.id %}">
+                      <div class="btn btn-primary mt-2 ms-2 fw-semibold" x-show="submitted">ดูรายละเอียด</div>
+                    </a>
+                  </div>
+                  <div class="col-4">
+                    <div class="text-success mt-2 fw-semibold" x-show="submitted">บันทึกเรียบร้อย</div>
+                  </div>
+                </div>
               </div>
             </div>
           </template>
