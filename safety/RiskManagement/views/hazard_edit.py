@@ -13,7 +13,7 @@ def update(request, pk):
         if form.is_valid() and formset.is_valid():
             form.save()
             formset.save()
-            return redirect('your-success-url')  # replace with your success redirect
+            return redirect('risk_management:hazard-log')
 
     else:
         form = HazardLogForm(instance=hazard_log)

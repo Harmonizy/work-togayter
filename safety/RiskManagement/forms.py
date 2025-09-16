@@ -42,6 +42,7 @@ class HazardLogForm(forms.ModelForm):
             self.fields['related_report'].initial = initial['related_report_id']
             self.fields['source'].initial = HazardSourceChoices.REPORT
             self.fields['title'].initial = base_report.title
+            self.fields['affiliation'].initial = base_report.affiliation
             self.fields['description'].initial = base_report.content
             
 

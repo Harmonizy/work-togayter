@@ -46,7 +46,7 @@ class BaseReportForm(forms.ModelForm):
         if report_type:
             self.fields["report_type"].choices = [(choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type]
         if affiliation:
-            self.fields['affiliation'].queryset = self.fields['affiliation'].queryset.filter(id=affiliation.id)
+            self.fields['affiliation'].queryset = self.fields['affiliation'].queryset.filter(id=affiliation)
 
         self.helper.layout = Layout(
             Row(
