@@ -4,7 +4,7 @@
         <option value="" disabled selected>เลือกชุดคำถาม</option>
         {% for qs in question_sets %}
         {% if qs.start_question %}
-            <option value="{{ qs.start_question.id }}">{{ forloop.counter }}. {{ qs.name }}</option>
+            <option value="{{ qs.id }}">{{ forloop.counter }}. {{ qs.name }}</option>
         {% endif %}
         {% endfor %}
     </select>
@@ -19,9 +19,9 @@
 <script>
   function redirectToEvaluate(reportId) {
     const select = document.getElementById("questionset-select");
-    const questionId = select.value;
-    if (questionId) {
-      window.location.href = `/safety-evaluate/evaluate-main/${reportId}/${questionId}/`;
+    const questionSetId = select.value;
+    if (questionSetId) {
+      window.location.href = `/safety-evaluate/evaluate-main/${reportId}/${questionSetId}/`;
     } else {
       alert("กรุณาเลือกชุดคำถามก่อนดำเนินการประเมิน");
     }
