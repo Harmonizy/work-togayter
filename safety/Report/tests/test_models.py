@@ -2,16 +2,9 @@ from django.urls import reverse
 
 import pytest
 
-from ..models import (
-    BaseReport, GroundReport, AviationReport
-)
-from ..choices import (
-    ReportTypeChoices, ReportStatusChoices, DamageTypeChoices,
-    MissionTypeChoices, ReportTypeChoices, InjuryTypeChoices
-)
-from safety.Data.models import (
-    Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory
-)
+from ..models import (BaseReport, GroundReport, AviationReport)
+from ..choices import (ReportTypeChoices, ReportStatusChoices, DamageTypeChoices, ReportTypeChoices, InjuryLevelChoices)
+from safety.Data.models import (Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory)
 
 
 @pytest.mark.django_db
@@ -97,7 +90,6 @@ def test_aviation_incident_report_creation(user, squadron, base_report):
 #     safety_report = SafetyReport.objects.create(
 #         base_report=base_report,
 #         squadron=squadron,
-#         mission_type=MissionTypeChoices.AIR,
 #         report_type=ReportTypeChoices.INCIDENT,
 #         aircraft=aircraft,
 #         damage_level=DamageTypeChoices.MAJOR,

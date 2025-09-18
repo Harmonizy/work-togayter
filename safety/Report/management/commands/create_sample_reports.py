@@ -11,8 +11,7 @@ from safety.Report.models import (
     BaseReport, GroundReport, AviationReport, SafetyReport,
     SafetyReportAircraftSystem, SafetyReportFlightPhase, SafetyReportEvent
 )
-from safety.Report.choices import (
-    MissionTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryTypeChoices, ReportStatusChoices
+from safety.Report.choices import (ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices
 )
 
 # หัวข้อภาษาไทยจำลอง
@@ -129,11 +128,10 @@ class Command(BaseCommand):
             safety = SafetyReport.objects.create(
                 base_report=base_safety,
                 squadron=random.choice(squadrons),
-                mission_type=random.choice(MissionTypeChoices.values),
                 report_type=random.choice(ReportTypeChoices.values),
                 aircraft=random.choice(aircrafts),
                 damage_level=random.choice(DamageTypeChoices.values),
-                injury_type=random.choice(InjuryTypeChoices.values),
+                injury_type=random.choice(InjuryLevelChoices.values),
                 location=random.choice(locations),
                 latitude=random.uniform(13.5, 17.5),
                 longitude=random.uniform(100.5, 104.5),
