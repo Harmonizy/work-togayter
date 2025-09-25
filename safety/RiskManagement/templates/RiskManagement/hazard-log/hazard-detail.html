@@ -51,10 +51,11 @@
                   <div class="col-md-4">
                     <div class="row g-3">
                       <div class="col-6">
-                        <img src="{% static 'images/risk-matrix/5-5.jpg' %}" class="img-fluid risk-matrix-img" alt="Initial Risk Matrix">
+                        {% risk_box hazard_log.initial_risk_level "ก่อนแก้ไข" %}
                       </div>
                       <div class="col-6">
-                        <img src="{% static 'images/risk-matrix/2-1.jpg' %}" class="img-fluid risk-matrix-img" alt="Residual Risk Matrix">
+                        {% risk_box hazard_log.residual_risk_level "หลังแก้ไข" %}
+                      
                       </div>
                     </div>
                   </div>
