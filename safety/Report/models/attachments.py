@@ -40,7 +40,7 @@ def get_upload_to(instance, filename):
 
 
 class Image(BaseContentType):
-    image = models.ImageField(verbose_name="รูปภาพ", upload_to=get_upload_to)
+    image = models.ImageField(verbose_name="รูปภาพ", upload_to=get_upload_to, max_length=255)
 
     def __str__(self):
         return f"Image"
@@ -54,7 +54,7 @@ class Recommendation(BaseContentType):
 
 
 class File(BaseContentType):
-    file = models.FileField(verbose_name="ไฟล์", upload_to=get_upload_to)
+    file = models.FileField(verbose_name="ไฟล์", upload_to=get_upload_to, max_length=255)
 
     def __str__(self):
         return f"File"

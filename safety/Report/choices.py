@@ -1,9 +1,5 @@
 from django.db import models
 
-class MissionTypeChoices(models.TextChoices):
-    AVIATION = "A", "ภาคอากาศ"
-    GROUND = "G", "ภาคพื้น"
-
 
 class ReportTypeChoices(models.TextChoices):
     SIMPLE = 'S', 'รายงานขั้นต้น'
@@ -42,7 +38,7 @@ class DamageTypeChoices(models.IntegerChoices):
     BROKEN = 3, "ชั้นจำหน่าย"
 
 
-class InjuryTypeChoices(models.IntegerChoices):
+class InjuryLevelChoices(models.IntegerChoices):
     SAFE = 1, "ปลอดภัย"
     MINOR = 2, "บาดเจ็บเล็กน้อย"
     SEVERE = 3, "บาดเจ็บสาหัส"
@@ -57,3 +53,13 @@ class OrganizationExpectationChoice(models.TextChoices):
 class BelowTheoryChoice(models.TextChoices):
     SAFETY_BEHAVIOR = "S", "SafetyBehavior"
     VULNERABILITY = "V", "VulnerabilityTheory"
+
+
+class RoleTypeChoices(models.TextChoices):
+    INJURY = "I", "ผู้บาดเจ็บ"
+    DEATH = "D", "ผู้เสียชีวิต"
+    PILOT = "P", "นักบิน"
+    PASSENGER = "G", "ผู้โดยสาร"
+    TEACHER = "T", "ครูการบิน"
+    STUDENT = "S", "ศิษย์การบิน"
+

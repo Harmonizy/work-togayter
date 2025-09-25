@@ -131,7 +131,6 @@ def safety_doc(request, pk):
         '##recorder##': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
         '##position##': str(base_report.recorder.position) if not base_report.anonymous else '-',
         '##date##': thai_date(date.today()),
-        '##mission-type##': base_report.get_mission_type_display() if base_report.mission_type else '',
         '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
         'Rank': "พลอากาศตรี",
         'Name': "สุนทร สวัสดิ์",

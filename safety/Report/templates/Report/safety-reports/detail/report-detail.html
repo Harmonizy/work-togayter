@@ -285,8 +285,9 @@
                   {% for f in files %}
                   <li class="list-group-item px-0 d-flex align-items-start justify-content-between">
                     <div class="me-2">
-                      <div class="text-truncate-1">
-                        <a href="{{ f.file.url }}" target="_blank" rel="noopener">
+                      <div class="text-truncate" style="max-width: 250px;">
+                        <a href="{{ f.file.url }}" target="_blank" rel="noopener" class="d-inline-block text-truncate w-100" 
+                          title="{{ f.file.name }}">
                           {{ f.file.name|slice:"-60:" }}
                         </a>
                       </div>
