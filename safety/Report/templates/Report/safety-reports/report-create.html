@@ -9,8 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
 
-<style>    
-   
+<style>
     .django-ckeditor-widget {
         width: 100% !important;
     }
@@ -42,22 +41,22 @@
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
                 
                 <div class="form-check my-3">
-                    <input class="form-check-input" type="checkbox" id="surveyCheck" name="surveyCheck" value="1">
-                    <label class="form-check-label" for="surveyCheck">
+                    <input class="form-check-input" type="radio" id="surveyOption1" name="surveyOption" value="1">
+                    <label class="form-check-label" for="surveyOption1">
                         ฉันยินยอมเข้าร่วมการทำแบบประเมิน
                     </label>
                 </div>
 
                 <div class="form-check my-3">
-                    <input class="form-check-input" type="checkbox" id="surveyCheck" name="surveyCheck" value="2">
-                    <label class="form-check-label" for="surveyCheck">
+                    <input class="form-check-input" type="radio" id="surveyOption2" name="surveyOption" value="2">
+                    <label class="form-check-label" for="surveyOption2">
                         การกระทำ/การละเว้นการกระทำโดยไม่ตั้งใจ
                     </label>
                 </div>
 
                 <div class="form-check my-3">
-                    <input class="form-check-input" type="checkbox" id="surveyCheck" name="surveyCheck" value="3">
-                    <label class="form-check-label" for="surveyCheck">
+                    <input class="form-check-input" type="radio" id="surveyOption3" name="surveyOption" value="3">
+                    <label class="form-check-label" for="surveyOption3">
                         การกระทำ/การละเว้นการกระทำโดยตั้งใจ
                     </label>
                 </div>

@@ -79,8 +79,6 @@ def get_next_question(request):
         return JsonResponse({'type': 'end', 'message': 'No next question or result.'})
 
 
-
-
 @require_POST
 def submit_evaluation(request):
 

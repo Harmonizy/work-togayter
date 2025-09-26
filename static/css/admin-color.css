@@ -1,0 +1,160 @@
+#branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: #fff;
+}
+
+#header {
+    /* make gradient green */
+    background: linear-gradient(to right, #2e7d32 0%, #43a047 100%);
+    color: #fff;
+    padding: 20px 45px !important;
+}
+#header a:link, #header a:visited {
+    color: #fff;
+}
+
+#header a:hover {
+    color: #fff;
+}
+
+div.breadcrumbs {
+    background: #66bb6a;
+    color: #c8e6c9;
+}
+div.breadcrumbs a.active {
+    color: #c8e6c9 !important;
+    font-weight: 300;
+}
+
+div.breadcrumbs a:focus, div.breadcrumbs a:hover {
+    color: #c8e6c9 !important;
+    font-weight: 300;
+}
+
+.select2-container--admin-autocomplete .select2-results__option--highlighted[aria-selected] {
+    background-color: #1b5e20;
+}
+
+.paginator a:link, .paginator a:visited {
+    background: #1b5e20;
+}
+
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: #66bb6a;
+}
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background: #4caf50;
+}
+
+.module h2, .module caption, .inline-group h2 {    
+    background: linear-gradient(to right, #2e7d32 0%, #66bb6a 100%);
+}
+#user-tools a:focus, #user-tools a:hover {
+    border: 0;
+    color: #c8e6c9;
+}
+
+.selector-chosen h2 {
+    background: #66bb6a !important;
+}
+
+.calendar td.selected a {
+    background: #66bb6a !important;
+}
+
+.calendar td a:focus, .timelist a:focus,
+.calendar td a:hover, .timelist a:hover {
+    background: #66bb6a !important;
+}
+
+#changelist-filter li.selected a {
+    color: #1b5e20;
+}
+
+fieldset.collapsed .collapse-toggle {
+    color: #1b5e20;
+}
+
+a:link, a:visited {
+    color: #388e3c;
+}
+
+a:focus, a:hover {
+    color: #4caf50;
+}
+
+table thead th.sorted .sortoptions a.sortremove:focus:after,
+table thead th.sorted .sortoptions a.sortremove:hover:after {
+    color: #1b5e20;
+}
+
+a.active.selector-chooseall:focus, a.active.selector-clearall:focus,
+a.active.selector-chooseall:hover, a.active.selector-clearall:hover {
+    color: #4caf50;
+}
+
+.calendar td a:active, .timelist a:active {
+    background: #1b5e20;
+}
+
+.change-list ul.toplinks .date-back a:focus,
+.change-list ul.toplinks .date-back a:hover {
+    color: #145a32;
+}
+
+.paginator a.showall:focus, .paginator a.showall:hover {
+    color: #145a32;
+}
+
+.paginator a:focus, .paginator a:hover {
+    background: #145a32;
+}
+
+#changelist-filter a:focus, #changelist-filter a:hover,
+#changelist-filter li.selected a:focus,
+#changelist-filter li.selected a:hover {
+    color: #145a32;
+}
+
+.calendar td a:active, .timelist a:active {
+    background: #1b5e20;
+    color: white;
+}
+
+.calendar caption, .calendarbox h2 {
+    background: #4caf50;
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: #388e3c;
+}
+
+.button.default:hover, input[type=submit].default:hover {
+    background: #1b5e20;
+}
+
+.select2-container--admin-autocomplete .select2-results__option--highlighted[aria-selected] {
+    background-color: #1b5e20;
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: #388e3c;
+}
+
+.object-tools a:focus, .object-tools a:hover {
+    background-color: #1b5e20;
+}
+
+input[type=file]::-webkit-file-upload-button:hover {
+    border: 0;
+    background: #1b5e20;
+}
+
+#changelist-filter {
+    top: -250px;
+    right: 15px;
+}
+
+#changelist-filter h2 {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}

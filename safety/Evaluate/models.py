@@ -41,7 +41,6 @@ class QuestionSet(models.Model):
         return self.name
     
 
-
 class EvaluationQuestion(models.Model):
     question_set = models.ForeignKey(QuestionSet, related_name='questions', on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField(verbose_name="คำถามประเมิน", max_length=256)

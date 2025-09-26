@@ -1,0 +1,185 @@
+// Color Variables (green theme)
+$green-dark: #1b5e20;
+$green-medium-dark: #2e7d32;
+$green-medium: #388e3c;
+$green-medium-light: #43a047;
+$green-light: #66bb6a;
+$green-lighter: #c8e6c9;
+$green-text-dark: #145a32;
+$green-text-medium: #4caf50;
+$white: #fff;
+$gray-dark: #444;
+$gray-medium: #777;
+$gray-light: #999;
+$gray-hover: #222;
+
+#branding {
+  h1, h1 a:link, h1 a:visited {
+    color: $white;
+  }
+}
+
+#header {
+  background: linear-gradient(to right, $green-medium-dark 0%, $green-medium-light 100%);
+  color: $white;
+  padding: 20px 45px !important;
+
+  a:link, a:visited {
+    color: $white;
+  }
+  a:hover {
+    color: $white;
+  }
+}
+
+div.breadcrumbs {
+  background: $green-light;
+  color: $green-lighter;
+
+  a.active {
+    color: $green-lighter !important;
+    font-weight: 300;
+  }
+
+  a:focus, a:hover {
+    color: $green-lighter !important;
+    font-weight: 300;
+  }
+}
+
+.select2-container--admin-autocomplete {
+  .select2-results__option--highlighted[aria-selected] {
+    background-color: $green-dark;
+  }
+}
+
+.paginator {
+  a:link, a:visited {
+    background: $green-dark;
+  }
+  a.showall:focus, a.showall:hover {
+    color: $green-text-dark;
+  }
+  a:focus, a:hover {
+    background: $green-text-dark;
+  }
+}
+
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+  background: $green-light;
+  &:hover {
+    background: $green-medium;
+  }
+}
+
+.module {
+  h2, caption, .inline-group h2 {
+    background: linear-gradient(to right, $green-medium-dark 0%, $green-light 100%);
+  }
+}
+
+#user-tools {
+  a:focus, a:hover {
+    border: 0;
+    color: $green-lighter;
+  }
+}
+
+.selector-chosen {
+  h2 {
+    background: $green-light !important;
+  }
+}
+
+.calendar {
+  td.selected a,
+  td a:focus, td a:hover {
+    background: $green-light !important;
+  }
+}
+
+.timelist {
+  a:focus, a:hover {
+    background: $green-light !important;
+  }
+}
+
+#changelist-filter {
+  li.selected a {
+    color: $green-dark;
+  }
+  a:focus, a:hover,
+  li.selected a:focus,
+  li.selected a:hover {
+    color: $green-text-dark;
+  }
+  top: -250px;
+  right: 15px;
+
+  h2 {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+fieldset.collapsed {
+  .collapse-toggle {
+    color: $green-dark;
+  }
+}
+
+a:link, a:visited {
+  color: $green-medium;
+}
+a:focus, a:hover {
+  color: $green-text-medium;
+}
+
+table thead th.sorted .sortoptions {
+  a.sortremove:focus:after,
+  a.sortremove:hover:after {
+    color: $green-dark;
+  }
+}
+
+a.active.selector-chooseall:focus,
+a.active.selector-clearall:focus,
+a.active.selector-chooseall:hover,
+a.active.selector-clearall:hover {
+  color: $green-text-medium;
+}
+
+.calendar td a:active,
+.timelist a:active {
+  background: $green-dark;
+  color: $white;
+}
+
+.change-list ul.toplinks .date-back a:focus,
+.change-list ul.toplinks .date-back a:hover {
+  color: $green-text-dark;
+}
+
+.calendar caption,
+.calendarbox h2 {
+  background: $green-text-medium;
+}
+
+.button.default,
+input[type=submit].default,
+.submit-row input.default {
+  background: $green-medium;
+  &:hover {
+    background: $green-dark;
+  }
+}
+
+.object-tools a:focus,
+.object-tools a:hover {
+  background-color: $green-dark;
+}
+
+input[type=file]::-webkit-file-upload-button:hover {
+  border: 0;
+  background: $green-dark;
+}
