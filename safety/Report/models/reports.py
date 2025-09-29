@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.shortcuts import reverse
 # from django.contrib.contenttypes.fields import GenericRelation
@@ -18,6 +19,17 @@ def current_fiscal_year():
         return (today.year + 1 + 543) % 100
     return (today.year + 543) % 100
 
+
+class ReportManager(models.Manager):
+    def for_user(self, user):
+        print("for user:", user)
+        if user.groups.filter(name__in=['Administrator','SafetyCenterOfficer', 'TopRTAFExecutive']).exists():
+            return self.all()
+        elif user.groups.filter(name__in=['SafetyOfficer']).exists():
+            return self.filter(Q(affiliation=user.affiliation) | Q(recorder=user))
+        else:
+            return self.filter(recorder=user)
+        
 
 class BaseReport(models.Model):
     fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ",default=current_fiscal_year)
@@ -41,6 +53,9 @@ class BaseReport(models.Model):
     
     created_at = models.DateTimeField(verbose_name="วัน-เวลาที่สร้างรายงาน",auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด",auto_now=True)
+    
+    # objects = models.Manager()
+    objects = ReportManager()
     
     class Meta:
         verbose_name = verbose_name_plural = "1. แบบรายงาน"
