@@ -8,7 +8,7 @@ from django.shortcuts import reverse
 # from taggit.managers import TaggableManager
 from ckeditor.fields import RichTextField
 
-from ..choices import ( BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices)
+from ..choices import ( BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices)
 from safety.Data.models import Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory, Keyword
 from common.RTAFUser.models import RTAFUser, Affiliation, Squadron
 
@@ -92,6 +92,8 @@ class Person(models.Model):
 
 class AirAdditionReport(models.Model):
     base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='air_addition_reports')
+    plane_number = models.CharField(verbose_name="เลขที่เครื่องบิน", null=True, blank=True)
+    air_control = models.ForeignKey(verbose_name="หน่วยควบคุมการจราจรทางอากาศ", on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "5. ภาคอากาศเพิ่มเติม"
@@ -99,6 +101,7 @@ class AirAdditionReport(models.Model):
 
 class GroundAdditionReport(models.Model):
     base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='ground_addition_reports')
+    accident_type = models.IntegerField(verbose_name="ประเภทอุบัติเหตุ", choices=AccidentTypeChoices.choices, null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "6. ภาคพื้นเพิ่มเติม"
