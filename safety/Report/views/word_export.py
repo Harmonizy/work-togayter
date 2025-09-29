@@ -55,6 +55,7 @@ def replace_placeholders_in_paragraphs(doc, context, base_report=None):
     for i, paragraph in enumerate(paragraphs):
         for key, value in context.items():
             if key in paragraph.text:
+                print("Found placeholder:", key, "in paragraph:", paragraph.text)
                 if key == "##content##":
                     # ลบข้อความ placeholder
                     for run in paragraph.runs:
@@ -87,6 +88,7 @@ def replace_placeholders_in_paragraphs(doc, context, base_report=None):
                 else:
                     # placeholder ปกติ
                     for run in paragraph.runs:
+                        print("xx run.text:", run.text)
                         if key in run.text:
                             run.text = run.text.replace(key, str(value))
 
@@ -121,7 +123,9 @@ def safety_doc(request, pk):
     }
 
     template_filename = report_type_to_template.get(base_report.report_type, 'safety-report.docx')
+    template_filename = 'ground-hazard-report.docx'
     template_path = os.path.join(BASE_TEMPLATE_DIR, template_filename)
+    
 
     doc = Document(template_path)
 
@@ -179,3 +183,36 @@ def safety_doc(request, pk):
     replace_placeholders_in_paragraphs(doc, context, base_report)
 
     return docx_to_response(doc, f"file-{template_filename}")
+
+
+def rtaf_message_form(request, base_report_id):
+    template_path = os.path.join(settings.BASE_DIR, 'safety', 'Report', 'templates', 'Documents', 'rtaf-message-form-template.docx')
+    doc = Document(template_path)
+
+    base_report = BaseReport.objects.get(id=base_report_id)
+    context = {
+        '##report-title##': base_report.title,
+        '##event-date-time##': f"{thai_date(base_report.event_date)} เวลา {base_report.event_time.strftime('%H:%M') if base_report.event_time else ''}",
+        '##report-body##': '1.  เนื้อหาของรายงานความปลอดภัยส่วนแรก\n2.  เนื้อหาของรายงานความปลอดภัยส่วนที่สอง\n3.  เนื้อหาของรายงานความปลอดภัยส่วนที่สาม',
+        '##secret-type##':  "ลับมาก",
+        '##sender-action##': "ด่วนที่สุด",
+        '##sender-info##': "ด่วนที่สุด",
+        '##action-list##': "ศปก.ทอ., สนภ.ทอ.",
+        '##info-list##': "ศยอ.ศปก.ทอ., ชอ.",
+        '##name-drafter##': "น.ต.ทดสอบ ระบบ",
+        '##office##': "นภบ.บน.๒",
+        '##tel##': "๒-๐๙๕๐",
+
+
+    }
+    # replace_placeholders_in_paragraphs(doc, context)
+    table = doc.tables[0]
+    for row in table.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                for run in paragraph.runs:
+                    for key, value in context.items():
+                        if key in run.text:
+                            run.text = run.text.replace(key, str(value))
+
+    return docx_to_response(doc, f"rtaf-message-{base_report_id}.docx")

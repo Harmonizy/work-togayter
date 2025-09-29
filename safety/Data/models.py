@@ -95,3 +95,13 @@ class Keyword(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Role(models.Model):
+    name = models.CharField(verbose_name="ชื่อ", max_length=120)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "8. บทบาท"
+
+    def __str__(self):
+        return self.name

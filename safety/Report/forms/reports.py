@@ -74,8 +74,10 @@ class GroundReportForm(forms.ModelForm):
     class Meta:
         model = GroundReport
         fields = [
+            "accident_type",
             "category",
             "location",
+            
         ]
         widgets = {            
             'category': single_select_widget,
@@ -87,8 +89,9 @@ class GroundReportForm(forms.ModelForm):
         self.helper.form_tag = False  
         self.helper.layout = Layout(
             Row(
-                Column('category', css_class='form-group col-md-3 mb-0'),
-                Column('location', css_class='form-group col-md-9 mb-0'),
+                Column('accident_type', css_class='form-group col-md-4 mb-0'),
+                Column('category', css_class='form-group col-md-4 mb-0'),
+                Column('location', css_class='form-group col-md-4 mb-0'),
             ),
         )
 
@@ -101,12 +104,15 @@ class AviationReportForm(forms.ModelForm):
             'aircraft',
             'system',
             'flight_phase',
+            'plane_number',
+            'air_control',
         ]
         widgets = {
             'squadron': single_select_widget,
             'aircraft': single_select_widget,
             'system': multi_select_widget,
             'flight_phase': multi_select_widget,
+            
         }
 
     def __init__(self, *args, **kwargs):
@@ -120,12 +126,14 @@ class AviationReportForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('squadron', css_class='form-group col-md-6 mb-0'),
-                Column('aircraft', css_class='form-group col-md-6 mb-0'),
+                Column('squadron', css_class='form-group col-md-4 mb-0'),
+                Column('plane_number', css_class='form-group col-md-4 mb-0'),
+                Column('air_control', css_class='form-group col-md-4 mb-0'),
             ),
             Row(
-                Column('system', css_class='form-group col-md-6 mb-0'),
-                Column('flight_phase', css_class='form-group col-md-6 mb-0'),
+                Column('aircraft', css_class='form-group col-md-4 mb-0'),
+                Column('system', css_class='form-group col-md-4 mb-0'),
+                Column('flight_phase', css_class='form-group col-md-4 mb-0'),
             ),
         )
 

@@ -9,8 +9,8 @@ from django.shortcuts import reverse
 # from taggit.managers import TaggableManager
 from ckeditor.fields import RichTextField
 
-from ..choices import ( BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices)
-from safety.Data.models import Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory, Keyword
+from ..choices import ( BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices)
+from safety.Data.models import Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory, Keyword, Role
 from common.RTAFUser.models import RTAFUser, Affiliation, Squadron
 
 def current_fiscal_year():
@@ -78,6 +78,7 @@ class GroundReport(BaseAbsoluteURL, models.Model):
     location = models.CharField(verbose_name="สถานที่โดยละเอียด", max_length=255, null=True, blank=True,
                                 help_text="ระบุสถานที่เกิดเหตุอย่างละเอียด เช่น โรงซ่อมอากาศนายที่ 3 แผนกซ่อมอากาศยานฯ")
     category = models.ForeignKey(GroundSafetyCategory, verbose_name="สาขา", on_delete=models.CASCADE, null=True, blank=True)
+    accident_type = models.IntegerField(verbose_name="ประเภทอุบัติเหตุ", choices=AccidentTypeChoices.choices, null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "2. ภาคพื้น"
@@ -90,33 +91,22 @@ class AviationReport(BaseAbsoluteURL, models.Model):
     aircraft = models.ForeignKey(Aircraft, verbose_name="อากาศยาน", on_delete=models.CASCADE, null=True, blank=True)
     system = models.ManyToManyField(AircraftSystem, verbose_name="ระบบอากาศยาน", related_name='aviation_reports', blank=True)
     flight_phase = models.ManyToManyField('Data.FlightPhase', verbose_name="ช่วงของการบิน", related_name='aviation_reports', blank=True)
+    plane_number = models.CharField(verbose_name="เลขที่เครื่องบิน", null=True, blank=True)
+    air_control = models.CharField(verbose_name="หน่วยควบคุมการจราจรทางอากาศ", null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "3. ภาคอากาศ"
 
 
-class Person(models.Model):
-    base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='people')
-    user = models.ForeignKey(RTAFUser, verbose_name="ชื่อ-นามสกุล", on_delete=models.CASCADE, null=True, blank=True)
-    role = models.CharField(verbose_name="บทบาท", choices=RoleTypeChoices.choices, max_length=120, null=True, blank=True)
+class Participant(models.Model):
+    base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='participants')
+    full_name = models.CharField(verbose_name="ชื่อ-นามสกุล", null=True, blank=True)
+    role = models.ForeignKey(Role, verbose_name="บทบาท", on_delete=models.SET_NULL, null=True, blank=True)
     injury_level = models.IntegerField(verbose_name="ระดับการบาดเจ็บ", choices=InjuryLevelChoices.choices, null=True, blank=True)
+    note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "4. บุคคล"
-
-
-class AirAdditionReport(models.Model):
-    base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='air_addition_reports')
-
-    class Meta:
-        verbose_name = verbose_name_plural = "5. ภาคอากาศเพิ่มเติม"
-
-
-class GroundAdditionReport(models.Model):
-    base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='ground_addition_reports')
-
-    class Meta:
-        verbose_name = verbose_name_plural = "6. ภาคพื้นเพิ่มเติม"
 
 
 # class ObservationReport(BaseAbsoluteURL, models.Model):
