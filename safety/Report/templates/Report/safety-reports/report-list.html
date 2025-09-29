@@ -187,6 +187,10 @@
                                                         <a class="dropdown-item" href="{% url 'report:word_export.safety_doc' report.id %}">
                                                             <i class="ri-file-word-fill align-bottom me-2 text-primary"></i> Export Word
                                                         </a>
+                                                        {# Export to Word option #}
+                                                        <a class="dropdown-item" href="{% url 'report:word_export.rtaf_message_form' report.id %}">
+                                                            <i class="ri-file-word-fill align-bottom me-2 text-info"></i> Export RTAF Message
+                                                        </a>
 
                                                         <div class="dropdown-divider"></div>
                                                         <a href="#" 

@@ -24,6 +24,7 @@ main_urlpatterns = [
     
     # export
     path('word-export/safety-doc/<int:pk>/', word_export.safety_doc, name='word_export.safety_doc'),
+    path('word-export/rtaf-message-form/<int:base_report_id>/', word_export.rtaf_message_form, name='word_export.rtaf_message_form'),
 
     # form
     # path('create-safety-report/<str:report_type>/', create.create_report, name='create.create_report'),

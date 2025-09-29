@@ -31,16 +31,16 @@ def list(request):
                             .order_by('-updated_at')
     )
 
-    # กรองตามสิทธิ์แบบ if/else ธรรมดา
-    if request.user.is_superuser or request.user.groups.filter(name="SafetyCenterOfficer").exists():
-        pass
-    elif request.user.groups.filter(name="SafetyOfficer").exists():
-        if getattr(request.user, "affiliation_id", None):  # <------ เขียนแบบนี้แปลว่าอะไร
-            reports = reports.filter(affiliation_id=request.user.affiliation_id)
-        else:
-            reports = reports.filter(recorder=request.user)
-    else:
-        reports = reports.filter(recorder=request.user)
+    # # กรองตามสิทธิ์แบบ if/else ธรรมดา
+    # if request.user.is_superuser or request.user.groups.filter(name="SafetyCenterOfficer").exists():
+    #     pass
+    # elif request.user.groups.filter(name="SafetyOfficer").exists():
+    #     if getattr(request.user, "affiliation_id", None):  # <------ เขียนแบบนี้แปลว่าอะไร
+    #         reports = reports.filter(affiliation_id=request.user.affiliation_id)
+    #     else:
+    #         reports = reports.filter(recorder=request.user)
+    # else:
+    #     reports = reports.filter(recorder=request.user)
 
     report_cards = card_data(reports)
     
