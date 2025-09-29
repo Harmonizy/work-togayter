@@ -93,7 +93,7 @@ class Person(models.Model):
 class AirAdditionReport(models.Model):
     base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='air_addition_reports')
     plane_number = models.CharField(verbose_name="เลขที่เครื่องบิน", null=True, blank=True)
-    air_control = models.ForeignKey(verbose_name="หน่วยควบคุมการจราจรทางอากาศ", on_delete=models.CASCADE, null=True, blank=True)
+    air_control = models.CharField(verbose_name="หน่วยควบคุมการจราจรทางอากาศ", null=True, blank=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "5. ภาคอากาศเพิ่มเติม"
