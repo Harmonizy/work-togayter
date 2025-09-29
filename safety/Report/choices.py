@@ -63,3 +63,7 @@ class RoleTypeChoices(models.TextChoices):
     TEACHER = "T", "ครูการบิน"
     STUDENT = "S", "ศิษย์การบิน"
 
+
+class AccidentTypeChoices(models.IntegerChoices):
+    ACCIDENT = 1, "ย่อย"
+    INCIDENT = 2, "ร้ายแรง"
