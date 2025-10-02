@@ -1,0 +1,156 @@
+{% extends "partials/base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Safety Reports Create{% endblock title %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
+
+<style>
+    .django-ckeditor-widget {
+        width: 100% !important;
+    }
+</style>
+{% endblock extra_css %}
+
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            {% url 'report:safety-report.list' as safety_report_list_url %}
+            {% include "partials/page-title.html" with pagetitle="รายงาน" pagetitle_url=safety_report_list_url title="สร้างรายงานใหม่" %}
+
+
+            <form id="reportForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% crispy base_form %}
+                {% crispy participant_form %}
+                {% if ground_form %}
+                    {% crispy ground_form %}
+                {% endif %}
+                {% if aviation_form %}
+                    {% crispy aviation_form %}
+                {% endif %}
+
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
+                
+                <div class="form-check my-3">
+                    <input class="form-check-input" type="radio" id="surveyOption1" name="surveyOption" value="1">
+                    <label class="form-check-label" for="surveyOption1">
+                        ฉันยินยอมเข้าร่วมการทำแบบประเมิน
+                    </label>
+                </div>
+
+                <div class="form-check my-3">
+                    <input class="form-check-input" type="radio" id="surveyOption2" name="surveyOption" value="2">
+                    <label class="form-check-label" for="surveyOption2">
+                        การกระทำ/การละเว้นการกระทำโดยไม่ตั้งใจ
+                    </label>
+                </div>
+
+                <div class="form-check my-3">
+                    <input class="form-check-input" type="radio" id="surveyOption3" name="surveyOption" value="3">
+                    <label class="form-check-label" for="surveyOption3">
+                        การกระทำ/การละเว้นการกระทำโดยตั้งใจ
+                    </label>
+                </div>
+
+                <div class="my-5">
+                    <!-- จำเป็นต้องทำแบบนี้เพราะ มี javascript + sweetalert มาดัก submit ทำให้ค่าไม่ส่งไปกับ request.POST-->
+                    <input type="hidden" name="priority" id="priority-input">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-2">
+                        <button type="submit" name="priority" value="L" class="btn btn-success w-100">
+                            บันทึก (ปกติ)
+                        </button>
+                        </div>
+                        <div class="col-12 col-md-2">
+                        <button type="submit" name="priority" value="M" class="btn btn-warning w-100">
+                            บันทึก (ต้องติดตาม)
+                        </button>
+                        </div>
+                        <div class="col-12 col-md-2">
+                        <button type="submit" name="priority" value="H" class="btn btn-danger w-100">
+                            บันทึก (เร่งด่วน)
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>            
+    {% include "partials/footer.html" %}
+</div>
+
+
+{% endblock %}
+
+{% comment %} {% block footer %}{% endblock footer %} {% endcomment %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'libs/sweetalert2/dist/sweetalert2.min.js' %}"></script>
+
+<script>
+$(document).ready(function () {
+    $('.js-example-basic-multiple').select2();
+    $('.js-example-basic-single').select2();
+
+    $('.django-ckeditor-widget').addClass('w-100');
+
+    $('#reportForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        let priorityValue = $('button[type="submit"]:focus').val();
+
+        Swal.fire({
+            title: 'ยืนยันส่งข้อมูล?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'ยืนยัน',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // ส่ง form พร้อมค่าที่ถูกต้อง
+            }
+        });
+    });
+    
+    $('button[name="priority"]').on('click', function() {
+        // Set the value of the hidden input to the clicked button's value
+        $('#priority-input').val($(this).val());
+    });
+
+  $('.add-formset-btn').click(function () {
+    const targetContainerSelector = $(this).data('target');
+    const container = $(targetContainerSelector);
+    const totalFormsSelector = container.data('total-forms');
+    const emptyFormSelector = container.data('empty-form');
+
+    let totalFormsInput = $(totalFormsSelector);
+    let totalFormsCount = parseInt(totalFormsInput.val());
+
+    // Get empty form HTML, replace __prefix__ with current count
+    let newFormHtml = $(emptyFormSelector).html().replace(/__prefix__/g, totalFormsCount);
+
+    // Append new form
+    container.append(newFormHtml);
+
+    // Increment total forms count
+    totalFormsInput.val(totalFormsCount + 1);
+  });
+});
+</script>
+{% endblock %}

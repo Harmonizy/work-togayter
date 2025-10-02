@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
@@ -8,8 +8,6 @@ from ..constants import default_content
 from ..choices import ReportTypeChoices
 from ..services.reports import save_new_report
 from common.RTAFUser.models import Affiliation
-
-
 
         
 # @login_required
@@ -89,7 +87,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+
 @login_required
+# @permission_required("Report.create_safety_report", raise_exception=True)
 def new_report(request):
     if request.method == "GET":
         initial, affiliation, report_type = extract_get_params(request)
@@ -113,7 +113,6 @@ def new_report(request):
         return handle_post_success(request, base_report)
 
     return handle_post_failure([base_form, image_formset, rec_formset, file_formset], addition_context)
-
 
 # --- Subfunctions ---
 
@@ -156,7 +155,6 @@ def build_context_for_get(initial, report_type, affiliation):
         aviation_initial = {"affiliation": affiliation} if affiliation else {}
         context["aviation_form"] = AviationReportForm(prefix="aviation", initial=aviation_initial)
     return context
-
 
 
 def build_additional_form(report_type, request):

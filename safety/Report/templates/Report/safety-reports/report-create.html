@@ -29,12 +29,12 @@
             <form id="reportForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% crispy base_form %}
-                {% if ground_form %}
+                {% comment %} {% if ground_form %}
                     {% crispy ground_form %}
                 {% endif %}
                 {% if aviation_form %}
                     {% crispy aviation_form %}
-                {% endif %}
+                {% endif %} {% endcomment %}
 
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}

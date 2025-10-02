@@ -22,7 +22,6 @@ def current_fiscal_year():
 
 class ReportManager(models.Manager):
     def for_user(self, user):
-        print("for user:", user)
         if user.groups.filter(name__in=['Administrator','SafetyCenterOfficer', 'TopRTAFExecutive']).exists():
             return self.all()
         elif user.groups.filter(name__in=['SafetyOfficer']).exists():
@@ -59,6 +58,9 @@ class BaseReport(models.Model):
     
     class Meta:
         verbose_name = verbose_name_plural = "1. แบบรายงาน"
+        permissions = [
+            ("create_safety_report", "สร้างรายงานนิรภัยได้"),
+        ]
 
     def __str__(self):
         return self.title

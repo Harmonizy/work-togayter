@@ -10,8 +10,8 @@ from ckeditor.widgets import CKEditorWidget
 from safety.Report.models import BaseReport, AviationReport, GroundReport
 # , SafetyReport, ObservationReport
 from .fields import  content_example, content_field, textarea_field, multi_select_widget, single_select_widget
-from ..models import BaseReport, Image, Recommendation, File
-from ..choices import ReportTypeChoices
+from ..models import BaseReport, Image, Recommendation, File, AviationReport, GroundReport, Participant
+from ..choices import ReportTypeChoices, InjuryLevelChoices
 from common.RTAFUser.models.RTAFUser import Affiliation
 
 
@@ -134,6 +134,48 @@ class AviationReportForm(forms.ModelForm):
                 Column('aircraft', css_class='form-group col-md-4 mb-0'),
                 Column('system', css_class='form-group col-md-4 mb-0'),
                 Column('flight_phase', css_class='form-group col-md-4 mb-0'),
+            ),
+        )
+
+
+class ParticipantForm(forms.ModelForm):
+    class Meta:
+        model = Participant
+        fields = ["full_name", "role", "injury_level", "note"]
+        widgets = {
+            "note": textarea_field(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+        role_initial = self.initial.get("role", None)
+        injury_initial = self.initial.get("injury_level", None)
+
+        if role_initial:
+            self.fields["role"].queryset = self.fields["role"].queryset.filter(id=role_initial.id)
+
+        if injury_initial:
+            self.fields["injury_level"].choices = [
+                (choice.value, choice.label)
+                for choice in InjuryLevelChoices
+                if choice.value == injury_initial
+            ]
+
+        self.helper.layout = Layout(
+            Row(
+                Column('full_name', css_class='form-group col-md-6 mb-0'),
+                Column('role', css_class='form-group col-md-6 mb-0'),
+            ),
+            Row(
+                Column('injury_level', css_class='form-group col-md-6 mb-0'),
+            ),
+            Row(
+                Column(Field('note'), css_class='form-group col-md-12 mb-0'),
             ),
         )
 
