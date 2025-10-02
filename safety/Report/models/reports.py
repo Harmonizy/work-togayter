@@ -111,6 +111,15 @@ class Participant(models.Model):
         verbose_name = verbose_name_plural = "4. บุคคล"
 
 
+class ReferenceReport(models.Model):
+    base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='references')
+    report = models.ForeignKey(BaseReport, verbose_name="รายงาน", on_delete=models.CASCADE, null=True, blank=True)
+    note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "5. อ้างอิง"
+
+
 # class ObservationReport(BaseAbsoluteURL, models.Model):
 #     base_report = models.OneToOneField(BaseReport, on_delete=models.CASCADE, primary_key=True)
 

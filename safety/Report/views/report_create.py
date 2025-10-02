@@ -105,14 +105,13 @@ def new_report(request):
     report_type = request.POST.get("base_form-report_type", "")
     priority = request.POST.get("priority", "L")
     
-    additional_form, addition_context = build_additional_form(report_type, request)
 
-    if all(form.is_valid() for form in [base_form, image_formset, rec_formset, file_formset] + [additional_form]):
+    if all(form.is_valid() for form in [base_form, image_formset, rec_formset, file_formset]):
         base_form.instance.report_type = report_type
-        base_report = save_new_report(base_form, image_formset, rec_formset, file_formset, request, priority, **addition_context)
+        base_report = save_new_report(base_form, image_formset, rec_formset, file_formset, request, priority,)
         return handle_post_success(request, base_report)
 
-    return handle_post_failure([base_form, image_formset, rec_formset, file_formset], addition_context)
+    return handle_post_failure([base_form, image_formset, rec_formset, file_formset],)
 
 # --- Subfunctions ---
 
@@ -155,16 +154,6 @@ def build_context_for_get(initial, report_type, affiliation):
         aviation_initial = {"affiliation": affiliation} if affiliation else {}
         context["aviation_form"] = AviationReportForm(prefix="aviation", initial=aviation_initial)
     return context
-
-
-def build_additional_form(report_type, request):
-    if report_type in [ReportTypeChoices.HAZARD_GROUND, ReportTypeChoices.SAFETY_GROUND]:
-        ground_form = GroundReportForm(request.POST, prefix="ground")
-        return ground_form, {"ground_form": ground_form}
-    elif report_type in [ReportTypeChoices.HAZARD_AVIATION, ReportTypeChoices.SAFETY_AVIATION]:
-        aviation_form = AviationReportForm(request.POST, prefix="aviation")
-        return aviation_form, {"aviation_form": aviation_form}
-    return None, {}
 
 
 def handle_post_success(request, base_report):
