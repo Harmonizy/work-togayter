@@ -4,10 +4,8 @@ from ..models.reports import (
     BaseReport,
     GroundReport,
     AviationReport,
-    # SafetyReport,
-    # SafetyReportAircraftSystem,
-    # SafetyReportEvent,
-    # SafetyReportFlightPhase
+    Participant,
+    ReferenceReport,
 )
 
 from ..models.attachments import File, Image, Recommendation
@@ -147,4 +145,15 @@ class AviationReportAdmin(admin.ModelAdmin):
     get_event_date.short_description = "วันที่เกิดเหตุ"
 
 
-    
+@admin.register(Participant)
+class ParticipantAdmin(admin.ModelAdmin):
+    list_display = ('base_report', 'name', 'rank', 'position', 'get_report_type')
+    list_filter = ('base_report', 'rank', 'position')
+    search_fields = ('base_report__title', 'name')
+
+
+@admin.register(ReferenceReport)
+class ReferenceReportAdmin(admin.ModelAdmin):
+    list_display = ('base_report', 'report', 'note')
+    list_filter = ('base_report', 'report')
+    search_fields = ('base_report__title', 'report__title')
