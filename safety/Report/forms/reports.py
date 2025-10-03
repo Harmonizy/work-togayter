@@ -138,49 +138,74 @@ class AviationReportForm(forms.ModelForm):
         )
 
 
+# class ParticipantForm(forms.ModelForm):
+#     class Meta:
+#         model = Participant
+#         fields = ["full_name", "role", "injury_level", "note"]
+#         widgets = {
+#             "note": textarea_field(),
+#         }
+
+#     def __init__(self, *args, **kwargs):
+#         self.user = kwargs.pop("user", None)
+#         super().__init__(*args, **kwargs)
+
+#         self.helper = FormHelper()
+#         self.helper.form_tag = False
+
+#         role_initial = self.initial.get("role", None)
+#         injury_initial = self.initial.get("injury_level", None)
+
+#         if role_initial:
+#             self.fields["role"].queryset = self.fields["role"].queryset.filter(id=role_initial.id)
+
+#         if injury_initial:
+#             self.fields["injury_level"].choices = [
+#                 (choice.value, choice.label)
+#                 for choice in InjuryLevelChoices
+#                 if choice.value == injury_initial
+#             ]
+
+#         self.helper.layout = Layout(
+#             Row(
+#                 Column('full_name', css_class='form-group col-md-6 mb-0'),
+#                 Column('role', css_class='form-group col-md-6 mb-0'),
+#             ),
+#             Row(
+#                 Column('injury_level', css_class='form-group col-md-6 mb-0'),
+#             ),
+#             Row(
+#                 Column(Field('note'), css_class='form-group col-md-12 mb-0'),
+#             ),
+#         )
+
+
+# ========== Attachment Forms ==========
 class ParticipantForm(forms.ModelForm):
     class Meta:
         model = Participant
         fields = ["full_name", "role", "injury_level", "note"]
         widgets = {
-            "note": textarea_field(),
+            "note": forms.TextInput(attrs={"class": "form-control"}),  # ให้เป็นช่อง input text
         }
 
+
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.form_tag = False
-
-        role_initial = self.initial.get("role", None)
-        injury_initial = self.initial.get("injury_level", None)
-
-        if role_initial:
-            self.fields["role"].queryset = self.fields["role"].queryset.filter(id=role_initial.id)
-
-        if injury_initial:
-            self.fields["injury_level"].choices = [
-                (choice.value, choice.label)
-                for choice in InjuryLevelChoices
-                if choice.value == injury_initial
-            ]
-
+        self.helper.form_tag = False 
+        # Layout
         self.helper.layout = Layout(
             Row(
-                Column('full_name', css_class='form-group col-md-6 mb-0'),
-                Column('role', css_class='form-group col-md-6 mb-0'),
-            ),
-            Row(
-                Column('injury_level', css_class='form-group col-md-6 mb-0'),
-            ),
-            Row(
-                Column(Field('note'), css_class='form-group col-md-12 mb-0'),
+                Column('full_name', css_class='form-group col-md-3 mb-0'),
+                Column('role', css_class='form-group col-md-3 mb-0'),
+                Column('injury_level', css_class='form-group col-md-3 mb-0'),
+                Column('note', css_class='form-group col-md-3 mb-0'),
             ),
         )
-
-
-# ========== Attachment Forms ==========
+        
+        
 class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
@@ -197,9 +222,14 @@ class RecommendationForm(forms.ModelForm):
     class Meta:
         model = Recommendation
         fields = ["note", "comment"]
-
+    
 
 # ========== Formsets ==========
+
+ParticipantFormSet = inlineformset_factory(
+    BaseReport, Participant, form=ParticipantForm, extra=1, can_delete=True
+)
+
 ImageFormSet = inlineformset_factory(
     BaseReport, Image, form=ImageForm, extra=1, can_delete=False
 )
@@ -211,7 +241,6 @@ FileFormSet = inlineformset_factory(
 RecommendationFormSet = inlineformset_factory(
     BaseReport, Recommendation, form=RecommendationForm, extra=1, can_delete=False
 )
-
 
 
 # class HazardReportForm(forms.ModelForm):

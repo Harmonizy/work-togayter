@@ -45,6 +45,7 @@ class Affiliation(models.Model):
     
     super_affiliation = models.ForeignKey('self', verbose_name="ต้นสังกัด", on_delete=models.SET_NULL, null = True, blank = True)
     airviation_content = models.TextField(verbose_name="ร่างเนื้อหารายงานการบิน", null=True, blank=True)
+    officer_content = models.TextField(verbose_name="ร่างเนื้อหาผู้บังคับบัญชาด้านความปลอดภัย", null=True, blank=True)
 
     aircraft_types = models.ManyToManyField('Data.Aircraft', verbose_name="ประเภทอากาศยาน", through=AffiliationAircraft, blank=True)
 

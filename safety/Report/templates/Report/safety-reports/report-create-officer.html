@@ -29,7 +29,6 @@
             <form id="reportForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {% crispy base_form %}
-                {% crispy participant_form %}
                 {% if ground_form %}
                     {% crispy ground_form %}
                 {% endif %}
@@ -40,7 +39,7 @@
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
-                
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=participant_formset formset_name="participants" container_id="participants-container" title="ผู้เกี่ยวข้อง" %}
                 <div class="form-check my-3">
                     <input class="form-check-input" type="radio" id="surveyOption1" name="surveyOption" value="1">
                     <label class="form-check-label" for="surveyOption1">
