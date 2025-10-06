@@ -8,6 +8,7 @@ from .models import (
     Location,
     GroundSafetyCategory,
     Keyword,
+    Role
 )
 
 @admin.register(Event)
@@ -62,5 +63,11 @@ class GroundSafetyCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Keyword)
 class KeywordAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
     list_display = ("name",)
     search_fields = ("name",)

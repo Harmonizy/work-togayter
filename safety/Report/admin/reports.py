@@ -50,6 +50,21 @@ class AviationReportInline(admin.StackedInline):
     extra = 0
 
 
+class ParticipantInline(admin.TabularInline):
+    model = Participant
+    extra = 0
+    autocomplete_fields = ['role']
+    fields = ['full_name', 'role', 'injury_level', 'note']
+
+
+class ReferenceReportInline(admin.TabularInline):
+    model = ReferenceReport
+    extra = 0
+    autocomplete_fields = ['report']
+    fields = ['report', 'note']
+    fk_name = 'base_report'
+
+
 # class SafetyReportInline(admin.StackedInline):
 #     model = SafetyReport
 #     extra = 0
@@ -68,9 +83,10 @@ class BaseReportAdmin(admin.ModelAdmin):
     # autocomplete_fields = ('recorder')
 
     inlines = [ 
-               GroundReportInline,
+                GroundReportInline,
                 AviationReportInline,
-            #     SafetyReportInline,
+                ParticipantInline,
+                ReferenceReportInline,
                 FileAdminInline,
                 ImageAdminInline,
                 RecommendationAdminInline]
@@ -147,13 +163,11 @@ class AviationReportAdmin(admin.ModelAdmin):
 
 @admin.register(Participant)
 class ParticipantAdmin(admin.ModelAdmin):
-    list_display = ('base_report', 'name', 'rank', 'position', 'get_report_type')
-    list_filter = ('base_report', 'rank', 'position')
-    search_fields = ('base_report__title', 'name')
+    list_display = ('base_report', 'full_name', 'role', 'injury_level', 'note')
+    search_fields = ('base_report__title', 'full_name', 'role__name')
 
 
 @admin.register(ReferenceReport)
 class ReferenceReportAdmin(admin.ModelAdmin):
     list_display = ('base_report', 'report', 'note')
-    list_filter = ('base_report', 'report')
     search_fields = ('base_report__title', 'report__title')

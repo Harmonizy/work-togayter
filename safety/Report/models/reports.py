@@ -108,7 +108,7 @@ class Participant(models.Model):
     note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "4. บุคคล"
+        verbose_name = verbose_name_plural = "4. บุคคลเกี่ยวข้อง"
 
 
 class ReferenceReport(models.Model):
@@ -117,7 +117,7 @@ class ReferenceReport(models.Model):
     note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "5. อ้างอิง"
+        verbose_name = verbose_name_plural = "5. รายงานอ้างอิง"
 
 
 # class ObservationReport(BaseAbsoluteURL, models.Model):
