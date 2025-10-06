@@ -10,7 +10,7 @@
             <div class="{{ form_class }} position-relative formset-form">
                 {% crispy form %}
 
-                <!-- Delete button -->
+                {% comment %} <!-- Delete button -->
                 <button type="button" class="btn btn-sm btn-danger delete-form-btn position-absolute" style="top:6px; right:10px;">
                     ลบ
                 </button>
@@ -20,7 +20,7 @@
                     <div class="d-none delete-checkbox">
                         {{ form.DELETE }}
                     </div>
-                {% endif %}
+                {% endif %} {% endcomment %}
             </div>
         {% endfor %}
     </div>

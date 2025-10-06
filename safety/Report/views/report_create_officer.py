@@ -43,16 +43,10 @@ def new_report(request):
 
     if all(form.is_valid() for form in forms_to_validate):
         base_form.instance.report_type = report_type
-        base_report = save_new_report(
-            base_form, participant_formset, image_formset,
-            rec_formset, file_formset, request, priority, **addition_context
-        )
+        base_report = save_new_report(request, base_form, participant_formset, image_formset, rec_formset, file_formset, priority, **addition_context)
         return handle_post_success(request, base_report)
 
-    return handle_post_failure(
-        [base_form, participant_formset, image_formset, rec_formset, file_formset],
-        addition_context
-    )
+    return handle_post_failure([base_form, participant_formset, image_formset, rec_formset, file_formset], addition_context)
 
 
 # --- Subfunctions ---
