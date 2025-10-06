@@ -3,7 +3,7 @@ from django.db import transaction
 
 logger = logging.getLogger('report')  
 
-def save_new_report(request, base_form, participant_formset, image_formset, rec_formset, file_formset, priority, ground_form=None, aviation_form=None):
+def save_new_report(request, base_form, participant_formset, image_formset, rec_formset, file_formset, reference_formset, priority, ground_form=None, aviation_form=None):
     with transaction.atomic():
         base_report = base_form.save(commit=False)
 
@@ -13,7 +13,7 @@ def save_new_report(request, base_form, participant_formset, image_formset, rec_
         base_report.priority = priority
         base_report.save()
 
-        for formset in (participant_formset, image_formset, rec_formset, file_formset):
+        for formset in (participant_formset, image_formset, rec_formset, file_formset, reference_formset):
             attachments = formset.save(commit=False)
             for attach in attachments:
                 attach.base_report = base_report

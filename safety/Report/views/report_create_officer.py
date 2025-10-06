@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from ..forms.reports import BaseReportForm, GroundReportForm, AviationReportForm, ParticipantForm, ParticipantFormSet
+from ..forms.reports import BaseReportForm, GroundReportForm, AviationReportForm, ParticipantForm, ParticipantFormSet, ReferenceReportForm, ReferenceReportFormSet
 from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet
 from ..constants import default_content
 from ..choices import ReportTypeChoices
@@ -29,6 +29,7 @@ def new_report(request):
     image_formset = ImageFormSet(request.POST, request.FILES, prefix="images")
     rec_formset = RecommendationFormSet(request.POST, prefix="recommendations")
     file_formset = FileFormSet(request.POST, request.FILES, prefix="files")
+    reference_formset = ReferenceReportFormSet(request.POST, prefix="references")
 
     report_type = request.POST.get("base_form-report_type", "")
     priority = request.POST.get("priority", "L")
@@ -36,17 +37,17 @@ def new_report(request):
     additional_form, addition_context = build_additional_form(report_type, request)
 
     forms_to_validate = [
-        base_form, participant_formset, image_formset, rec_formset, file_formset
+        base_form, participant_formset, image_formset, rec_formset, file_formset, reference_formset
     ]
     if additional_form:
         forms_to_validate.append(additional_form)
 
     if all(form.is_valid() for form in forms_to_validate):
         base_form.instance.report_type = report_type
-        base_report = save_new_report(request, base_form, participant_formset, image_formset, rec_formset, file_formset, priority, **addition_context)
+        base_report = save_new_report(request, base_form, participant_formset, image_formset, rec_formset, file_formset, reference_formset, priority, **addition_context)
         return handle_post_success(request, base_report)
 
-    return handle_post_failure([base_form, participant_formset, image_formset, rec_formset, file_formset], addition_context)
+    return handle_post_failure([base_form, participant_formset, image_formset, rec_formset, file_formset, reference_formset], addition_context)
 
 
 # --- Subfunctions ---
@@ -71,6 +72,7 @@ def build_context_for_get(initial, report_type, affiliation):
         "image_formset": ImageFormSet(prefix="images"),
         "recommendation_formset": RecommendationFormSet(prefix="recommendations"),
         "file_formset": FileFormSet(prefix="files"),
+        "reference_formset": ReferenceReportFormSet(prefix="references"),
         "ReportTypeChoices": ReportTypeChoices,
         "report_type": report_type,
     }
@@ -110,6 +112,7 @@ def handle_post_failure(forms, addition_context):
         "image_formset": forms[2],
         "recommendation_formset": forms[3],
         "file_formset": forms[4],
+        "reference_formset": forms[5],
         **addition_context,
         "ReportTypeChoices": ReportTypeChoices,
     }
