@@ -30,10 +30,10 @@
                     <div class="card" id="reportsList">
                         {# ส่วน Header + ปุ่มสร้าง Report ใหม่ #}
                         <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5 class="card-title mb-0 flex-grow-1">All Safety Reports</h5>
+                            <div class="d-flex align-items-center flex-column flex-md-row">
+                                <h5 class="card-title mb-2 mb-md-0 flex-grow-1 text-center text-md-start">All Safety Reports</h5>
                                 <div class="flex-shrink-0">
-                                    <div class="d-flex flex-wrap gap-2">
+                                    <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2">
                                         {% if perms.Report.create_safety_report %}
                                         <a class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#reportAdvanceModal">
                                             <i class="ri-add-line align-bottom me-1"></i> สร้างรายงาน นนพ., นภบ.
@@ -47,6 +47,7 @@
                                 </div>
                             </div>
                         </div>
+
                         {# Search bar #}
                         <div class="card-body border border-dashed border-end-0 border-start-0">
                             <form method="get" class="w-100">  
