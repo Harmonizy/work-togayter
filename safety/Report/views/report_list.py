@@ -2,7 +2,8 @@ from datetime import datetime
 
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.views.generic import TemplateView
@@ -19,24 +20,30 @@ from common.RTAFUser.models import Affiliation
 
 can_view_report = q_condition['report.can_view']
 
+
 @login_required
 def list(request):
     search_query = request.GET.get('search', '').strip()
     date_range = request.GET.get('date_range', '').strip()
     status_filter = request.GET.get('status', '').strip()
 
-    reports = (BaseReport.objects.for_user(request.user)
-                                 .select_related("recorder", "affiliation", "recorder__rank")
-                                 .prefetch_related("file_attachment","image_attachment"))
-
+    if request.user.has_perm('Report.view_all_safety_report'):
+        reports = (BaseReport.objects
+                   .select_related("recorder", "affiliation", "recorder__rank")
+                   .prefetch_related("file_attachment", "image_attachment"))
+    elif request.user.has_perm('Report.view_own_safety_report'):
+        reports = (BaseReport.objects
+                   .filter(affiliation=request.user.affiliation)
+                   .select_related("recorder", "affiliation", "recorder__rank")
+                   .prefetch_related("file_attachment", "image_attachment"))
+    else:
+        raise PermissionDenied()
 
     report_cards = card_data(reports)
-    
+
     if search_query:
         reports = reports.filter(
             Q(title__icontains=search_query) |
-            # Q(description__icontains=search_query) |
-            # Q(keyword__name__icontains=search_query) |
             Q(recorder__first_name__icontains=search_query) |
             Q(recorder__last_name__icontains=search_query)
         ).distinct()
@@ -48,22 +55,20 @@ def list(request):
             end_date = datetime.strptime(end_str.strip(), "%d %b, %Y").date()
             reports = reports.filter(event_date__range=(start_date, end_date))
         except ValueError:
-            pass  
+            pass
 
     if status_filter.isdigit():
         reports = reports.filter(status=int(status_filter))
 
-    
-    paginator = Paginator(reports, 10)  # 10 per page
+    paginator = Paginator(reports, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
 
     context = {
         'report_cards': report_cards,
         'base_reports': page_obj,
         'ReportTypeChoices': ReportTypeChoices,
-        "ReportStatusChoices": ReportStatusChoices,
+        'ReportStatusChoices': ReportStatusChoices,
         'search': search_query, 
         'date_range': date_range,
         'status': status_filter,

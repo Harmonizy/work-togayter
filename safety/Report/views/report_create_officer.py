@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required
-# @permission_required("Report.create_safety_report", raise_exception=True)
+@permission_required("Report.create_safety_report", raise_exception=True)
 def new_report(request):
     if request.method == "GET":
         initial, affiliation, report_type = extract_get_params(request)
