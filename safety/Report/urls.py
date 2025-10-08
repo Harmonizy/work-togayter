@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-from .views import  report_list, report_create, report_create_officer, report_delete, report_details, report_edit, report_overviews, word_export
+from .views import  report_list, report_create, report_create_officer, report_delete, report_details, report_edit, word_export
 # from .views import safety_create
 
 app_name = 'report'
@@ -13,7 +13,6 @@ main_urlpatterns = [
 
     path('', report_list.list, name='safety-report.home'),
     path('safety-report/list', report_list.list, name='safety-report.list'),
-    path('safety-overviews/main-page/<int:base_report_id>/', report_overviews.main_page, name='safety-overviews.main-page'),
     path("safety-report/detail/<int:pk>/", report_details.main_page, name="safety-report.detail"),
 
     path('safety-create/new-report/', report_create.new_report, name='safety-create.new_report'),   

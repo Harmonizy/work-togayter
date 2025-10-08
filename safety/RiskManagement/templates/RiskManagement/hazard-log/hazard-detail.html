@@ -5,6 +5,13 @@
 
 {% block extra_css %}
   {% include "Report/safety-reports/detail/_styles.html" %}
+  .btn-primary {
+  background: linear-gradient(45deg, #5b00ff, #8f00ff);
+  border: none;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(45deg, #6d00ff, #9c00ff);
+  }
 {% endblock %}
 
 {% block content %}
@@ -121,9 +128,15 @@
 
             {# ===================== CARD 4: CAPs ===================== #}
             <div class="card mb-4" id="hazard-caps">
-              <div class="card-header border-0">
+              <div class="card-header border-0 d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 section-title">Collective Action Plans (CAPs)</h4>
+
+                  <a href="{% url 'hazard-log.cap-create' hazard_log.id %}" 
+                    class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-circle me-1"></i> เพิ่ม CAP
+                  </a>
               </div>
+
               <div class="card-body">
                 {% for cap in caps %}
                   <div class="card mb-3">

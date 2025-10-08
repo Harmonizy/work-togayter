@@ -60,6 +60,11 @@ class BaseReport(models.Model):
         verbose_name = verbose_name_plural = "1. แบบรายงาน"
         permissions = [
             ("create_safety_report", "สร้างรายงานนิรภัยได้"),
+            ("view_all_safety_report", "ดูรายงานนิรภัยทั้งหมดได้"),
+            ("view_own_safety_report", "ดูรายงานนิรภัยของหน่วยงานตนเองได้"),
+            ("edit_safety_report", "แก้ไขรายงานนิรภัยได้"),
+            ("delete_safety_report", "ลบรายงานนิรภัยได้"),
+            ("detail_safety_report", "ดูรายละเอียดรายงานนิรภัยได้"),
         ]
 
     def __str__(self):

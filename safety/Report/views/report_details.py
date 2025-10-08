@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Prefetch
 
 from ..models.reports import BaseReport, AviationReport, GroundReport, Participant, ReferenceReport
