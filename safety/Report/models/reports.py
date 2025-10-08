@@ -28,7 +28,7 @@ class ReportManager(models.Manager):
             return self.filter(Q(affiliation=user.affiliation) | Q(recorder=user))
         else:
             return self.filter(recorder=user)
-        
+
 
 class BaseReport(models.Model):
     fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ",default=current_fiscal_year)
