@@ -10,6 +10,7 @@ main_urlpatterns = [
     
     path("hazard-log/create/", hazard_log.create, name="hazard-log-create"),
     path("hazard-log/create-by-report/<int:report_id>/", hazard_log.create_by_report, name="hazard-log.create-by-report"),
+    path("hazard/<int:hazard_id>/cap/create/", hazard_log.handle_create_cap, name="hazard-log.cap-create"),
     
     path("hazard-edit/update/<int:pk>/", hazard_edit.update, name="hazard-edit.update"),
     

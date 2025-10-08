@@ -31,13 +31,10 @@ def list(request):
         reports = (BaseReport.objects
                    .select_related("recorder", "affiliation", "recorder__rank")
                    .prefetch_related("file_attachment", "image_attachment"))
-    elif request.user.has_perm('Report.view_own_safety_report'):
-        reports = (BaseReport.objects
-                   .filter(affiliation=request.user.affiliation)
-                   .select_related("recorder", "affiliation", "recorder__rank")
-                   .prefetch_related("file_attachment", "image_attachment"))
     else:
-        raise PermissionDenied()
+        reports = (BaseReport.objects.for_user(request.user)
+                                 .select_related("recorder", "affiliation", "recorder__rank")
+                                 .prefetch_related("file_attachment","image_attachment"))
 
     report_cards = card_data(reports)
 

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>403 Forbidden</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden; /* ❌ ห้ามเลื่อนจอ */
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #160025 0%, #080012 100%);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      animation: fadeInPage 1.5s ease-in-out;
+      text-align: center;
+      position: relative; /* เพื่อให้ absolute ซ้อนถูกต้อง */
+    }
+
+    @keyframes fadeInPage {
+      from { opacity: 0; transform: scale(1.03); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ---------- เอฟเฟกต์ Glow พื้นหลัง ---------- */
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(138,43,226,0.15) 0%, transparent 80%);
+      filter: blur(70px);
+      animation: pulse 6s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    .glow.one { top: 10%; left: 10%; }
+    .glow.two { bottom: 10%; right: 10%; animation-delay: 3s; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.2); }
+    }
+
+    /* ---------- เครื่องบินเล็กบินผ่าน ---------- */
+    .jet {
+      position: absolute;
+      width: 200px;
+      bottom: 40%;
+      left: -300px;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 20px rgba(120, 0, 255, 0.5));
+      animation: jetFly 7s ease-in-out forwards;
+      z-index: 1;
+    }
+
+    @keyframes jetFly {
+      0% { transform: translateX(0) translateY(0) rotate(6deg); opacity: 0; }
+      10% { opacity: 1; }
+      50% { transform: translateX(120vw) translateY(-5vh) rotate(-8deg); opacity: 1; }
+      100% { transform: translateX(150vw) translateY(3vh) rotate(-12deg); opacity: 0; }
+    }
+
+    /* ---------- เครื่องบินใหญ่ด้านขวา ---------- */
+    .jet-big {
+      position: absolute;
+      width: 800px;
+      bottom: -60px;
+      right: -400px;
+      opacity: 0;
+      transform: rotate(-8deg);
+      filter: drop-shadow(0 0 30px rgba(120, 0, 255, 0.6));
+      animation: jetBigAppear 3s ease-out forwards;
+      animation-delay: 6s;
+      z-index: 0;
+    }
+
+    @keyframes jetBigAppear {
+      0% { opacity: 0; transform: translateX(200px) scale(1.05) rotate(-8deg); }
+      50% { opacity: 1; transform: translateX(0) scale(1) rotate(-6deg); }
+      100% { opacity: 0.95; transform: translateX(0) scale(1) rotate(-5deg); }
+    }
+
+    /* ---------- เนื้อหา 403 ---------- */
+    .container-403 {
+      z-index: 2;
+      position: relative;
+      padding: 0 1rem;
+    }
+
+    .code {
+      font-size: clamp(4rem, 10vw, 9rem);
+      font-weight: 900;
+      background: linear-gradient(45deg, #9a00ff, #d04eff, #7a00ff);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 40px rgba(186, 85, 255, 0.5);
+      animation: glowText 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowText {
+      from { text-shadow: 0 0 10px #7a00ff, 0 0 25px #b84eff; }
+      to { text-shadow: 0 0 50px #ff8fff, 0 0 90px #b84eff; }
+    }
+
+    .message {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      margin-bottom: 10px;
+    }
+
+    .sub {
+      color: #c7a7ff;
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .btn-back {
+      padding: 12px 30px;
+      border-radius: 50px;
+      background: linear-gradient(90deg, #7a00ff, #b84eff);
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 0 15px rgba(184, 78, 255, 0.5);
+      display: inline-block;
+    }
+
+    .btn-back:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(184, 78, 255, 0.9);
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 768px) {
+      .jet-big { width: 450px; bottom: -30px; right: -180px; }
+      .jet { width: 150px; bottom: 45%; }
+      .glow { width: 350px; height: 350px; filter: blur(50px); }
+    }
+
+    @media (max-width: 480px) {
+      .jet-big { width: 320px; right: -120px; bottom: -20px; }
+      .glow { width: 250px; height: 250px; }
+      .btn-back { padding: 10px 25px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Glow พื้นหลัง -->
+  <div class="glow one"></div>
+  <div class="glow two"></div>
+
+  <!-- เครื่องบิน -->
+  <img src="{% static 'images/jet.png' %}" alt="Griffin Jet" class="jet">
+  <img src="{% static 'images/jetbig.png' %}" alt="Griffin Jet Large" class="jet-big">
+
+  <!-- เนื้อหา -->
+  <div class="container-403">
+    <div class="code">403</div>
+    <div class="message">Access Denied 🚫</div>
+    <div class="sub">คุณไม่มีสิทธิ์เข้าถึงหน้านี้<br>กรุณาติดต่อผู้ดูแลระบบ</div>
+    <a href="/" class="btn-back"><i class="bi bi-house-door"></i> กลับหน้าหลัก</a>
+  </div>
+</body>
+</html>
