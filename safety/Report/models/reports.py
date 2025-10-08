@@ -64,7 +64,9 @@ class BaseReport(models.Model):
             ("view_own_safety_report", "ดูรายงานนิรภัยของหน่วยงานตนเองได้"),
             ("edit_safety_report", "แก้ไขรายงานนิรภัยได้"),
             ("delete_safety_report", "ลบรายงานนิรภัยได้"),
-            ("detail_safety_report", "ดูรายละเอียดรายงานนิรภัยได้"),
+            ("view_all_report_detail", "ดูรายละเอียดรายงานนิรภัยได้"),
+            ("view_affiliaiotn_report_detail", "ดูรายละเอียดรายงานนิรภัยได้"),
+            
         ]
 
     def __str__(self):
