@@ -29,12 +29,14 @@ def list(request):
 
     if request.user.has_perm('Report.view_all_safety_report'):
         reports = (BaseReport.objects
-                   .select_related("recorder", "affiliation", "recorder__rank")
-                   .prefetch_related("file_attachment", "image_attachment"))
+                    .select_related("recorder", "affiliation", "recorder__rank")
+                    .prefetch_related("file_attachment", "image_attachment")
+                    .order_by("-created_at"))
     else:
         reports = (BaseReport.objects.for_user(request.user)
-                                 .select_related("recorder", "affiliation", "recorder__rank")
-                                 .prefetch_related("file_attachment","image_attachment"))
+                    .select_related("recorder", "affiliation", "recorder__rank")
+                    .prefetch_related("file_attachment","image_attachment")
+                    .order_by("-created_at"))
 
     report_cards = card_data(reports)
 

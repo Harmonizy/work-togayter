@@ -182,27 +182,27 @@
 
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item" href="{% url 'report:safety-report.detail' report.id %}">
-                                                            <i class="ri-eye-fill align-bottom me-2 text-primary"></i> View
+                                                            <i class="ri-eye-fill align-bottom me-2 text-primary"></i> รายละเอียด
                                                         </a>
 
                                                         <a class="dropdown-item" href="{% url 'report:safety-edit.edit-report' report.id %}">
-                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
 
                                                         {# Export to Word option #}
                                                         <a class="dropdown-item" href="{% url 'report:word_export.safety_doc' report.id %}">
-                                                            <i class="ri-file-word-fill align-bottom me-2 text-primary"></i> Export Word
+                                                            <i class="ri-file-word-fill align-bottom me-2 text-primary"></i> บันทึกข้อความ
                                                         </a>
                                                         {# Export to Word option #}
                                                         <a class="dropdown-item" href="{% url 'report:word_export.rtaf_message_form' report.id %}">
-                                                            <i class="ri-file-word-fill align-bottom me-2 text-info"></i> Export RTAF Message
+                                                            <i class="ri-file-word-fill align-bottom me-2 text-info"></i> กระดาษเขียนข่าว
                                                         </a>
 
                                                         <div class="dropdown-divider"></div>
                                                         <a href="#" 
-                                                        class="dropdown-item btn-delete" 
-                                                        data-url="{% url 'report:delete' report.id %}">
-                                                        <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Remove
+                                                            class="dropdown-item btn-delete" 
+                                                            data-url="{% url 'report:delete' report.id %}">
+                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> ลบ
                                                         </a>
                                                     </div>
 
