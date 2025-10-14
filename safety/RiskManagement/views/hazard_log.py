@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_POST
 
-from ..models import HazardLog
+from ..models import HazardLog, CAP
 from ..choices import HazardSourceChoices
 from ..forms import HazardLogForm, CAPFormSet
 from ..services.hazard_summary import get_hazard_summary_cards
@@ -58,7 +58,7 @@ def handle_create_cap(request, hazard_id):
         else:
             print("❌ Formset invalid:", formset.errors)
     else:
-        formset = CAPFormSet(instance=hazard)
+        formset = CAPFormSet(instance=hazard, queryset=CAP.objects.none())  ## ไม่แสดง CAP เก่า
 
     context = {
         "hazard": hazard,

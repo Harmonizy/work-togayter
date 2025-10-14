@@ -27,11 +27,9 @@
               {% for form in formset %}
                 <div class="cap-form mb-4 p-3 border rounded bg-light">
                   {% crispy form %}
-                  {% if form.instance.pk %}
                     <div class="form-check form-switch mt-2">
                       {{ form.DELETE }} <label class="form-check-label">ลบ CAP นี้</label>
                     </div>
-                  {% endif %}
                 </div>
               {% endfor %}
             </div>
@@ -55,7 +53,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const formsetArea = document.getElementById("formset-area");
   const addBtn = document.getElementById("add-cap-btn");
-  const totalForms = document.getElementById("id_caps-TOTAL_FORMS"); 
+  const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]'); 
   addBtn.addEventListener("click", function () {
     const formIndex = parseInt(totalForms.value);
     const emptyFormHtml = `{{ formset.empty_form|crispy|escapejs }}`.replace(/__prefix__/g, formIndex);

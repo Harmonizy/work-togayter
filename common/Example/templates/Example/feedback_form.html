@@ -114,7 +114,7 @@
         // add toast
         swal.fire({
             icon: 'success',
-            title: 'Feedback submitted successfully!',
+            title: 'เสร็จสิ้น!',
             // toast: true,
             position: 'top-end',
             showConfirmButton: false,
@@ -130,12 +130,12 @@
           return;
       } 
       Swal.fire({
-          title: "Proceed?",
+          title: "ดำเนินการต่อ?",
           text: `${e.detail.question}`,
           icon: "warning",
           showCancelButton: true,
-          confirmButtonText: "Yes",
-          cancelButtonText: "No",
+          confirmButtonText: "ยืนยัน",
+          cancelButtonText: "ยกเลิก",
           reverseButtons: true
       }).then(function(result) {
           if(result.isConfirmed) e.detail.issueRequest(true); // use true to skip window.confirm

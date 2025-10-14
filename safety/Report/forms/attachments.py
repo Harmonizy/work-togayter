@@ -25,7 +25,7 @@ class ImageForm(forms.ModelForm):
         self.fields['comment'].label = ''
                 
         self.helper = FormHelper()
-        self.helper.form_tag = False  # important for inline forms
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
                 Column('image', css_class='form-group col-md-8 mb-0'),
