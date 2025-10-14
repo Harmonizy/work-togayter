@@ -52,18 +52,6 @@ def extract_get_params(request):
     }
     return initial, affiliation, report_type
 
-# --- Subfunctions ---
-
-def extract_get_params(request):
-    affiliation_id = request.GET.get("affiliation")
-    affiliation = Affiliation.objects.get(id=affiliation_id) if affiliation_id else None
-    report_type = request.GET.get("report_type", "")
-    initial = {
-        "affiliation": affiliation,
-        "report_type": report_type,
-        "content": affiliation.airviation_content if affiliation and affiliation.airviation_content else default_content,
-    }
-    return initial, affiliation, report_type
 
 def build_context_for_get(initial, report_type, affiliation):
     context = {

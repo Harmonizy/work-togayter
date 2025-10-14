@@ -30,7 +30,7 @@ def handle_create(request, initial_data=None):
         form = HazardLogForm(request.POST)
         if form.is_valid():
             hazard = form.save()
-            return redirect("risk_management:cap-create", hazard_id=hazard.id)
+            return redirect("risk_management:hazard-detail", hazard.id)
         else:
             print(form.errors)
     else:
@@ -54,16 +54,15 @@ def handle_create_cap(request, hazard_id):
         formset = CAPFormSet(request.POST, instance=hazard)
         if formset.is_valid():
             formset.save()
-            return redirect("risk_management:hazard-log")
+            return redirect("risk_management:hazard-detail", hazard.id)
         else:
-            print(formset.errors)
+            print("❌ Formset invalid:", formset.errors)
     else:
         formset = CAPFormSet(instance=hazard)
 
     context = {
         "hazard": hazard,
         "formset": formset,
-        "title": f"เพิ่ม CAP สำหรับ {hazard.title}",
     }
     return render(request, "RiskManagement/hazard-log/cap-create.html", context)
 
@@ -74,6 +73,7 @@ def create(request):
 
 def create_by_report(request, report_id):
     return handle_create(request, initial_data={"related_report_id": report_id})
+
 
 @login_required
 @permission_required("RiskManagement.delete_hazard_log", raise_exception=True)

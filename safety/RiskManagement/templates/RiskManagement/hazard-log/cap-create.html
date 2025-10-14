@@ -1,71 +1,72 @@
 {% extends "partials/base.html" %}
-{% load static %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
-<div class="container py-4">
-  <div class="card shadow-sm">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <h4 class="mb-0">{{ title }}</h4>
-      <a href="{% url 'risk_management:hazard-log' %}" class="btn btn-outline-light btn-sm">
-        <i class="bi bi-arrow-left"></i> กลับไปหน้า Hazard Log
-      </a>
-    </div>
-
-    <div class="card-body">
-      <div class="mb-4">
-        <h5 class="fw-bold">{{ hazard.title }}</h5>
-        <p class="text-muted mb-0">รหัส: {{ hazard.code }} | สร้างเมื่อ: {{ hazard.created_at|date:"d/m/Y" }}</p>
-      </div>
-
-      <form method="post">
-        {% csrf_token %}
-        {{ formset.management_form }}
-
-        <div class="table-responsive">
-          <table class="table table-bordered align-middle">
-            <thead class="table-dark">
-              <tr>
-                <th style="width: 5%;">ลำดับ</th>
-                <th style="width: 30%;">หัวข้อ</th>
-                <th style="width: 20%;">สถานะ</th>
-                <th style="width: 20%;">วันครบกำหนด</th>
-                <th style="width: 25%;">รายละเอียด</th>
-                <th style="width: 5%;">ลบ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for form in formset.forms %}
-                <tr>
-                  <td>{{ form.order }}</td>
-                  <td>{{ form.title }}</td>
-                  <td>{{ form.status }}</td>
-                  <td>{{ form.due_date }}</td>
-                  <td>{{ form.description }}</td>
-                  <td class="text-center">
-                    {% if form.instance.pk %}
-                      {{ form.DELETE }}
-                    {% else %}
-                      <span class="text-muted">-</span>
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-
-        <div class="d-flex justify-content-between mt-4">
-          <button type="submit" class="btn btn-success px-4">
-            <i class="bi bi-save"></i> บันทึก CAP
-          </button>
-          <a href="{% url 'risk_management:hazard-log' %}" class="btn btn-secondary px-4">
-            <i class="bi bi-x-circle"></i> ยกเลิก
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+      <div class="card shadow-lg">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">เพิ่ม CAP สำหรับ {{ hazard.title }}</h4>
+          <a href="{% url 'risk_management:hazard-detail' hazard.id %}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left"></i> กลับไปหน้า Hazard Log
           </a>
         </div>
-      </form>
+
+        <div class="card-body">
+          <p class="text-muted mb-3">
+            รหัส: {{ hazard.code }} | วันที่สร้าง: {{ hazard.created_at|date:"d/m/Y" }}
+          </p>
+
+          <form method="post" id="cap-form">
+            {% csrf_token %}
+            {{ formset.management_form }}
+
+            <div id="formset-area">
+              {% for form in formset %}
+                <div class="cap-form mb-4 p-3 border rounded bg-light">
+                  {% crispy form %}
+                  {% if form.instance.pk %}
+                    <div class="form-check form-switch mt-2">
+                      {{ form.DELETE }} <label class="form-check-label">ลบ CAP นี้</label>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <button type="button" id="add-cap-btn" class="btn btn-outline-primary">
+                <i class="bi bi-plus-circle"></i> เพิ่ม CAP
+              </button>
+              <button type="submit" class="btn btn-success px-4">
+                <i class="bi bi-save"></i> บันทึก
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const formsetArea = document.getElementById("formset-area");
+  const addBtn = document.getElementById("add-cap-btn");
+  const totalForms = document.getElementById("id_caps-TOTAL_FORMS"); 
+  addBtn.addEventListener("click", function () {
+    const formIndex = parseInt(totalForms.value);
+    const emptyFormHtml = `{{ formset.empty_form|crispy|escapejs }}`.replace(/__prefix__/g, formIndex);
+
+    const newDiv = document.createElement("div");
+    newDiv.classList.add("cap-form", "mb-4", "p-3", "border", "rounded", "bg-light");
+    newDiv.innerHTML = emptyFormHtml;
+
+    formsetArea.appendChild(newDiv);
+    totalForms.value = formIndex + 1;
+  });
+});
+</script>
 {% endblock %}
