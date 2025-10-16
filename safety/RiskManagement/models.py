@@ -51,13 +51,13 @@ class HazardLog(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "1. ทะเบียนความเสี่ยง"
         permissions = [
-            ("view_all_hazard_log", "ดูทะเบียนความเสี่ยงทุกหน่วยได้ (ทุกหน่วย)"),
-            ("view_own_hazard_log", "ดูทะเบียนความเสี่ยงเฉพาะของหน่วยตนเอง"),
-            ("create_hazard_log", "สร้างทะเบียนความเสี่ยงได้"),
-            ("create_caps", "สร้าง CAPs"),
-            ("edit_hazard_log", "แก้ไขทะเบียนความเสี่ยงได้"),
-            ("delete_hazard_log", "ลบทะเบียนความเสี่ยงได้"),
-            ("detail_hazard_log", "ดูรายละเอียดทะเบียนความเสี่ยงได้"),
+            ("view_all_hazard_log", "*ดูทะเบียนความเสี่ยงทั้งหมดได้"),
+            ("view_affiliation_hazard_log", "*ดูทะเบียนความเสี่ยงของหน่วยตนเองได้"),
+            ("create_hazard_log", "*สร้างทะเบียนความเสี่ยงได้"),
+            ("edit_hazard_log", "*แก้ไขทะเบียนความเสี่ยงได้"),
+            ("delete_hazard_log", "*ลบทะเบียนความเสี่ยงได้"),
+            ("detail_hazard_log", "*ดูรายละเอียดทะเบียนความเสี่ยงได้"),
+            ("create_cap", "*สร้าง CAP ได้"),
         ]
 
     def __str__(self):

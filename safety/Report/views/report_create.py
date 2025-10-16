@@ -14,9 +14,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
-# @permission_required("Report.create_safety_report", raise_exception=True)
+@login_required 
 def new_report(request):
+
     if request.method == "GET":
         initial, affiliation, report_type = extract_get_params(request)
         context = build_context_for_get(initial, report_type, affiliation)

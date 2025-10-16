@@ -25,8 +25,6 @@ class PriorityChoices(models.TextChoices):
 
 class ReportStatusChoices(models.IntegerChoices):
     DRAFT = 1, "ร่าง"
-    SUBMITTED = 2, "ส่งแล้ว"
-    CHECKING = 3, "รอตรวจสอบ"
     APPROVED = 4, "อนุมัติ"
     REJECTED = 5, "ไม่อนุมัติ"
 

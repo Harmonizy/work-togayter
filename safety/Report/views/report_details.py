@@ -1,6 +1,7 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Prefetch
+from django.contrib import messages
 
 from ..models.reports import BaseReport, AviationReport, GroundReport, Participant, ReferenceReport
 from ..models.attachments import Image, File, Recommendation
@@ -17,6 +18,19 @@ def is_type_in(report, choices):
 
 
 def main_page(request, pk):
+    report = get_object_or_404(BaseReport, pk=pk)
+
+    if request.user.has_perm("report.view_all_report_detail"):
+        pass
+    elif request.user.has_perm("report.view_affiliation_report_detail"):
+        if report.affiliation != request.user.affiliation:
+            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานหน่วยอื่นได้")
+            return redirect("report:safety-report.list")
+    else:
+        if report.recorder != request.user:
+            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานนี้")
+            return redirect("report:safety-report.list")
+
     report = get_object_or_404(
         BaseReport.objects
             .select_related("affiliation", "recorder")

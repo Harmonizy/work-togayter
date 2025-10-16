@@ -34,7 +34,7 @@
                                 <h5 class="card-title mb-2 mb-md-0 flex-grow-1 text-center text-md-start">All Safety Reports</h5>
                                 <div class="flex-shrink-0">
                                     <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2">
-                                        {% if perms.Report.create_safety_report %}
+                                        {% if perms.Report.create_report %}
                                         <a class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#reportAdvanceModal">
                                             <i class="ri-add-line align-bottom me-1"></i> สร้างรายงาน นนพ., นภบ.
                                         </a>
@@ -189,21 +189,22 @@
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
 
-                                                        {# Export to Word option #}
                                                         <a class="dropdown-item" href="{% url 'report:word_export.safety_doc' report.id %}">
                                                             <i class="ri-file-word-fill align-bottom me-2 text-primary"></i> บันทึกข้อความ
                                                         </a>
-                                                        {# Export to Word option #}
+
                                                         <a class="dropdown-item" href="{% url 'report:word_export.rtaf_message_form' report.id %}">
                                                             <i class="ri-file-word-fill align-bottom me-2 text-info"></i> กระดาษเขียนข่าว
                                                         </a>
 
+                                                        {% if perms.Report.delete_report %}
                                                         <div class="dropdown-divider"></div>
                                                         <a href="#" 
                                                             class="dropdown-item btn-delete" 
                                                             data-url="{% url 'report:delete' report.id %}">
                                                             <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> ลบ
                                                         </a>
+                                                        {% endif %}
                                                     </div>
 
 

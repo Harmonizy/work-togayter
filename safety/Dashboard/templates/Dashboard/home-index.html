@@ -198,24 +198,24 @@
                                                     <div class="col-6 col-sm-3">
                                                         <div class="p-3 border border-dashed border-start-0">
                                                             <h5 class="mb-1"><span class="counter-value"
-                                                                    data-target="7585">0</span></h5>
-                                                            <p class="text-muted mb-0">Orders</p>
-                                                        </div>
-                                                    </div>
-                                                    <!--end col-->
-                                                    <div class="col-6 col-sm-3">
-                                                        <div class="p-3 border border-dashed border-start-0">
-                                                            <h5 class="mb-1">$<span class="counter-value"
-                                                                    data-target="22.89">0</span>k</h5>
-                                                            <p class="text-muted mb-0">Earnings</p>
+                                                                    data-target="1585">0</span></h5>
+                                                            <p class="text-muted mb-0">รายงานขั้นต้น</p>
                                                         </div>
                                                     </div>
                                                     <!--end col-->
                                                     <div class="col-6 col-sm-3">
                                                         <div class="p-3 border border-dashed border-start-0">
                                                             <h5 class="mb-1"><span class="counter-value"
-                                                                    data-target="367">0</span></h5>
-                                                            <p class="text-muted mb-0">Refunds</p>
+                                                                    data-target="1120">0</span></h5>
+                                                            <p class="text-muted mb-0">รายงานอนุมัติ</p>
+                                                        </div>
+                                                    </div>
+                                                    <!--end col-->
+                                                    <div class="col-6 col-sm-3">
+                                                        <div class="p-3 border border-dashed border-start-0">
+                                                            <h5 class="mb-1"><span class="counter-value"
+                                                                    data-target="167">0</span></h5>
+                                                            <p class="text-muted mb-0">รายงานต้องติดตาม</p>
                                                         </div>
                                                     </div>
                                                     <!--end col-->
@@ -223,7 +223,7 @@
                                                         <div class="p-3 border border-dashed border-start-0 border-end-0">
                                                             <h5 class="mb-1 text-success"><span class="counter-value"
                                                                     data-target="18.92">0</span>%</h5>
-                                                            <p class="text-muted mb-0">Conversation Ratio</p>
+                                                            <p class="text-muted mb-0">แนวโน้ม</p>
                                                         </div>
                                                     </div>
                                                     <!--end col-->
@@ -318,21 +318,22 @@
                                     <div class="col-xl-6">
                                         <div class="card card-height-100">
                                             <div class="card-header align-items-center d-flex">
-                                                <h4 class="card-title mb-0 flex-grow-1">Sessions by Countries</h4>
+                                                <h4 class="card-title mb-0 flex-grow-1">CAPs</h4>
                                             <div>
-                                                <button type="button" class="btn btn-soft-secondary btn-sm material-shadow-none">
+                                                {% comment %} <button type="button" class="btn btn-soft-secondary btn-sm material-shadow-none">
                                                     ALL
-                                                </button>
-                                                <button type="button" class="btn btn-soft-primary btn-sm material-shadow-none">
+                                                </button> {% endcomment %}
+                                                {% comment %} <button type="button" class="btn btn-soft-primary btn-sm material-shadow-none">
                                                     1M
                                                 </button>
                                                 <button type="button" class="btn btn-soft-secondary btn-sm material-shadow-none">
                                                     6M
-                                                </button>
+                                                </button> {% endcomment %}
                                             </div>
                                         </div>
                                             <div class="card-body p-0">
                                                 <div>
+                                                    {% comment %} # safety-analysis-project\static\js\pages\dashboard-analytics.init.js {% endcomment %}
                                                     <div id="countries_charts" data-colors='["--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-danger", "--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-info"]' data-colors-minimal='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]' data-colors-material='["--vz-primary", "--vz-primary", "--vz-info", "--vz-info", "--vz-danger", "--vz-primary", "--vz-primary", "--vz-warning", "--vz-primary", "--vz-primary"]' data-colors-galaxy='["--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4"]' data-colors-classic='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]' class="apex-charts" dir="ltr"></div>    
                                                 </div>
                                             </div><!-- end card body -->

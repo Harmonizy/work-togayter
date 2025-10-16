@@ -7,7 +7,7 @@ from ..models import BaseReport
 
 
 @login_required
-@permission_required("Report.delete_safety_report", raise_exception=True)
+@permission_required("Report.delete_report", raise_exception=True)
 def delete_report(request, pk):
     report = get_object_or_404(BaseReport, pk=pk)
     title = report.title

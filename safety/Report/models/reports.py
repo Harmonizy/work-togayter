@@ -59,14 +59,13 @@ class BaseReport(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "1. แบบรายงาน"
         permissions = [
-            ("create_safety_report", "สร้างรายงานนิรภัยได้"),
-            ("view_all_safety_report", "ดูรายงานนิรภัยทั้งหมดได้"),
-            ("view_own_safety_report", "ดูรายงานนิรภัยของหน่วยงานตนเองได้"),
-            ("edit_safety_report", "แก้ไขรายงานนิรภัยได้"),
-            ("delete_safety_report", "ลบรายงานนิรภัยได้"),
-            ("view_all_report_detail", "ดูรายละเอียดรายงานนิรภัยได้"),
-            ("view_affiliaiotn_report_detail", "ดูรายละเอียดรายงานนิรภัยได้"),
-            
+            ("view_all_report_list", "*ดูรายงานทั้งหมดได้"),
+            ("view_affiliation_report_list", "*ดูรายงานของหน่วยงานตนเองได้"),
+            ("create_report", "*สร้างรายงานละเอียดได้"),
+            ("edit_report", "*แก้ไขรายงานได้"),
+            ("delete_report", "*ลบรายงานได้"),
+            ("view_all_report_detail", "*ดูรายละเอียดรายงานทั้งหมดได้"),
+            ("view_affiliaiotn_report_detail", "*ดูรายละเอียดรายงานของหน่วยงานตัวเองได้"),
         ]
 
     def __str__(self):

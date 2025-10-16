@@ -12,8 +12,6 @@ def status_badge(report):
     # Map status to bootstrap classes
     classes_map = {
         ReportStatusChoices.DRAFT: "bg-info-subtle text-info",
-        ReportStatusChoices.SUBMITTED: "bg-warning-subtle text-warning",
-        ReportStatusChoices.CHECKING: "bg-primary-subtle text-primary",
         ReportStatusChoices.APPROVED: "bg-success-subtle text-success",
         ReportStatusChoices.REJECTED: "bg-danger-subtle text-danger",
     }

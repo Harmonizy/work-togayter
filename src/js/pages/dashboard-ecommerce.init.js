@@ -146,27 +146,27 @@ function loadCharts() {
     if (linechartcustomerColors) {
         var options = {
             series: [{
-                name: "Orders",
+                name: "รายงาน",
                 type: "area",
                 data: [4, 5, 6, 8, 9, 1, 2, 4, 8, 2, 3, 7],
             },
             {
-                name: "Online",
+                name: "อนุมัติ",
                 type: "bar",
                 data: [34, 45, 32, 56, 47, 58, 39, 41, 52, 45, 48, 55],
             },
             {
-                name: "Retail",
+                name: "เร่งด่วน",
                 type: "bar",
                 data: [28, 35, 30, 44, 39, 41, 30, 29, 48, 33, 38, 40],
             },
             {
-                name: "Wholesale",
+                name: "ต้องติดตาม",
                 type: "bar",
                 data: [22, 31, 27, 36, 32, 38, 25, 24, 40, 29, 34, 36],
             },
             {
-                name: "Refunds",
+                name: "ไม่อนุมัติ",
                 type: "line",
                 data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35],
             },
@@ -297,7 +297,7 @@ function loadCharts() {
     if (chartDonutBasicColors) {
         var options = {
             series: [44, 41, 17, 15],
-            labels: ["อ.อุบัติเหตุ", "อ.อุบัติการณ์", "อ.อุบัติการณ์ร้ายแรง", "อ.ไร้คนขับอุบัติเหตุ"],
+            labels: ["รายงานอุบัติเหตุภาคพื้น", "รายงานอุบัติการณ์ภาคพื้น", "รายงานอากาศยานอุบัติเหตุ", "รายงานอากาศยานอุบัติการณ์"],
             chart: {
                 height: 333,
                 type: "donut",

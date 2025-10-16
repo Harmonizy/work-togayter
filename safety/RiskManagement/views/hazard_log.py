@@ -14,7 +14,7 @@ from ..services.hazard_summary import get_hazard_summary_cards
 def list(request):
     if request.user.has_perm('RiskManagement.view_all_hazard_log'):
         hazard_log = HazardLog.objects.all()
-    elif request.user.has_perm('RiskManagement.view_own_hazard_log'):
+    elif request.user.has_perm('RiskManagement.view_affiliation_hazard_log'):
         hazard_log = HazardLog.objects.filter(affiliation=request.user.affiliation)
     else:
         raise PermissionDenied() ## Djano ใช้ PermissionDenied เพื่อส่งไป 403
@@ -45,7 +45,7 @@ def handle_create(request, initial_data=None):
 
 
 @login_required
-@permission_required("RiskManagement.create_caps", raise_exception=True)
+@permission_required("RiskManagement.create_cap", raise_exception=True)
 def handle_create_cap(request, hazard_id):
 
     hazard = get_object_or_404(HazardLog, id=hazard_id)

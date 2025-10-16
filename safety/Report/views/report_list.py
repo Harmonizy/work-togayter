@@ -27,16 +27,18 @@ def list(request):
     date_range = request.GET.get('date_range', '').strip()
     status_filter = request.GET.get('status', '').strip()
 
-    if request.user.has_perm('Report.view_all_safety_report'):
-        reports = (BaseReport.objects
-                    .select_related("recorder", "affiliation", "recorder__rank")
-                    .prefetch_related("file_attachment", "image_attachment")
-                    .order_by("-created_at"))
+    if request.user.has_perm('Report.view_all_report_list'):
+        reports = BaseReport.objects.all()
+    elif request.user.has_perm('Report.view_affiliation_report_list'):
+        reports = BaseReport.objects.filter(affiliation=request.user.affiliation)
     else:
-        reports = (BaseReport.objects.for_user(request.user)
-                    .select_related("recorder", "affiliation", "recorder__rank")
-                    .prefetch_related("file_attachment","image_attachment")
-                    .order_by("-created_at"))
+        reports = BaseReport.objects.filter(recorder=request.user)
+
+    reports = (
+        reports.select_related("recorder", "affiliation", "recorder__rank")
+                .prefetch_related("file_attachment", "image_attachment")
+                .order_by("-event_date")
+    )
 
     report_cards = card_data(reports)
 
