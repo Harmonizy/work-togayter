@@ -18,11 +18,11 @@
                 {% include "partials/page-title.html" with pagetitle="Safety Reports" title="Safety Reports List" %}
             {% endblock pagetitle %}
 
-            <div class="row">
+            {% comment %} <div class="row">
                 {% for card in report_cards %}
                     {% include "Report/safety-reports/partials/card.html" with label=card.label count=card.count growth=card.growth trend_icon=card.trend_icon trend_color=card.trend_color icon_bg=card.icon_bg icon_text=card.icon_text icon=card.icon %}
                 {% endfor %}
-            </div>
+            </div> {% endcomment %}
 
 
             <div class="row">

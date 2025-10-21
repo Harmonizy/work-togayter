@@ -78,102 +78,19 @@
                         <div class="row">
                             <div class="col-xl-9 col-md-6">
                                 <div class="row">
-                                    <div class="col-xl-4 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">ชั่วโมงบินรวม</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-success fs-14 mb-0">
-                                                            <i class="ri-arrow-right-up-line fs-13 align-middle"></i> +16.24 %
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                                class="counter-value" data-target="1352">0</span> ชม.</h4>
-                                                        <a href="" class="text-decoration-underline">รายละเอียดตามกองบิน</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-success-subtle rounded fs-3">
-                                                            <i class="bx bxs-plane-alt text-success"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-4 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">สรุปสถิติและรายงาน
-                                                        </p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-danger fs-14 mb-0">
-                                                            <i class="ri-arrow-right-down-line fs-13 align-middle"></i> -3.57 %
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                                class="counter-value" data-target="120">0</span> เรื่อง </h4>
-                                                                
-                                                        <a href="" class="text-decoration-underline">ประจำปีงบประมาณ</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-info-subtle rounded fs-3">
-                                                            <i class=" bx bx-spreadsheet text-info"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
-
-                                    <div class="col-xl-4 col-md-6">
-                                        <!-- card -->
-                                        <div class="card card-animate">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1 overflow-hidden">
-                                                        <p class="text-uppercase fw-medium text-muted text-truncate mb-0">
-                                                            อุบัติเหตุรวม</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <h5 class="text-success fs-14 mb-0">
-                                                            <i class="ri-arrow-right-up-line fs-13 align-middle"></i> +29.08 %
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-end justify-content-between mt-4">
-                                                    <div>
-                                                        <h4 class="fs-22 fw-semibold ff-secondary mb-4"><span
-                                                                class="counter-value" data-target="99">0</span> ครั้ง </h4>
-                                                                
-                                                        <a href="" class="text-decoration-underline">รายละเอียดตามกองบิน</a>
-                                                    </div>
-                                                    <div class="avatar-sm flex-shrink-0">
-                                                        <span class="avatar-title bg-warning-subtle rounded fs-3">
-                                                            <i class="bx bx-stats text-warning"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card body -->
-                                        </div><!-- end card -->
-                                    </div><!-- end col -->
+                                    {% include "Dashboard/partial/card_count.html" with name='รายงานทั้งหมด' value=report_all logo='file' color='primary'  %}
+                                    {% include "Dashboard/partial/card_count.html" with name='รายงานร่าง' value=report_draft logo='file' color='secondary'  status=1 %}
+                                    {% include "Dashboard/partial/card_count.html" with name='รายงานอนุมัติ' value=report_approved logo='file' color='info' status=2 %}
                                 </div>
+
                                 <div class="row">
-                                    <div class="col-xl-12">
+                                    {% include "Dashboard/partial/card_count.html" with name='เร่งด่วน' value=report_high logo='plane' color='danger' priority='H' %}
+                                    {% include "Dashboard/partial/card_count.html" with name='ต้องติดตาม' value=report_medium logo='plane' color='warning'  priority='M' %}
+                                    {% include "Dashboard/partial/card_count.html" with name='ปกติ' value=report_low logo='plane' color='success' priority='L' %}
+                                </div>
+                                <div class="col-xl-12">
+
+                                <div class="row">
                                         <div class="card">
                                             <div class="card-header border-0 align-items-center d-flex">
                                                 <h4 class="card-title mb-0 flex-grow-1">Revenue</h4>

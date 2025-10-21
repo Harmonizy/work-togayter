@@ -26,6 +26,7 @@ def list(request):
     search_query = request.GET.get('search', '').strip()
     date_range = request.GET.get('date_range', '').strip()
     status_filter = request.GET.get('status', '').strip()
+    priority_filter = request.GET.get('priority', '').strip()
 
     if request.user.has_perm('Report.view_all_report_list'):
         reports = BaseReport.objects.all()
@@ -61,6 +62,9 @@ def list(request):
     if status_filter.isdigit():
         reports = reports.filter(status=int(status_filter))
 
+    if priority_filter:
+        reports = reports.filter(priority=priority_filter)
+
     paginator = Paginator(reports, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -73,6 +77,7 @@ def list(request):
         'search': search_query, 
         'date_range': date_range,
         'status': status_filter,
+        'priority': priority_filter,
         'affiliation': Affiliation.objects.all().order_by('short_name'),
     }
 

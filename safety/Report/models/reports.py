@@ -53,7 +53,6 @@ class BaseReport(models.Model):
     created_at = models.DateTimeField(verbose_name="วัน-เวลาที่สร้างรายงาน",auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด",auto_now=True)
     
-    # objects = models.Manager()
     objects = ReportManager()
     
     class Meta:
