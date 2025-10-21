@@ -28,7 +28,7 @@ class ReportManager(models.Manager):
             return self.filter(Q(affiliation=user.affiliation) | Q(recorder=user))
         else:
             return self.filter(recorder=user)
-        
+
 
 class BaseReport(models.Model):
     fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ",default=current_fiscal_year)
@@ -53,13 +53,18 @@ class BaseReport(models.Model):
     created_at = models.DateTimeField(verbose_name="วัน-เวลาที่สร้างรายงาน",auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด",auto_now=True)
     
-    # objects = models.Manager()
     objects = ReportManager()
     
     class Meta:
         verbose_name = verbose_name_plural = "1. แบบรายงาน"
         permissions = [
-            ("create_safety_report", "สร้างรายงานนิรภัยได้"),
+            ("view_all_report_list", "*ดูรายงานทั้งหมดได้"),
+            ("view_affiliation_report_list", "*ดูรายงานของหน่วยงานตนเองได้"),
+            ("create_report", "*สร้างรายงานละเอียดได้"),
+            ("edit_report", "*แก้ไขรายงานได้"),
+            ("delete_report", "*ลบรายงานได้"),
+            ("view_all_report_detail", "*ดูรายละเอียดรายงานทั้งหมดได้"),
+            ("view_affiliaiotn_report_detail", "*ดูรายละเอียดรายงานของหน่วยงานตัวเองได้"),
         ]
 
     def __str__(self):

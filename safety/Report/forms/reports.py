@@ -46,6 +46,9 @@ class BaseReportForm(forms.ModelForm):
         if report_type:
             self.fields["report_type"].choices = [(choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type]
         if affiliation:
+            # if affiliation is integer
+            if isinstance(affiliation, int):
+                affiliation = Affiliation.objects.get(id=affiliation)
             self.fields['affiliation'].queryset = self.fields['affiliation'].queryset.filter(id=affiliation.id)
 
         self.helper.layout = Layout(
@@ -204,12 +207,43 @@ class ReferenceReportForm(forms.ModelForm):
 
 
 # ========== Formsets ==========
-ParticipantFormSet = inlineformset_factory(BaseReport, Participant, form=ParticipantForm, extra=1, can_delete=True)
 
-ImageFormSet = inlineformset_factory(BaseReport, Image, form=ImageForm, extra=1, can_delete=False)
+ParticipantFormSet = inlineformset_factory(
+    BaseReport, Participant,
+    form=ParticipantForm,
+    fk_name='base_report',
+    extra=1,
+    can_delete=True
+)
 
-FileFormSet = inlineformset_factory(BaseReport, File, form=FileForm, extra=1, can_delete=False)
+ImageFormSet = inlineformset_factory(
+    BaseReport, Image,
+    form=ImageForm,
+    fk_name='base_report',
+    extra=1,
+    can_delete=True
+)
 
-RecommendationFormSet = inlineformset_factory(BaseReport, Recommendation, form=RecommendationForm, extra=1, can_delete=False)
+FileFormSet = inlineformset_factory(
+    BaseReport, File,
+    form=FileForm,
+    fk_name='base_report',
+    extra=1,
+    can_delete=True
+)
 
-ReferenceReportFormSet = inlineformset_factory(BaseReport, ReferenceReport, form=ReferenceReportForm, extra=1, can_delete=True, fk_name="base_report",)
+RecommendationFormSet = inlineformset_factory(
+    BaseReport, Recommendation,
+    form=RecommendationForm,
+    fk_name='base_report',
+    extra=1,
+    can_delete=True
+)
+
+ReferenceReportFormSet = inlineformset_factory(
+    BaseReport, ReferenceReport,
+    form=ReferenceReportForm,
+    fk_name="base_report",
+    extra=1,
+    can_delete=True
+)

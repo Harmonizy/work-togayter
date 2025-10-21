@@ -1,77 +1,103 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Prefetch
+from django.contrib import messages
 
-from ..models.reports import BaseReport, AviationReport, GroundReport
+from ..models.reports import BaseReport, AviationReport, GroundReport, Participant, ReferenceReport
 from ..models.attachments import Image, File, Recommendation
 from ..choices import ReportTypeChoices
 
 from safety.Evaluate.models import BaseReportEvaluation, EvaluationAnswer
 
-def _expect_flags(report_type: str):
-    return {
-        "is_ground": report_type in (ReportTypeChoices.SAFETY_GROUND, ReportTypeChoices.HAZARD_GROUND),
-        "is_aviation": report_type in (ReportTypeChoices.SAFETY_AVIATION, ReportTypeChoices.HAZARD_AVIATION),
-        "is_simple": report_type == ReportTypeChoices.SIMPLE,
-        "is_observation": report_type == ReportTypeChoices.OBSERVATION,
-    }
 
-def main_page(request, pk: int):
-    base_report = get_object_or_404(
+def is_type(report, type_choice):
+    return report.report_type == type_choice
+
+def is_type_in(report, choices):
+    return report.report_type in choices
+
+
+def main_page(request, pk):
+    report = get_object_or_404(BaseReport, pk=pk)
+
+    if request.user.has_perm("report.view_all_report_detail"):
+        pass
+    elif request.user.has_perm("report.view_affiliation_report_detail"):
+        if report.affiliation != request.user.affiliation:
+            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานหน่วยอื่นได้")
+            return redirect("report:safety-report.list")
+    else:
+        if report.recorder != request.user:
+            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานนี้")
+            return redirect("report:safety-report.list")
+
+    report = get_object_or_404(
         BaseReport.objects
-                        .prefetch_related(
-                            Prefetch('image_attachment', queryset=Image.objects.order_by('-created_at')),
-                            Prefetch('file_attachment', queryset=File.objects.order_by('-created_at')),
-                            Prefetch('recommendation_attachment', queryset=Recommendation.objects.order_by('-created_at')),
-                        )
-                        .select_related('affiliation', 'recorder'),
+            .select_related("affiliation", "recorder")
+            .prefetch_related(
+                Prefetch("image_attachment", queryset=Image.objects.order_by("-created_at")),
+                Prefetch("file_attachment", queryset=File.objects.order_by("-created_at")),
+                Prefetch("recommendation_attachment", queryset=Recommendation.objects.order_by("-created_at")),
+                Prefetch("participants", queryset=Participant.objects.select_related("role").order_by("id")),
+                Prefetch("references", queryset=ReferenceReport.objects.select_related("report").order_by("id")),
+            ),
         pk=pk
     )
 
-    aviation = (AviationReport.objects
-                        .select_related('base_report', 'squadron', 'aircraft')
-                        .prefetch_related('system', 'flight_phase')
-                        .filter(base_report=base_report)
-                        .first()
+    aviation_report = (
+        AviationReport.objects
+        .filter(base_report=report)
+        .select_related("base_report", "squadron", "aircraft")
+        .prefetch_related("system", "flight_phase")
+        .first()
     )
 
-    ground = (GroundReport.objects
-                        .select_related('base_report', 'category')
-                        .filter(base_report=base_report)
-                        .first()
+    ground_report = (
+        GroundReport.objects
+        .filter(base_report=report)
+        .select_related("base_report", "category")
+        .first()
     )
 
-    evaluation = (BaseReportEvaluation.objects
-                        .select_related('final_result__type', 'question_set', 'evaluator', 'report')
-                        .prefetch_related(
-                            Prefetch(
-                                'answers',
-                                queryset=EvaluationAnswer.objects
-                                                    .select_related('question')
-                                                    .order_by('order')
-                            )
-                        )
-                        .filter(report=base_report)
-                        .first()
+    evaluation = (
+        BaseReportEvaluation.objects
+        .filter(report=report)
+        .select_related("final_result__type", "question_set", "evaluator", "report")
+        .prefetch_related(
+            Prefetch(
+                "answers",
+                queryset=EvaluationAnswer.objects.select_related("question").order_by("order")
+            )
+        )
+        .first()
     )
 
-    flags = _expect_flags(base_report.report_type)
+    flags = {
+        "is_ground_report": is_type_in(report, [ReportTypeChoices.SAFETY_GROUND, ReportTypeChoices.HAZARD_GROUND]),
+        "is_aviation_report": is_type_in(report, [ReportTypeChoices.SAFETY_AVIATION, ReportTypeChoices.HAZARD_AVIATION]),
+        "is_simple_report": is_type(report, ReportTypeChoices.SIMPLE),
+        "is_observation_report": is_type(report, ReportTypeChoices.OBSERVATION),
+    }
 
     context = {
-        "base_report": base_report,
-        "aviation": aviation,
-        "ground": ground,
-        "images": base_report.image_attachment.all(),
-        "files": base_report.file_attachment.all(),
-        "recommends": base_report.recommendation_attachment.all(),
+        "base_report": report,
+        "aviation_report": aviation_report,
+        "ground_report": ground_report,
+
+        "images": report.image_attachment.all(),
+        "files": report.file_attachment.all(),
+        "recommendations": report.recommendation_attachment.all(),
+
+        "participants": report.participants.all(),
+        "reference_reports": report.references.all(),
 
         "evaluation": evaluation,
-        "eval_answers": evaluation.answers.all() if evaluation else [],
+        "evaluation_answers": evaluation.answers.all() if evaluation else [],
+        "report_type_label": report.get_report_type_display(),
 
-        "report_type_label": base_report.get_report_type_display(),
         **flags,
-        "missing_ground": flags["is_ground"] and not ground,  # <-----  คืออะไร
-        "missing_aviation": flags["is_aviation"] and not aviation,   # <-----  คืออะไร
+        "is_missing_ground_report": flags["is_ground_report"] and not ground_report,
+        "is_missing_aviation_report": flags["is_aviation_report"] and not aviation_report,
     }
-    # is_aviation ต่าง กับ aviation อย่างไร
-    # ทำนองเดียวกับ is_ground ต่าง กับ ground อย่างไร
+
     return render(request, "Report/safety-reports/detail/report-detail.html", context)

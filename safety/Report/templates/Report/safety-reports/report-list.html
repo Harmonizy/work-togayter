@@ -18,11 +18,11 @@
                 {% include "partials/page-title.html" with pagetitle="Safety Reports" title="Safety Reports List" %}
             {% endblock pagetitle %}
 
-            <div class="row">
+            {% comment %} <div class="row">
                 {% for card in report_cards %}
                     {% include "Report/safety-reports/partials/card.html" with label=card.label count=card.count growth=card.growth trend_icon=card.trend_icon trend_color=card.trend_color icon_bg=card.icon_bg icon_text=card.icon_text icon=card.icon %}
                 {% endfor %}
-            </div>
+            </div> {% endcomment %}
 
 
             <div class="row">
@@ -30,11 +30,11 @@
                     <div class="card" id="reportsList">
                         {# ส่วน Header + ปุ่มสร้าง Report ใหม่ #}
                         <div class="card-header border-0">
-                            <div class="d-flex align-items-center">
-                                <h5 class="card-title mb-0 flex-grow-1">All Safety Reports</h5>
+                            <div class="d-flex align-items-center flex-column flex-md-row">
+                                <h5 class="card-title mb-2 mb-md-0 flex-grow-1 text-center text-md-start">All Safety Reports</h5>
                                 <div class="flex-shrink-0">
-                                    <div class="d-flex flex-wrap gap-2">
-                                        {% if perms.Report.create_safety_report %}
+                                    <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2">
+                                        {% if perms.Report.create_report %}
                                         <a class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#reportAdvanceModal">
                                             <i class="ri-add-line align-bottom me-1"></i> สร้างรายงาน นนพ., นภบ.
                                         </a>
@@ -47,6 +47,7 @@
                                 </div>
                             </div>
                         </div>
+
                         {# Search bar #}
                         <div class="card-body border border-dashed border-end-0 border-start-0">
                             <form method="get" class="w-100">  
@@ -181,28 +182,29 @@
 
                                                     <div class="dropdown-menu dropdown-menu-end">
                                                         <a class="dropdown-item" href="{% url 'report:safety-report.detail' report.id %}">
-                                                            <i class="ri-eye-fill align-bottom me-2 text-primary"></i> View
+                                                            <i class="ri-eye-fill align-bottom me-2 text-primary"></i> รายละเอียด
                                                         </a>
 
                                                         <a class="dropdown-item" href="{% url 'report:safety-edit.edit-report' report.id %}">
-                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                            <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
 
-                                                        {# Export to Word option #}
                                                         <a class="dropdown-item" href="{% url 'report:word_export.safety_doc' report.id %}">
-                                                            <i class="ri-file-word-fill align-bottom me-2 text-primary"></i> Export Word
-                                                        </a>
-                                                        {# Export to Word option #}
-                                                        <a class="dropdown-item" href="{% url 'report:word_export.rtaf_message_form' report.id %}">
-                                                            <i class="ri-file-word-fill align-bottom me-2 text-info"></i> Export RTAF Message
+                                                            <i class="ri-file-word-fill align-bottom me-2 text-primary"></i> บันทึกข้อความ
                                                         </a>
 
+                                                        <a class="dropdown-item" href="{% url 'report:word_export.rtaf_message_form' report.id %}">
+                                                            <i class="ri-file-word-fill align-bottom me-2 text-info"></i> กระดาษเขียนข่าว
+                                                        </a>
+
+                                                        {% if perms.Report.delete_report %}
                                                         <div class="dropdown-divider"></div>
                                                         <a href="#" 
-                                                        class="dropdown-item btn-delete" 
-                                                        data-url="{% url 'report:delete' report.id %}">
-                                                        <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Remove
+                                                            class="dropdown-item btn-delete" 
+                                                            data-url="{% url 'report:delete' report.id %}">
+                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> ลบ
                                                         </a>
+                                                        {% endif %}
                                                     </div>
 
 
@@ -219,7 +221,7 @@
                                 <div class="noresult" style="display: none">
                                     <div class="text-center">
                                         <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px"></lord-icon>
-                                        <h5 class="mt-2">Sorry! No Result Found</h5>
+                                        <h5 class="mt-2">ไม่มีข้อมูล</h5>
                                         <p class="text-muted mb-0">We've searched more than 200k+ reports We did not find any reports for you search.</p>
                                     </div>
                                 </div>
@@ -347,7 +349,7 @@
             if (modal) { modal.hide(); }
             swal.fire({
                 icon: 'success',
-                title: 'Feedback submitted successfully!',
+                title: 'เสร็จสิ้น!',
                 // toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
@@ -390,7 +392,7 @@
                 text: "รายงานนี้จะถูกลบถาวร",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'ใช่, ลบเลย!',
+                confirmButtonText: 'ยืนยัน',
                 cancelButtonText: 'ยกเลิก'
             }).then((result) => {
                 if (result.isConfirmed) {

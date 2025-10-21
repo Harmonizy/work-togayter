@@ -42,25 +42,25 @@
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=participant_formset formset_name="participants" container_id="participants-container" title="ผู้เกี่ยวข้อง" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=reference_formset formset_name="references" container_id="references-container" title="รายงานอ้างอิง" %}
                 <div class="form-check my-3">
-                    <input class="form-check-input" type="radio" id="surveyOption1" name="surveyOption" value="1">
-                    <label class="form-check-label" for="surveyOption1">
+                    <input class="form-check-input" type="checkbox" id="surveyCheck" name="surveyCheck" value="1">
+                    <label class="form-check-label" for="surveyCheck">
                         ฉันยินยอมเข้าร่วมการทำแบบประเมิน
                     </label>
                 </div>
 
-                <div class="form-check my-3">
-                    <input class="form-check-input" type="radio" id="surveyOption2" name="surveyOption" value="2">
-                    <label class="form-check-label" for="surveyOption2">
+                {% comment %} <div class="form-check my-3">
+                    <input class="form-check-input" type="radio" id="surveyCheck" name="surveyCheck" value="2">
+                    <label class="form-check-label" for="surveyCheck">
                         การกระทำ/การละเว้นการกระทำโดยไม่ตั้งใจ
                     </label>
                 </div>
 
                 <div class="form-check my-3">
-                    <input class="form-check-input" type="radio" id="surveyOption3" name="surveyOption" value="3">
-                    <label class="form-check-label" for="surveyOption3">
+                    <input class="form-check-input" type="radio" id="surveyCheck" name="surveyCheck" value="3">
+                    <label class="form-check-label" for="surveyCheck">
                         การกระทำ/การละเว้นการกระทำโดยตั้งใจ
                     </label>
-                </div>
+                </div> {% endcomment %}
 
                 <div class="my-5">
                     <!-- จำเป็นต้องทำแบบนี้เพราะ มี javascript + sweetalert มาดัก submit ทำให้ค่าไม่ส่งไปกับ request.POST-->
@@ -114,7 +114,7 @@ $(document).ready(function () {
         let priorityValue = $('button[type="submit"]:focus').val();
 
         Swal.fire({
-            title: 'ยืนยันส่งข้อมูล?',
+            title: 'ยืนยันบันทึกข้อมูล?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -123,7 +123,7 @@ $(document).ready(function () {
             cancelButtonText: 'ยกเลิก'
         }).then((result) => {
             if (result.isConfirmed) {
-                form.submit(); // ส่ง form พร้อมค่าที่ถูกต้อง
+                form.submit(); 
             }
         });
     });

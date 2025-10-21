@@ -6,7 +6,7 @@ from ..forms.reports import BaseReportForm, GroundReportForm, AviationReportForm
 from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet
 from ..constants import default_content
 from ..choices import ReportTypeChoices
-from ..services.reports import save_new_report
+from ..services.reports import save_new_report_officer
 from common.RTAFUser.models import Affiliation
 
 
@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 
 
 @login_required
-# @permission_required("Report.create_safety_report", raise_exception=True)
+@permission_required("Report.create_report", raise_exception=True)
 def new_report(request):
     if request.method == "GET":
         initial, affiliation, report_type = extract_get_params(request)
@@ -44,7 +44,7 @@ def new_report(request):
 
     if all(form.is_valid() for form in forms_to_validate):
         base_form.instance.report_type = report_type
-        base_report = save_new_report(request, base_form, participant_formset, image_formset, rec_formset, file_formset, reference_formset, priority, **addition_context)
+        base_report = save_new_report_officer(request, base_form, participant_formset, image_formset, rec_formset, file_formset, reference_formset, priority, **addition_context)
         return handle_post_success(request, base_report)
 
     return handle_post_failure([base_form, participant_formset, image_formset, rec_formset, file_formset, reference_formset], addition_context)

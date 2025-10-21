@@ -7,19 +7,19 @@
                 <!-- Dark Logo-->
                 <a href="{% url 'dashboards:dashboard'%}" class="logo logo-dark">
                     <span class="logo-sm">
-                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="50">
+                        <img src="{% static 'images/SA-logo-2.png'%}" alt="" height="50">
                     </span>
                     <span class="logo-lg">
-                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="100">
+                        <img src="{% static 'images/SA-logo-2.png'%}" alt="" height="100">
                     </span>
                 </a>
                 <!-- Light Logo-->
                 <a href="{% url 'dashboards:dashboard'%}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="50">
+                        <img src="{% static 'images/SA-logo-2.png'%}" alt="" height="50">
                     </span>
                     <span class="logo-lg">
-                        <img src="{% static 'images/SA-logo.png'%}" alt="" height="100">
+                        <img src="{% static 'images/SA-logo-2.png'%}" alt="" height="100">
                     </span>
                 </a>
                 <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
@@ -87,10 +87,12 @@
                                     <li class="nav-item">
                                         <a href="{% url 'report:safety-report.list' %}" class="nav-link" data-key="t-report">รายงานนิรภัย</a>
                                     </li>
+                                    {% if perms.RiskManagment.view_all_hazard_log or perms.RiskManagment.view_affiliation_hazard_log %}
                                     <li><hr class="menu-divider"></li>
                                     <li class="nav-item">
                                         <a href="{% url 'risk_management:hazard-log' %}" class="nav-link" data-key="t-dashboard">ทะเบียนความเสี่ยง</a>
                                     </li> 
+                                    {% endif %}
                                     {% comment %} <li class="nav-item">
                                         <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
                                     </li> {% endcomment %}

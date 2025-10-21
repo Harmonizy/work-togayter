@@ -5,9 +5,10 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import transaction
 
-from ..models import BaseReport  # Import your report model
+from ..models import BaseReport
 from ..forms.reports import BaseReportForm
 from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet
+from ..choices import ReportStatusChoices
 
 logger = logging.getLogger('report')
 
@@ -15,6 +16,16 @@ logger = logging.getLogger('report')
 @login_required
 def edit_report(request, report_id):
     report = get_object_or_404(BaseReport, pk=report_id)
+
+    if report.status == ReportStatusChoices.DRAFT:
+        if not request.user.has_perm("report.edit_report") and report.affiliation != request.user.affiliation:
+            messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานของหน่วยอื่น")
+            return redirect("report:safety-report.list")
+
+    elif report.status in [ReportStatusChoices.APPROVED, ReportStatusChoices.REJECTED]:
+        if not request.user.has_perm("report.edit_report"):
+            messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานสถานะนี้")
+            return redirect("report:safety-report.list")
 
     if request.method == 'POST':
         base_form = BaseReportForm(request.POST, instance=report, prefix='base_form', user=request.user)

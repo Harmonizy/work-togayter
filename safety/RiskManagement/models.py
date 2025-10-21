@@ -50,6 +50,15 @@ class HazardLog(models.Model):
 
     class Meta:
         verbose_name = verbose_name_plural = "1. ทะเบียนความเสี่ยง"
+        permissions = [
+            ("view_all_hazard_log", "*ดูทะเบียนความเสี่ยงทั้งหมดได้"),
+            ("view_affiliation_hazard_log", "*ดูทะเบียนความเสี่ยงของหน่วยตนเองได้"),
+            ("create_hazard_log", "*สร้างทะเบียนความเสี่ยงได้"),
+            ("edit_hazard_log", "*แก้ไขทะเบียนความเสี่ยงได้"),
+            ("delete_hazard_log", "*ลบทะเบียนความเสี่ยงได้"),
+            ("detail_hazard_log", "*ดูรายละเอียดทะเบียนความเสี่ยงได้"),
+            ("create_cap", "*สร้าง CAP ได้"),
+        ]
 
     def __str__(self):
         return f"{self.code} - {self.category.event.name}"
@@ -74,7 +83,8 @@ class CAP(models.Model):
     hazard_log = models.ForeignKey(HazardLog, verbose_name="Hazard Log", on_delete=models.CASCADE, related_name="caps")
     title = models.CharField(verbose_name="หัวข้อ", max_length=255, null=False, blank=False)
     description = models.TextField(verbose_name="รายละเอียด", null=True, blank=True)
-
+    
+    owner  = models.CharField(verbose_name="ผู้รับผิดชอบ", max_length=255, null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=2, choices=CAPStatusChoices.choices, default=CAPStatusChoices.PLANNING, null=True, blank=True)
 
     due_date = models.DateField(verbose_name="วันครบกำหนด", null=True, blank=True)

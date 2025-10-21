@@ -226,7 +226,7 @@
         <div class="col-lg-3 order-2">
 
           {# คำสำคัญ #}
-          <div class="card mb-4">
+          {% comment %} <div class="card mb-4">
             <div class="card-header section-title">คำสำคัญ (Keywords)</div>
             <div class="card-body">
               {% with kws=base_report.keywords.all %}
@@ -239,7 +239,7 @@
                 {% endif %}
               {% endwith %}
             </div>
-          </div>
+          </div> {% endcomment %}
 
           {# รูปภาพ #}
           <div class="card mb-4">
@@ -305,6 +305,78 @@
               {% endif %}
             </div>
           </div>
+
+          {# บุคคลที่เกี่ยวข้อง #}
+          {% if participants %}
+          <div class="card mb-4">
+            <div class="card-header">
+              <span class="section-title">บุคคลที่เกี่ยวข้อง</span>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px;">ลำดับ</th>
+                      <th>ชื่อ-นามสกุล</th>
+                      <th>บทบาท</th>
+                      <th>ระดับการบาดเจ็บ</th>
+                      <th>หมายเหตุ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for p in participants %}
+                    <tr>
+                      <td class="text-center">{{ forloop.counter }}</td>
+                      <td>{{ p.full_name|default:"-" }}</td>
+                      <td>{{ p.role.name|default:"-" }}</td>
+                      <td>
+                        {% if p.injury_level is not None %}
+                          {{ p.get_injury_level_display }}
+                        {% else %}
+                          -
+                        {% endif %}
+                      </td>
+                      <td>{{ p.note|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {# รายงานอ้างอิง #}
+          {% if reference_reports %}
+          <div class="card mb-4">
+            <div class="card-header">
+              <span class="section-title">รายงานที่อ้างอิง</span>
+            </div>
+            <div class="card-body">
+              <ul class="list-group">
+                {% for ref in reference_reports %}
+                <li class="list-group-item d-flex justify-content-between">
+                  <div>
+                    <div>
+                      {% if ref.report %}
+                        <a href="{{ ref.report.get_absolute_url }}" target="_blank">
+                          {{ ref.report.title }}
+                        </a>
+                      {% else %}
+                        <span class="text-muted">ไม่พบรายงานที่อ้างอิง</span>
+                      {% endif %}
+                    </div>
+                    {% if ref.note %}
+                      <div class="text-muted small">หมายเหตุ: {{ ref.note }}</div>
+                    {% endif %}
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          {% endif %}
 
         </div>
       </div><!-- /.row -->

@@ -1,0 +1,70 @@
+{% extends "partials/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+      <div class="card shadow-lg">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">เพิ่ม CAP สำหรับ {{ hazard.title }}</h4>
+          <a href="{% url 'risk_management:hazard-detail' hazard.id %}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left"></i> กลับไปหน้า Hazard Log
+          </a>
+        </div>
+
+        <div class="card-body">
+          <p class="text-muted mb-3">
+            รหัส: {{ hazard.code }} | วันที่สร้าง: {{ hazard.created_at|date:"d/m/Y" }}
+          </p>
+
+          <form method="post" id="cap-form">
+            {% csrf_token %}
+            {{ formset.management_form }}
+
+            <div id="formset-area">
+              {% for form in formset %}
+                <div class="cap-form mb-4 p-3 border rounded bg-light">
+                  {% crispy form %}
+                    <div class="form-check form-switch mt-2">
+                      {{ form.DELETE }} <label class="form-check-label">ลบ CAP นี้</label>
+                    </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <button type="button" id="add-cap-btn" class="btn btn-outline-primary">
+                <i class="bi bi-plus-circle"></i> เพิ่ม CAP
+              </button>
+              <button type="submit" class="btn btn-success px-4">
+                <i class="bi bi-save"></i> บันทึก
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const formsetArea = document.getElementById("formset-area");
+  const addBtn = document.getElementById("add-cap-btn");
+  const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]'); 
+  addBtn.addEventListener("click", function () {
+    const formIndex = parseInt(totalForms.value);
+    const emptyFormHtml = `{{ formset.empty_form|crispy|escapejs }}`.replace(/__prefix__/g, formIndex);
+
+    const newDiv = document.createElement("div");
+    newDiv.classList.add("cap-form", "mb-4", "p-3", "border", "rounded", "bg-light");
+    newDiv.innerHTML = emptyFormHtml;
+
+    formsetArea.appendChild(newDiv);
+    totalForms.value = formIndex + 1;
+  });
+});
+</script>
+{% endblock %}

@@ -24,25 +24,9 @@
         {% csrf_token %}
         {% crispy form %}
 
-        <h4 class="mt-4">Corrective Action Plans (CAPs)</h4>
-        {{ formset.management_form }}
-
-        <div id="formset-container">
-            {% for form in formset %}
-            <div class="formset-form border rounded p-3 mb-3">
-                {% crispy form %}
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="d-grid d-md-flex gap-2 justify-content-between mb-4">
-          <button type="button" id="add-form" class="btn btn-outline-success">
-              + เพิ่มแผนปฏิบัติการ
-          </button>
-        </div>
-          <button type="submit" class="btn btn-primary">
-              บันทึก
-          </button>
+        <button type="submit" class="btn btn-primary">
+            บันทึก
+        </button>
       </form>
 
     </div>
@@ -134,9 +118,11 @@ $(function () {
     e.preventDefault();
     const form = this;
     Swal.fire({
-      title: 'ยืนยันส่งข้อมูล?',
+      title: 'ยืนยันบันทึกข้อมูล?',
       icon: 'warning',
       showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
       confirmButtonText: 'ยืนยัน',
       cancelButtonText: 'ยกเลิก'
     }).then((res) => { if (res.isConfirmed) form.submit(); });

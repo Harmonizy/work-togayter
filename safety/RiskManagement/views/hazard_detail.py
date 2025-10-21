@@ -1,9 +1,13 @@
 # safety/Report/views/details.py
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Prefetch
 
 from ..models import HazardLog, CAP
 
+
+@login_required
+@permission_required("RiskManagement.detail_hazard_log", raise_exception=True)
 def main(request, id):
     hazard_log = HazardLog.objects.get(id=id)
     caps = hazard_log.caps.all()
