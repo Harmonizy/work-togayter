@@ -83,7 +83,8 @@ class CAP(models.Model):
     hazard_log = models.ForeignKey(HazardLog, verbose_name="Hazard Log", on_delete=models.CASCADE, related_name="caps")
     title = models.CharField(verbose_name="หัวข้อ", max_length=255, null=False, blank=False)
     description = models.TextField(verbose_name="รายละเอียด", null=True, blank=True)
-
+    
+    owner  = models.CharField(verbose_name="ผู้รับผิดชอบ", max_length=255, null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=2, choices=CAPStatusChoices.choices, default=CAPStatusChoices.PLANNING, null=True, blank=True)
 
     due_date = models.DateField(verbose_name="วันครบกำหนด", null=True, blank=True)

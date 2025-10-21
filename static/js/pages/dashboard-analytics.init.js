@@ -41,40 +41,56 @@ async function loadCharts() {
 
         // ✅ เตรียมข้อมูลจาก API
         const categories = capData.map(item => item["hazard_log__affiliation__short_name"] || "ไม่ทราบหน่วย");
-        const seriesData = capData.map(item => item.total);
 
-        // ✅ ตั้งค่า ApexCharts
+        const planningData = capData.map(item => item.planning);
+        const inProgressData = capData.map(item => item.in_progress);
+        const completeData = capData.map(item => item.complete);
+
+        // ✅ ตั้งค่า ApexCharts - Stacked Bar Chart
         const chartOptions = {
-            series: [{
-                name: "จำนวน CAP",
-                data: seriesData,
-            }],
+            series: [
+                { name: "วางแผน", data: planningData },
+                { name: "กำลังดำเนินการ", data: inProgressData },
+                { name: "เสร็จสิ้น", data: completeData }
+            ],
             chart: {
                 type: "bar",
                 height: 436,
+                stacked: true,
                 toolbar: { show: false }
             },
             plotOptions: {
                 bar: {
                     borderRadius: 4,
                     horizontal: true,
-                    distributed: true,
-                    dataLabels: { position: "top" },
-                },
+                    dataLabels: { position: "center" }
+                }
             },
-            colors: colors,
+            colors: ["#6c757d", "#f1c40f", "#28a745"],
             dataLabels: {
                 enabled: true,
-                offsetX: 32,
                 style: {
                     fontSize: "12px",
-                    fontWeight: 400,
-                    colors: ["#adb5bd"]
-                },
+                    fontWeight: 500,
+                    colors: ["#fff"]
+                }
             },
-            legend: { show: false },
+            xaxis: {
+                categories: categories,
+                title: { text: "จำนวน CAP" }
+            },
+            legend: {
+                position: "top",
+                horizontalAlign: "center"
+            },
             grid: { show: false },
-            xaxis: { categories: categories },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: val => `${val} รายการ`
+                }
+            }
         };
 
         // ✅ สร้างหรืออัปเดตกาฟ

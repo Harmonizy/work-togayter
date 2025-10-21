@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import dashboard_home
-from .views import apis
+from .apis import apis
 
 app_name = 'safety-dashboard'
 urlpatterns = [
