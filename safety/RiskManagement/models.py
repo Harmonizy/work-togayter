@@ -7,6 +7,7 @@ from safety.Data.models import Event
 from common.RTAFUser.models.RTAFUser import RTAFUser, Affiliation
 from .choices import HazardLogStatusChoices, HazardSourceChoices, InspectChoices, CAPStatusChoices, LikelihoodChoices, SeverityChoices
 
+
 class HazardCategory(models.Model):
     event = models.ForeignKey(Event, verbose_name="ชื่อเหตุการณ์", on_delete=models.CASCADE, related_name="hazard_categories")
     description = models.TextField(verbose_name="รายละเอียด")
@@ -16,6 +17,10 @@ class HazardCategory(models.Model):
 
     def __str__(self):
         return self.event.name
+
+
+class HazardSource(models.Model):
+    name = models.CharField(max_length=100)
 
 
 class HazardLog(models.Model):
@@ -41,7 +46,7 @@ class HazardLog(models.Model):
     residual_severity = models.IntegerField(verbose_name="ความรุนแรงหลังแก้ไข", choices=SeverityChoices.choices, null=True, blank=True)
     residual_risk_level = models.IntegerField(verbose_name="ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
 
-    source = models.IntegerField(verbose_name="แหล่งที่มา", choices=HazardSourceChoices.choices, null=True, blank=True)
+    source = models.ManyToManyField(HazardSource, verbose_name="แหล่งที่มา", blank=True)
     related_report = models.ForeignKey('Report.BaseReport', verbose_name="รายงานที่เกี่ยวข้อง", related_name="hazard_log", on_delete=models.SET_NULL, null=True, blank=True)
     note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
@@ -75,7 +80,6 @@ class HazardLog(models.Model):
         self.residual_risk_level = (self.residual_likelihood or 1) * (self.residual_severity or 1)
         super().save(*args, **kwargs)
         
-
 
 
 class CAP(models.Model):

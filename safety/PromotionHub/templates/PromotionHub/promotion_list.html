@@ -114,20 +114,14 @@
                                                             <i class="ri-eye-fill align-bottom me-2 text-primary"></i> ดูรายละเอียด
                                                         </a>
 
-                                                        {% if perms.Promotion.change_promotion %}
                                                         <a class="dropdown-item" href="{% url 'promotion:edit' promotion.id %}">
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
-                                                        {% endif %}
 
-                                                        {% if perms.Promotion.delete_promotion %}
                                                         <div class="dropdown-divider"></div>
-                                                        <a href="#" 
-                                                            class="dropdown-item btn-delete" 
-                                                            data-url="{% url 'promotion:delete' promotion.id %}">
-                                                            <i class="ri-delete-bin-fill align-bottom me-2 text-danger"></i> ลบ
+                                                        <a href="{% url 'promotion:delete' promotion.id %}" class="dropdown-item text-danger">
+                                                            <i class="ri-delete-bin-fill align-bottom me-2"></i> ลบ
                                                         </a>
-                                                        {% endif %}
                                                     </div>
                                                 </div>
                                             </td>

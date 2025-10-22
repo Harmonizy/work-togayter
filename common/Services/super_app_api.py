@@ -7,7 +7,6 @@ GATEWAY_KEY = "Bearer 2Fg0lC4ye5l9hXG32t27EjOY-ROSyrX_2a1LseEc1veSWAcaLigCWvcvVh
 COOKIE_SESSION = "cookiesession1=678A8C328D216FD4FC0D1130862C8DCD"
 CERT_PATH = None  # Use 'cert.pem' if you want to verify SSL with a custom cert
 
-
 def send_notification(title: str, message: str, user_ids: List[str], url: str = "", using_auth: bool = True) -> requests.Response:
 
     headers = {
