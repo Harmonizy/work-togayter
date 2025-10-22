@@ -45,12 +45,10 @@
             {% include "partials/topbar.html" %}
         {% endblock header %}
 
-        {% if request.user.is_staff or request.user.is_superuser or request.user.get_all_permissions %}
         {% block sidebar %}
             {% include "partials/sidebar.html" %}
         {% endblock sidebar %}
-        {% endif %}
-        
+
         {% block content %}
             {% block pagetitle %}{% endblock pagetitle %}
         {% endblock content %}
