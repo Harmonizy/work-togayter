@@ -60,6 +60,7 @@ function loadCharts() {
   }
 
   // 📊 Customer Impression Chart
+  // อะตอม
   t = getChartColorsArray("customer_impression_charts");
   if (t) {
     var e = {
