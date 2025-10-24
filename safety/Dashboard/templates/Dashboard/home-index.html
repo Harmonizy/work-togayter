@@ -93,8 +93,8 @@
                                 <div class="row">
                                         <div class="card">
                                             <div class="card-header border-0 align-items-center d-flex">
-                                                <h4 class="card-title mb-0 flex-grow-1">Revenue</h4>
-                                                <div>
+                                                <h4 class="card-title mb-0 flex-grow-1">รายงาน</h4>
+                                                {% comment %} <div>
                                                     <button type="button" class="btn btn-soft-secondary material-shadow-none btn-sm">
                                                         ALL
                                                     </button>
@@ -107,10 +107,10 @@
                                                     <button type="button" class="btn btn-soft-primary material-shadow-none btn-sm">
                                                         1Y
                                                     </button>
-                                                </div>
+                                                </div> {% endcomment %}
                                             </div><!-- end card header -->
 
-                                            <div class="card-header p-0 border-0 bg-light-subtle">
+                                            {% comment %} <div class="card-header p-0 border-0 bg-light-subtle">
                                                 <div class="row g-0 text-center">
                                                     <div class="col-6 col-sm-3">
                                                         <div class="p-3 border border-dashed border-start-0">
@@ -145,7 +145,7 @@
                                                     </div>
                                                     <!--end col-->
                                                 </div>
-                                            </div><!-- end card header -->
+                                            </div><!-- end card header --> {% endcomment %}
 
                                             <div class="card-body p-0 pb-2">
                                                 <div class="w-100">
@@ -590,6 +590,7 @@
 <script src="{% static 'js/pages/dashboard-analytics.init.js'%}"></script>
 
 <script>
+  window.priority_datasets = {{ priority_datasets|safe }};
   document.addEventListener('DOMContentLoaded', function() {
       // ✅ โหลดแผนที่
       var map = L.map('map').setView([12.5, 100.5231], 6);

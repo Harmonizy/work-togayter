@@ -6,7 +6,7 @@ from ..models import CalendarEvent
 from safety.Report.models.reports import BaseReport
 from safety.Report.choices import ReportStatusChoices, PriorityChoices, ReportTypeChoices
 
-# 📅 เดือนภาษาไทยมาตรฐาน (production safe)
+
 THAI_MONTHS = [
     "", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
     "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
@@ -40,23 +40,37 @@ def index(request):
     else:
         selected_month = "all"
 
-    qs = (
+    # ✅ กราฟรายงานตามประเภท
+    qs_type = (
         qs.annotate(month=ExtractMonth("event_date"))
         .values("month", "report_type")
         .annotate(total=Count("id"))
         .order_by("month")
     )
-
     all_types = [choice.label for choice in ReportTypeChoices]
     type_data = {t: [0] * 12 for t in all_types}
-
-    for row in qs:
-        if row["month"]:  
+    for row in qs_type:
+        if row["month"]:
             month_index = row["month"] - 1
             label = ReportTypeChoices(row["report_type"]).label
             type_data[label][month_index] = row["total"]
-
     report_datasets = [{"label": label, "data": data} for label, data in type_data.items()]
+
+    # ✅ กราฟรายงานตาม Priority
+    qs_priority = (
+        qs.annotate(month=ExtractMonth("event_date"))
+        .values("month", "priority")
+        .annotate(total=Count("id"))
+        .order_by("month")
+    )
+    all_priorities = [choice.label for choice in PriorityChoices]
+    priority_data = {p: [0] * 12 for p in all_priorities}
+    for row in qs_priority:
+        if row["month"]:
+            month_index = row["month"] - 1
+            label = PriorityChoices(row["priority"]).label
+            priority_data[label][month_index] = row["total"]
+    priority_datasets = [{"label": label, "data": data} for label, data in priority_data.items()]
 
     month_list = [{"number": "all", "name": "ทั้งหมด"}] + [
         {"number": i, "name": THAI_MONTHS[i]} for i in range(1, 13)
@@ -75,6 +89,7 @@ def index(request):
         "report_low": report_low,
         "events": CalendarEvent.objects.filter(date__month=datetime.now().month).order_by("date", "time"),
         "report_datasets": report_datasets,
+        "priority_datasets": priority_datasets, 
         "month_list": month_list,
         "year_list": year_list,
         "current_month": selected_month,

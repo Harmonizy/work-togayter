@@ -72,8 +72,8 @@ class Promotion(models.Model):
     def __str__(self):
         return self.title
 
-    def send_notify(self, user_list : list):
-        send_notification(title=self.title, message=self.content, user_ids=user_list)
+    def send_notify(self, user_list : list, url: str = "",):
+        send_notification(title=self.title, message=self.content, user_ids=user_list, url=url,)
 
 
 class PromotionView(models.Model):

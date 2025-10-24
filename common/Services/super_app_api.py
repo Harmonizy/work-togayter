@@ -3,7 +3,7 @@ import json
 from typing import List
 
 API_URL = "https://apigw.rtaf.mi.th/super-apps/api-notification-v1/push-notification-to-app"
-GATEWAY_KEY = "Bearer 2Fg0lC4ye5l9hXG32t27EjOY-ROSyrX_2a1LseEc1veSWAcaLigCWvcvVhKyXFVyWLMDnqP4y8FCSw-fCNKg2Rf5mlwuFYVFDI9JoyYgNn2w598TNZoJagVpjtLvkQkm1czYNIvQpCUpQHTQQSkC85Ju64iGQ_tb0rrg8okZFx_t3dS-9Hd10Xhuku9MbEi2biYX-CdxEQzm0dxLHYY3bqQ9J3DDFhoS_eS4uBD5x5TfdzB64HyOC9tMvqKEnWXGEXNRKSQsj-A"
+GATEWAY_KEY = "Bearer yAHSqMRdtaTeSlztcvW4820SxNbEITw5w_6NTT8LTu0GaeK7VHowcaj3gyXYK2H5k3znQAN93w2kc70vN-Hc0aw41v59edkG6i6C1H4Cl3CqnpJZFDVMKmIAfAdTZNnWu4xoFBvlkxME2G8VTXFMDTLR30ayreU_5sA2qn2xBBk540imq78QrZQdsMwnnmxlSsb8F42BufGgKTQX6npTHXCyqXjIrKmqQW8WCgtkexpTjHV6pVE3FhiSc0aoxyqR1yoir_3qUAg"
 COOKIE_SESSION = "cookiesession1=678A8C328D216FD4FC0D1130862C8DCD"
 CERT_PATH = None  # Use 'cert.pem' if you want to verify SSL with a custom cert
 

@@ -59,56 +59,43 @@ function loadCharts() {
     });
   }
 
-  // 📊 Customer Impression Chart
-  // อะตอม
-  t = getChartColorsArray("customer_impression_charts");
-  if (t) {
-    var e = {
-      series: [
-        { name: "รายงาน", type: "area", data: [4, 5, 6, 8, 9, 1, 2, 4, 8, 2, 3, 7] },
-        { name: "อนุมัติ", type: "bar", data: [34, 45, 32, 56, 47, 58, 39, 41, 52, 45, 48, 55] },
-        { name: "เร่งด่วน", type: "bar", data: [28, 35, 30, 44, 39, 41, 30, 29, 48, 33, 38, 40] },
-        { name: "ต้องติดตาม", type: "bar", data: [22, 31, 27, 36, 32, 38, 25, 24, 40, 29, 34, 36] },
-        { name: "ไม่อนุมัติ", type: "line", data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35] },
-      ],
-      chart: { height: 370, type: "line", toolbar: { show: !1 } },
-      stroke: { curve: "straight", dashArray: [0, 0, 8], width: [2, 0, 2.2] },
-      fill: { opacity: [0.1, 0.9, 1] },
-      markers: { size: [0, 0, 0], strokeWidth: 2, hover: { size: 4 } },
-      xaxis: {
-        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        axisTicks: { show: !1 },
-        axisBorder: { show: !1 },
-      },
-      grid: {
-        show: !0,
-        xaxis: { lines: { show: !0 } },
-        yaxis: { lines: { show: !1 } },
-        padding: { top: 0, right: -2, bottom: 15, left: 10 },
-      },
-      legend: {
-        show: !0,
-        horizontalAlign: "center",
-        offsetX: 0,
-        offsetY: -5,
-        markers: { width: 9, height: 9, radius: 6 },
-        itemMargin: { horizontal: 10, vertical: 0 },
-      },
-      plotOptions: { bar: { columnWidth: "70%", barHeight: "70%" } },
-      colors: t,
-      tooltip: {
-        shared: !0,
-        y: [
-          { formatter: function (e) { return void 0 !== e ? e.toFixed(0) : e; } },
-          { formatter: function (e) { return void 0 !== e ? "$" + e.toFixed(2) + "k" : e; } },
-          { formatter: function (e) { return void 0 !== e ? e.toFixed(0) + " Sales" : e; } },
-        ],
-      },
-    };
-    if ("" != customerImpressionChart) customerImpressionChart.destroy();
-    customerImpressionChart = new ApexCharts(document.querySelector("#customer_impression_charts"), e);
-    customerImpressionChart.render();
+// 📊 Customer Impression Chart อะตอมหำเล็ก
+t = getChartColorsArray("customer_impression_charts");
+if (t) {
+  // ✅ ถ้ามีข้อมูลจาก Django (ผ่าน window.priority_datasets)
+  let dynamicSeries = [];
+  if (window.priority_datasets) {
+    const datasets = window.priority_datasets;
+    dynamicSeries = datasets.map(d => ({
+      name: d.label,
+      type: "bar",
+      data: d.data
+    }));
   }
+
+  var e = {
+    series: dynamicSeries.length ? dynamicSeries : [
+      { name: "เร่งด่วน", type: "bar", data: [3,5,6,7,4,5,6,7,8,9,5,6] },
+      { name: "ต้องติดตาม", type: "bar", data: [2,4,3,5,6,4,2,3,4,5,6,7] },
+      { name: "ปกติ", type: "bar", data: [1,2,2,3,1,2,3,2,1,2,3,2] }
+    ],
+    chart: { height: 370, type: "line", toolbar: { show: false } },
+    stroke: { curve: "straight", width: 2 },
+    fill: { opacity: 0.8 },
+    xaxis: {
+      categories: ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."]
+    },
+    colors: ["#f46a6a", "#fff700ff", "#34c38f"],
+    legend: { position: "bottom" },
+  };
+
+  if (customerImpressionChart != "") customerImpressionChart.destroy();
+  customerImpressionChart = new ApexCharts(
+    document.querySelector("#customer_impression_charts"), e
+  );
+  customerImpressionChart.render();
+}
+
 
   // 🍩 Donut Chart - store-visits-source
   var chartEl = document.getElementById("store-visits-source");
