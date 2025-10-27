@@ -59,7 +59,7 @@ function loadCharts() {
     });
   }
 
-// 📊 Customer Impression Chart อะตอมหำเล็ก
+// 📊 Customer Impression 
 t = getChartColorsArray("customer_impression_charts");
 if (t) {
   // ✅ ถ้ามีข้อมูลจาก Django (ผ่าน window.priority_datasets)

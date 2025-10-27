@@ -1,7 +1,8 @@
+
 from datetime import datetime
 from django.shortcuts import render
 from django.db.models import Count
-from django.db.models.functions import ExtractMonth, ExtractYear
+from django.db.models.functions import ExtractMonth
 from ..models import CalendarEvent
 from safety.Report.models.reports import BaseReport
 from safety.Report.choices import ReportStatusChoices, PriorityChoices, ReportTypeChoices
@@ -12,6 +13,7 @@ THAI_MONTHS = [
     "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
     "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
 ]
+
 
 def index(request):
     report = BaseReport.objects.all()
@@ -28,49 +30,20 @@ def index(request):
     selected_year = request.GET.get("year")
     selected_month = request.GET.get("month")
 
-    qs = BaseReport.objects.all()
+    reports = BaseReport.objects.all()
 
     if selected_year and selected_year != "all":
-        qs = qs.filter(event_date__year=int(selected_year))
+        reports = reports.filter(event_date__year=int(selected_year))
     else:
         selected_year = current_year  
 
     if selected_month and selected_month != "all":
-        qs = qs.filter(event_date__month=int(selected_month))
+        reports = reports.filter(event_date__month=int(selected_month))
     else:
         selected_month = "all"
 
-    # ✅ กราฟรายงานตามประเภท
-    qs_type = (
-        qs.annotate(month=ExtractMonth("event_date"))
-        .values("month", "report_type")
-        .annotate(total=Count("id"))
-        .order_by("month")
-    )
-    all_types = [choice.label for choice in ReportTypeChoices]
-    type_data = {t: [0] * 12 for t in all_types}
-    for row in qs_type:
-        if row["month"]:
-            month_index = row["month"] - 1
-            label = ReportTypeChoices(row["report_type"]).label
-            type_data[label][month_index] = row["total"]
-    report_datasets = [{"label": label, "data": data} for label, data in type_data.items()]
-
-    # ✅ กราฟรายงานตาม Priority
-    qs_priority = (
-        qs.annotate(month=ExtractMonth("event_date"))
-        .values("month", "priority")
-        .annotate(total=Count("id"))
-        .order_by("month")
-    )
-    all_priorities = [choice.label for choice in PriorityChoices]
-    priority_data = {p: [0] * 12 for p in all_priorities}
-    for row in qs_priority:
-        if row["month"]:
-            month_index = row["month"] - 1
-            label = PriorityChoices(row["priority"]).label
-            priority_data[label][month_index] = row["total"]
-    priority_datasets = [{"label": label, "data": data} for label, data in priority_data.items()]
+    report_datasets = get_monthly_reports_by_type(reports)
+    priority_datasets = get_monthly_reports_by_priority(reports)
 
     month_list = [{"number": "all", "name": "ทั้งหมด"}] + [
         {"number": i, "name": THAI_MONTHS[i]} for i in range(1, 13)
@@ -97,3 +70,36 @@ def index(request):
     }
 
     return render(request, "Dashboard/home-index.html", context)
+
+## ตารางรายงานอุบัติเหตุ
+def get_monthly_reports_by_type(reports):
+    qs = (
+        reports.annotate(month=ExtractMonth("event_date")).values("month", "report_type").annotate(total=Count("id")).order_by("month")
+    )
+    all_types = [choice.label for choice in ReportTypeChoices]
+    type_data = {t: [0] * 12 for t in all_types}
+
+    for row in qs:
+        if row["month"]:
+            month_index = row["month"] - 1
+            label = ReportTypeChoices(row["report_type"]).label
+            type_data[label][month_index] = row["total"]
+
+    return [{"label": label, "data": data} for label, data in type_data.items()]
+
+
+## ตารางรางาน
+def get_monthly_reports_by_priority(reports):
+    qs = (
+        reports.annotate(month=ExtractMonth("event_date")).values("month", "priority").annotate(total=Count("id")).order_by("month")
+    )
+    all_priorities = [choice.label for choice in PriorityChoices]
+    priority_data = {p: [0] * 12 for p in all_priorities}
+
+    for row in qs:
+        if row["month"]:
+            month_index = row["month"] - 1
+            label = PriorityChoices(row["priority"]).label
+            priority_data[label][month_index] = row["total"]
+
+    return [{"label": label, "data": data} for label, data in priority_data.items()]

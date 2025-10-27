@@ -1,39 +1,57 @@
-{% comment %} Partial template for rendering a formset block {% endcomment %}
 {% load crispy_forms_tags %}
 
 <hr>
 <div class="card p-3">
     {{ formset.management_form }}
-    <h6>{{ title }}</h6>
-    <div id="{{ container_id }}" data-total-forms="#id_{{ formset_name }}-TOTAL_FORMS" data-empty-form="#empty-{{ container_id }}">
+
+    <div id="{{ container_id }}"
+         data-total-forms="#id_{{ formset_name }}-TOTAL_FORMS"
+         data-empty-form="#empty-{{ container_id }}">
+
         {% for form in formset.forms %}
-            <div class="{{ form_class }} position-relative formset-form">
+            <div class="{{ form_class }} position-relative formset-form border rounded p-2 mb-2">
                 {% crispy form %}
 
-                {% comment %} <!-- Delete button -->
-                <button type="button" class="btn btn-sm btn-danger delete-form-btn position-absolute" style="top:6px; right:10px;">
-                    ลบ
-                </button>
-
-                <!-- Hide DELETE field if it's rendered -->
-                {% if form.DELETE %}
-                    <div class="d-none delete-checkbox">
-                        {{ form.DELETE }}
+                {% if form.instance.file %}
+                    <p class="mt-1">
+                        <a href="{{ form.instance.file.url }}" target="_blank">
+                            📎 {{ form.instance.file }}
+                        </a>
+                    </p>
+                {% endif %}
+                {% comment %} {% if form.instance.image %}
+                    <div class="mt-1">
+                        <img src="{{ form.instance.image.url }}" alt="" style="max-height: 100px; border-radius:8px;">
                     </div>
                 {% endif %} {% endcomment %}
+
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
+
+                <button type="button"
+                        class="btn btn-sm btn-outline-danger delete-form-btn position-absolute"
+                        style="top: 6px; right: 10px;">
+                    <i class="bi bi-x-circle"></i> ลบ
+                </button>
             </div>
         {% endfor %}
     </div>
 
     <div id="empty-{{ container_id }}" style="display:none;">
-        <div class="{{ form_class }}">
+        <div class="{{ form_class }} border rounded p-2 mb-2">
             {% crispy formset.empty_form %}
+            {% for hidden_field in formset.empty_form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
         </div>
     </div>
+
     <div>
-        <button type="button" class="btn btn-sm btn-outline-primary add-formset-btn" data-target="#{{ container_id }}">
+        <button type="button"
+                class="btn btn-sm btn-outline-primary add-formset-btn mt-2"
+                data-target="#{{ container_id }}">
             <i class="{{ icon }}"></i> เพิ่ม{{ title }}
         </button>
     </div>
 </div>
-

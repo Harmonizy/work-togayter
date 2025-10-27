@@ -1,12 +1,15 @@
 from datetime import datetime
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.views.generic import TemplateView
+from django.http import JsonResponse
+from django.contrib import messages
+
 
 from .utils import card_data
 from ..models import BaseReport
@@ -91,3 +94,35 @@ class MobileHomeView(LoginRequiredMixin, TemplateView):
 @login_required
 def mobile_create(request):
     return render(request, 'Report/safety-reports/mobile-create.html')
+
+
+@login_required
+@permission_required("Report.approve_report", raise_exception=True)
+def approve_report(request, report_id):
+    """อนุมัติรายงาน"""
+    report = get_object_or_404(BaseReport, id=report_id)
+
+    if report.status != ReportStatusChoices.APPROVED:
+        report.status = ReportStatusChoices.APPROVED
+        report.save()
+        messages.success(request, f"✅ อนุมัติรายงาน {report.title} เรียบร้อยแล้ว")
+    else:
+        messages.info(request, "รายงานนี้ได้รับการอนุมัติแล้ว")
+
+    return redirect("report:safety-report.list")
+
+
+@login_required
+@permission_required("Report.approve_report", raise_exception=True)
+def reject_report(request, report_id):
+    """ไม่อนุมัติรายงาน"""
+    report = get_object_or_404(BaseReport, id=report_id)
+
+    if report.status != ReportStatusChoices.REJECTED:
+        report.status = ReportStatusChoices.REJECTED
+        report.save()
+        messages.warning(request, f"❌ ไม่อนุมัติรายงาน {report.title}")
+    else:
+        messages.info(request, "รายงานนี้ถูกปฏิเสธไปแล้ว")
+
+    return redirect("report:safety-report.list")

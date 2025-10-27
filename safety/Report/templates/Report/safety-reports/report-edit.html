@@ -1,9 +1,8 @@
 {% extends "partials/base.html" %}
-
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block title %}Safety Reports Create{% endblock title %}
+{% block title %}Safety Reports Edit{% endblock title %}
 
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -14,73 +13,68 @@
         padding-left: 130px; 
         padding-right: 20px; 
     }
-    
-    .safety-report-wrapper .container {
-        max-width: none;
-    }
-    
+    .safety-report-wrapper .container { max-width: none; }
     @media (max-width: 768px) {
-        .safety-report-wrapper {
-            padding-left: 15px;
-            padding-right: 15px;
-        }
+        .safety-report-wrapper { padding-left: 15px; padding-right: 15px; }
     }
-    
-    .django-ckeditor-widget {
-        width: 100% !important;
-    }
+    .django-ckeditor-widget { width: 100% !important; }
 </style>
 {% endblock extra_css %}
 
 
 {% block content %}
-
 <div class="main-content">
-    <div class="page-content">
-        <div class="container-fluid">
-            {% include "partials/page-title.html" with pagetitle="รายงาน" title="สร้างรายงานใหม่" %}
+  <div class="page-content">
+    <div class="container-fluid">
+      {% include "partials/page-title.html" with pagetitle="รายงาน" title="แก้ไขรายงาน" %}
 
+      <form id="reportForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-            <!-- ตรวจสอบ report_type -->
-            <p>ประเภทรายงาน: {{ report_type_label }}</p>
+        <!-- ฟอร์มหลัก -->
+        {% crispy base_form %}
 
-            <form id="reportForm" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {% crispy base_form %}
-                {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" title="รูปภาพ" container_id="image-formset-container" empty_form_id="empty-image-form" form_class="file-form" icon="ri-image-add-line"%}
-                {# File Formset #}
-                {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" title="ไฟล์" container_id="file-formset-container" empty_form_id="empty-file-form" form_class="file-form" icon="ri-file-add-line"%}
-                {# Recommendation Formset #}
-                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" title="คอมเมนต์" container_id="recommendation-formset-container" empty_form_id="empty-rec-form" form_class="rec-form" icon="bx bx-comment-add"%}
-                
-    
-                <div class="my-5">
-                    <p class="mb-3 fw-bold">กรุณาประเมินรายงานเบื้องต้น:</p>
+        <!-- ฟอร์มพิเศษ (ground / aviation) -->
+        {% if additional_form %}
+          <div class="card p-3 mb-4">
+            {% crispy additional_form %}
+          </div>
+        {% endif %}
 
-                    <button type="submit" name="initial_assessment" value="green" class="btn btn-success">
-                        <i class="bi bi-check-circle"></i> บันทึก (ปกติ)
-                    </button>
+        <!-- ฟอร์มผู้เข้าร่วม (เจ้าหน้าที่เท่านั้น) -->
+        {% if participant_formset %}
+          {% include "Report/safety-reports/partials/formset-block.html" with formset=participant_formset formset_name="participants" title="ผู้เกี่ยวข้อง" container_id="participant-formset-container" empty_form_id="empty-participant-form" form_class="participant-form" icon="ri-user-add-line" %}
+        {% endif %}
 
-                    <button type="submit" name="initial_assessment" value="yellow" class="btn btn-warning">
-                        <i class="bi bi-exclamation-circle"></i> บันทึก (ต้องติดตาม)
-                    </button>
+        <!-- ฟอร์มเอกสารอ้างอิง -->
+        {% if reference_formset %}
+          {% include "Report/safety-reports/partials/formset-block.html" with formset=reference_formset formset_name="references" title="เอกสารอ้างอิง" container_id="reference-formset-container" empty_form_id="empty-reference-form" form_class="reference-form" icon="ri-links-line" %}
+        {% endif %}
 
-                    <button type="submit" name="initial_assessment" value="red" class="btn btn-danger">
-                        <i class="bi bi-x-circle"></i> บันทึก (เร่งด่วน)
-                    </button>
-                </div>
+        <!-- ฟอร์มแนบไฟล์ -->
+        {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" title="รูปภาพ" container_id="image-formset-container" empty_form_id="empty-image-form" form_class="file-form" icon="ri-image-add-line" %}
+        {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" title="ไฟล์" container_id="file-formset-container" empty_form_id="empty-file-form" form_class="file-form" icon="ri-file-add-line" %}
+        {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" title="คอมเมนต์" container_id="recommendation-formset-container" empty_form_id="empty-rec-form" form_class="rec-form" icon="bx bx-comment-add" %}
 
-            </form>
-
+        <!-- ปุ่มบันทึก -->
+        <div class="my-5">
+          <p class="mb-3 fw-bold">อัปเดตสถานะรายงาน:</p>
+          <button type="submit" name="initial_assessment" value="green" class="btn btn-success">
+            <i class="bi bi-check-circle"></i> บันทึก (ปกติ)
+          </button>
+          <button type="submit" name="initial_assessment" value="yellow" class="btn btn-warning">
+            <i class="bi bi-exclamation-circle"></i> บันทึก (ต้องติดตาม)
+          </button>
+          <button type="submit" name="initial_assessment" value="red" class="btn btn-danger">
+            <i class="bi bi-x-circle"></i> บันทึก (เร่งด่วน)
+          </button>
         </div>
-    </div>            
-    {% include "partials/footer.html" %}
+      </form>
+    </div>
+  </div>
+  {% include "partials/footer.html" %}
 </div>
-
-
 {% endblock %}
-
-{% comment %} {% block footer %}{% endblock footer %} {% endcomment %}
 
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -89,69 +83,50 @@
 
 <script>
 $(document).ready(function () {
-    // select2
-    $('.js-example-basic-multiple').select2();
-    $('.js-example-basic-single').select2();
+  $('.js-example-basic-multiple').select2();
+  $('.js-example-basic-single').select2();
+  $('.django-ckeditor-widget').addClass('w-100');
 
-    // CKEditor full width
-    $('.django-ckeditor-widget').addClass('w-100');
-
-    $('#reportForm').on('submit', function(e) {
-        e.preventDefault(); // prevent normal submission
-
-        Swal.fire({
-            title: 'ยืนยันบันทึกข้อมูล?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'ยืนยัน',
-            cancelButtonText: 'ยกเลิก'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.submit(); // submit form if confirmed
-            }
-        });
+  // Confirm ก่อนบันทึก
+  $('#reportForm').on('submit', function(e) {
+    e.preventDefault();
+    Swal.fire({
+      title: 'ยืนยันบันทึกข้อมูล?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+      if (result.isConfirmed) this.submit();
     });
-    
-    $('.add-formset-btn').click(function () {
-        const targetContainerSelector = $(this).data('target');
-        const container = $(targetContainerSelector);
-        const totalFormsSelector = container.data('total-forms');
-        const emptyFormSelector = container.data('empty-form');
+  });
 
-        let totalFormsInput = $(totalFormsSelector);
-        let totalFormsCount = parseInt(totalFormsInput.val());
+  // ปุ่มเพิ่ม formset
+  $('.add-formset-btn').click(function () {
+    const targetContainerSelector = $(this).data('target');
+    const container = $(targetContainerSelector);
+    const totalFormsSelector = container.data('total-forms');
+    const emptyFormSelector = container.data('empty-form');
 
-        // Get empty form HTML, replace __prefix__ with current count
-        let newFormHtml = $(emptyFormSelector).html().replace(/__prefix__/g, totalFormsCount);
+    let totalFormsInput = $(totalFormsSelector);
+    let totalFormsCount = parseInt(totalFormsInput.val());
 
-        // Append new form
-        container.append(newFormHtml);
+    let newFormHtml = $(emptyFormSelector).html().replace(/__prefix__/g, totalFormsCount);
+    container.append(newFormHtml);
+    totalFormsInput.val(totalFormsCount + 1);
+  });
 
-        // Increment total forms count
-        totalFormsInput.val(totalFormsCount + 1);
-    });
-
-    // Handler for any delete button in formsets
-    $(document).on('click', '.delete-form-btn', function () {
-        const $formBlock = $(this).closest('.formset-form');
-
-        // Mark DELETE checkbox if it exists
-        const $deleteCheckbox = $formBlock.find('input[type=checkbox][name$="-DELETE"]');
-        if ($deleteCheckbox.length > 0) {
-            $deleteCheckbox.prop('checked', true);
-        }
-
-        // Optionally, visually hide the form instead of removing
-        $formBlock.hide();
-
-        // Optional: you can add a class to indicate deletion visually
-        $formBlock.addClass('formset-marked-delete');
-    });
+  // ปุ่มลบ formset
+  $(document).on('click', '.delete-form-btn', function () {
+    const $formBlock = $(this).closest('.formset-form');
+    const $deleteCheckbox = $formBlock.find('input[type=checkbox][name$="-DELETE"]');
+    if ($deleteCheckbox.length > 0) {
+      $deleteCheckbox.prop('checked', true);
+    }
+    $formBlock.hide().addClass('formset-marked-delete');
+  });
 });
-
-
-
 </script>
 {% endblock %}

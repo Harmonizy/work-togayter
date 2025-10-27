@@ -94,6 +94,7 @@
                                         <div class="card">
                                             <div class="card-header border-0 align-items-center d-flex">
                                                 <h4 class="card-title mb-0 flex-grow-1">รายงาน</h4>
+
                                                 {% comment %} <div>
                                                     <button type="button" class="btn btn-soft-secondary material-shadow-none btn-sm">
                                                         ALL
@@ -157,6 +158,51 @@
                                 </div>  
                             </div>
                             <div class="col-xxl-3">
+                                <div class="card monthly-calendar">
+                                    <div class="card-header border-0">
+                                        <h6 class="fw-bold text-primary mb-2">📅 ตั้งค่ารายงาน</h6>
+
+                                                        <form id="filter-form" method="get" action="">
+                                                        <!-- 🗓️ เลือกเดือน -->
+                                                        <div class="mb-3">
+                                                            <label class="fw-semibold text-muted mb-1">เดือน</label>
+                                                            <select name="month" class="form-select form-select-sm">
+                                                            <option value="all" {% if current_month == 'all' %}selected{% endif %}>📆 แสดงทุกเดือน</option>
+                                                            {% for m in month_list %}
+                                                                <option value="{{ m.number }}" {% if m.number == current_month %}selected{% endif %}>
+                                                                {{ m.name }}
+                                                                </option>
+                                                            {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- 📆 เลือกปี -->
+                                                        <div class="mb-3">
+                                                            <label class="fw-semibold text-muted mb-1">ปี</label>
+                                                            <select name="year" class="form-select form-select-sm">
+                                                            <option value="all" {% if current_year == 'all' %}selected{% endif %}>📅 แสดงทุกปี</option>
+                                                            {% for y in year_list %}
+                                                                <option value="{{ y.number }}" {% if y.number == current_year %}selected{% endif %}>
+                                                                {{ y.name }}
+                                                                </option>
+                                                            {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <hr class="my-2">
+
+                                                        <!-- 🔘 ปุ่มยืนยันและรีเซ็ต -->
+                                                        <div class="d-flex gap-2">
+                                                            <button type="submit" class="btn btn-sm btn-primary flex-fill">
+                                                            <i class="mdi mdi-check-circle-outline me-1"></i> ยืนยัน
+                                                            </button>
+                                                            <a href="?month=all&year=all" class="btn btn-sm btn-outline-secondary flex-fill">
+                                                            <i class="mdi mdi-refresh me-1"></i> แสดงทั้งหมด
+                                                            </a>
+                                                        </div>
+                                                        </form>
+                                    </div><!-- end cardheader -->
+                                </div>
                                 <div class="card">
                                     <div class="card-header border-0">
                                         <h4 class="card-title mb-0">ปฏิทิน</h4>
@@ -210,65 +256,7 @@
                                         <div class="card card-height-100">
                                             <div class="card-header align-items-center d-flex">
                                                 <h4 class="card-title mb-0 flex-grow-1">รายงานอุบัติเหตุ</h4>
-                                                <div class="flex-shrink-0">
-                                                    <div class="dropdown card-header-dropdown">
-
-                                                    <a class="text-reset dropdown-btn d-flex align-items-center" href="#" data-bs-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        <i class="mdi mdi-calendar-month-outline me-1"></i>
-                                                        <span class="text-muted">เลือกช่วงเวลา</span>
-                                                        <i class="mdi mdi-chevron-down ms-1"></i>
-                                                    </a>
-
-                                                    <div class="dropdown-menu dropdown-menu-end p-3 shadow-lg"
-                                                        style="min-width: 260px; border-radius: 12px;">
-
-                                                        <h6 class="fw-bold text-primary mb-2">📅 ตั้งค่ารายงาน</h6>
-
-                                                        <form id="filter-form" method="get" action="">
-                                                        <!-- 🗓️ เลือกเดือน -->
-                                                        <div class="mb-3">
-                                                            <label class="fw-semibold text-muted mb-1">เดือน</label>
-                                                            <select name="month" class="form-select form-select-sm">
-                                                            <option value="all" {% if current_month == 'all' %}selected{% endif %}>📆 แสดงทุกเดือน</option>
-                                                            {% for m in month_list %}
-                                                                <option value="{{ m.number }}" {% if m.number == current_month %}selected{% endif %}>
-                                                                {{ m.name }}
-                                                                </option>
-                                                            {% endfor %}
-                                                            </select>
-                                                        </div>
-
-                                                        <!-- 📆 เลือกปี -->
-                                                        <div class="mb-3">
-                                                            <label class="fw-semibold text-muted mb-1">ปี</label>
-                                                            <select name="year" class="form-select form-select-sm">
-                                                            <option value="all" {% if current_year == 'all' %}selected{% endif %}>📅 แสดงทุกปี</option>
-                                                            {% for y in year_list %}
-                                                                <option value="{{ y.number }}" {% if y.number == current_year %}selected{% endif %}>
-                                                                {{ y.name }}
-                                                                </option>
-                                                            {% endfor %}
-                                                            </select>
-                                                        </div>
-
-                                                        <hr class="my-2">
-
-                                                        <!-- 🔘 ปุ่มยืนยันและรีเซ็ต -->
-                                                        <div class="d-flex gap-2">
-                                                            <button type="submit" class="btn btn-sm btn-primary flex-fill">
-                                                            <i class="mdi mdi-check-circle-outline me-1"></i> ยืนยัน
-                                                            </button>
-                                                            <a href="?month=all&year=all" class="btn btn-sm btn-outline-secondary flex-fill">
-                                                            <i class="mdi mdi-refresh me-1"></i> แสดงทั้งหมด
-                                                            </a>
-                                                        </div>
-                                                        </form>
-
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                                </div>
+                                            </div>
 
                                             <div class="card-body">
                                                     <div 

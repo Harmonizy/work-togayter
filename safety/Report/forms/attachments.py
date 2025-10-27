@@ -21,7 +21,7 @@ class ImageForm(forms.ModelForm):
         }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['image'].label = ''
+        self.fields['image'].required = False 
         self.fields['comment'].label = ''
                 
         self.helper = FormHelper()
@@ -47,7 +47,7 @@ class RecommendationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.fields['note'].label = ''
+        self.fields['note'].required = False 
         self.fields['comment'].label = ''
         
         self.helper = FormHelper()
@@ -83,7 +83,7 @@ class FileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.fields['file'].label = ''
+        self.fields['file'].required = False 
         self.fields['comment'].label = ''
         
         self.helper = FormHelper()
