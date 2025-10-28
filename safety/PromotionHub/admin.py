@@ -32,7 +32,7 @@ class QuizAdmin(admin.ModelAdmin):
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ("quiz", "short_question_text", "choice_count")
-    search_fields = ("question_text",)
+    search_fields = ("text",)
     inlines = [ChoiceInline]
 
     def choice_count(self, obj):
@@ -40,7 +40,7 @@ class QuestionAdmin(admin.ModelAdmin):
     choice_count.short_description = "จำนวนตัวเลือก"
 
     def short_question_text(self, obj):
-        return (obj.question_text[:70] + "...") if len(obj.question_text) > 70 else obj.question_text
+        return (obj.text[:70] + "...") if len(obj.text) > 70 else obj.text
     short_question_text.short_description = "คำถาม"
 
 

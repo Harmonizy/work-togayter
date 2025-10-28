@@ -83,10 +83,11 @@ class CAPForm(forms.ModelForm):
     description = content_field(300, "รายละเอียดการดำเนินการ...")
     class Meta:
         model = CAP
-        fields = ['order', 'title', 'description', 'status', 'due_date']
+        fields = ['order', 'title', 'description', 'assign_to', 'status', 'due_date']
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เช่น ดำเนินการอบรม'}),
+            'assign_to': single_select_widget,
         }
 
     def __init__(self, *args, **kwargs):
@@ -97,7 +98,8 @@ class CAPForm(forms.ModelForm):
         self.helper.layout = Layout(
             Row(
                 Column('order', css_class='col-md-1'),
-                Column('title', css_class='col-md-7'),
+                Column('title', css_class='col-md-5'),
+                Column('assign_to', css_class='col-md-2'),
                 Column('status', css_class='col-md-2'),
                 Column('due_date', css_class='col-md-2'),
             ),
@@ -112,5 +114,5 @@ CAPFormSet = inlineformset_factory(
     model=CAP,
     form=CAPForm,
     extra=1,
-    can_delete=True
+    can_delete=False
 )

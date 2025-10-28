@@ -24,22 +24,6 @@ class RecommendationAdminInline(admin.TabularInline):
     extra = 0
 
 
-# # ---------- Through Table Inlines for SafetyReport ----------
-# class SafetyReportAircraftSystemInline(admin.TabularInline):
-#     model = SafetyReportAircraftSystem
-#     extra = 0
-
-
-# class SafetyReportFlightPhaseInline(admin.TabularInline):
-#     model = SafetyReportFlightPhase
-#     extra = 0
-
-
-# class SafetyReportEventInline(admin.TabularInline):
-#     model = SafetyReportEvent
-#     extra = 0
-
-
 class GroundReportInline(admin.StackedInline):
     model = GroundReport
     extra = 0
@@ -65,19 +49,13 @@ class ReferenceReportInline(admin.TabularInline):
     fk_name = 'base_report'
 
 
-# class SafetyReportInline(admin.StackedInline):
-#     model = SafetyReport
-#     extra = 0
-#     list_select_related = ('squadron', 'aircraft', 'flight', 'event')
-
-
 # ---------- BaseReport Admin ----------
 @admin.register(BaseReport)
 class BaseReportAdmin(admin.ModelAdmin):
     list_display = ('title', 'fiscal_year', 'event_date', 'report_type', 'status', 'priority', 'recorder', 'created_at')
     list_editable = ('status',)
     list_filter = ('fiscal_year', 'status', 'report_type')
-    search_fields = ('title', 'description', 'comment')
+    search_fields = ('title',)
     list_select_related = ('recorder', 'recorder__rank')
     autocomplete_fields = ('recorder',)
     # autocomplete_fields = ('recorder')
