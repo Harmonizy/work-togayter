@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import hazard_log, hazard_edit, hazard_detail
+from .views import hazard_log, hazard_edit, hazard_detail, hazard_category, cap_delete, cap_edit
 
 app_name = 'risk_management'
 
@@ -15,6 +15,9 @@ main_urlpatterns = [
     path("hazard-edit/update/<int:pk>/", hazard_edit.update, name="hazard-edit.update"),
     
     path("hazards/delete/<int:pk>/", hazard_log.delete, name="hazard-delete"),  
+    
+    path("cap/edit/<int:cap_id>/", cap_edit.cap_edit, name="cap_edit"),
+    path("cap/delete/<int:cap_id>/", cap_delete.cap_delete_view, name="cap_delete"),
     
 
     # path("hazard-log/category/", hazard_category.list, name="hazard-category.list"),
