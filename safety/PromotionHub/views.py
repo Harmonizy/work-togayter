@@ -8,7 +8,7 @@ from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
 from .forms import PromotionForm
 
 
-
+@login_required
 def list(request):
     promotions = Promotion.objects.all().order_by("-created_at")
     context = {
@@ -17,7 +17,7 @@ def list(request):
     return render(request, "PromotionHub/promotion_list.html", context)
 
 
-@login_required
+# @login_required
 def detail(request, pk):
     promotion = get_object_or_404(Promotion, pk=pk)
 

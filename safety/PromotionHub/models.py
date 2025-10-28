@@ -73,7 +73,7 @@ class Promotion(models.Model):
         return self.title
 
     def send_notify(self, user_list : list, url: str = "",):
-        send_notification(title=self.title, message=self.content, user_ids=user_list, url=url,)
+        send_notification(title=self.title, message=self.content, user_ids=user_list, url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/',)
 
 
 class PromotionView(models.Model):
