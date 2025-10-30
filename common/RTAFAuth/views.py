@@ -4,15 +4,12 @@ from django.contrib.auth import authenticate , login
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, HttpResponse
 from django.http import HttpResponseRedirect
-
+from django.core.signing import BadSignature, SignatureExpired
 # from rest_framework.authtoken.views import ObtainAuthToken
 # from rest_framework.response import Response
 # from rest_framework.authtoken.models import Token
 
-
-
 # from common.RTAFUser.serializers import ShortRTAFUserSerializer as UserSerializer
-
 
 from .forms import MyAuthForm
 from .backends import SuperAppBackend as Backend
@@ -44,14 +41,17 @@ class AFLoginView(SuperAppLoginMixins, LoginView):
     template_name = 'account/login.html'
     form_class = MyAuthForm
 
-    def get(self, request, *args, **kwargs):        
-        
+    def get(self, request, *args, **kwargs):
         if request.GET.get("ref"):
-            print("ref = ", request.GET.get("ref"))
-            user = authenticate(request, username=request.GET.get("ref"), password="-")
-            if user is not None:
-                login(request, user)
-                return HttpResponseRedirect(self.get_success_url())        
+            print("ref =", request.GET.get("ref"))
+            try:
+                user = authenticate(request, username=request.GET.get("ref"), password="-")
+                if user is not None:
+                    login(request, user)
+                    return HttpResponseRedirect(self.get_success_url())
+            except (BadSignature, SignatureExpired):
+                print("⚠️ ref token หมดอายุหรือไม่ถูกต้อง")
+                # ไม่ต้อง redirect ไป error — แค่ปล่อยให้ไปหน้า login ตามปกติ
 
         return super().get(request, *args, **kwargs)
 

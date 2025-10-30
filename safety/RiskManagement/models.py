@@ -7,6 +7,7 @@ from safety.Data.models import Event
 from common.RTAFUser.models.RTAFUser import RTAFUser, Affiliation
 from .choices import HazardLogStatusChoices, HazardSourceChoices, InspectChoices, CAPStatusChoices, LikelihoodChoices, SeverityChoices
 
+
 class HazardCategory(models.Model):
     event = models.ForeignKey(Event, verbose_name="ชื่อเหตุการณ์", on_delete=models.CASCADE, related_name="hazard_categories")
     description = models.TextField(verbose_name="รายละเอียด")
@@ -16,6 +17,10 @@ class HazardCategory(models.Model):
 
     def __str__(self):
         return self.event.name
+
+
+class HazardSource(models.Model):
+    name = models.CharField(max_length=100)
 
 
 class HazardLog(models.Model):
@@ -41,7 +46,7 @@ class HazardLog(models.Model):
     residual_severity = models.IntegerField(verbose_name="ความรุนแรงหลังแก้ไข", choices=SeverityChoices.choices, null=True, blank=True)
     residual_risk_level = models.IntegerField(verbose_name="ระดับความเสี่ยงหลังแก้ไข", validators=[MinValueValidator(1), MaxValueValidator(25)], null=True, blank=True)
 
-    source = models.IntegerField(verbose_name="แหล่งที่มา", choices=HazardSourceChoices.choices, null=True, blank=True)
+    source = models.ManyToManyField(HazardSource, verbose_name="แหล่งที่มา", blank=True)
     related_report = models.ForeignKey('Report.BaseReport', verbose_name="รายงานที่เกี่ยวข้อง", related_name="hazard_log", on_delete=models.SET_NULL, null=True, blank=True)
     note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
@@ -77,14 +82,13 @@ class HazardLog(models.Model):
         
 
 
-
 class CAP(models.Model):
-    order = models.PositiveIntegerField(verbose_name="ลำดับ", default=1)
+    order = models.PositiveIntegerField(verbose_name="ลำดับ", blank=True, null=True)
     hazard_log = models.ForeignKey(HazardLog, verbose_name="Hazard Log", on_delete=models.CASCADE, related_name="caps")
     title = models.CharField(verbose_name="หัวข้อ", max_length=255, null=False, blank=False)
     description = models.TextField(verbose_name="รายละเอียด", null=True, blank=True)
     
-    owner  = models.CharField(verbose_name="ผู้รับผิดชอบ", max_length=255, null=True, blank=True)
+    assign_to  = models.CharField(verbose_name="ผู้รับผิดชอบ", max_length=255, null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=2, choices=CAPStatusChoices.choices, default=CAPStatusChoices.PLANNING, null=True, blank=True)
 
     due_date = models.DateField(verbose_name="วันครบกำหนด", null=True, blank=True)

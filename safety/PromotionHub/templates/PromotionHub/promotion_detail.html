@@ -1,0 +1,117 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}{{ promotion.title }} | Safety Promotion{% endblock %}
+
+{% block extra_css %}
+<style>
+    .promotion-main-img {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
+        margin: 1rem auto;
+        display: block;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* สำหรับจอขนาดกลางขึ้นไป (เช่น tablet, desktop) */
+    @media (min-width: 992px) {
+        .promotion-main-img {
+            max-width: 50%;
+        }
+    }
+
+    .promotion-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 0.5rem 0;
+    }
+
+    .promotion-meta {
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .ck-content {
+        line-height: 1.7;
+        font-size: 1.05rem;
+    }
+
+    .promotion-main-img:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+
+      <!-- Header -->
+      <div class="row mb-4">
+        <div class="col-lg-10 mx-auto">
+          <div class="text-center">
+            <h2 class="fw-bold">{{ promotion.title }}</h2>
+            <div class="promotion-meta">
+              โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} • 
+              {{ promotion.created_at|date:"d M Y" }} • 
+              เข้าชม {{ view_count }} คน
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image -->
+      {% if promotion.image %}
+      <div class="row mb-4 justify-content-center">
+        <div class="col-lg-8 text-center">
+          <img src="{{ promotion.image.url }}" class="promotion-main-img shadow-sm" alt="{{ promotion.title }}">
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Content -->
+      <div class="row mb-4 justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-sm">
+            <div class="card-body promotion-content ck-content">
+              {{ promotion.content|safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quiz Section -->
+      {% if promotion.quiz %}
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <div class="card border-info shadow-sm">
+            <div class="card-body">
+              <h5 class="text-info">
+                <i class="ri-question-answer-fill me-1"></i> แบบทดสอบหลังเรียน
+              </h5>
+              <p>เพื่อทดสอบความเข้าใจในเนื้อหาที่ท่านอ่าน</p>
+              <a href="{% url 'promotion:quiz_view' promotion.quiz.id %}" class="btn btn-outline-primary">
+                เริ่มทำแบบทดสอบ
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Back button -->
+      <div class="row mt-5 mb-5">
+        <div class="col text-center">
+          <a href="{% url 'promotion:list' %}" class="btn btn-secondary">
+            <i class="ri-arrow-left-line me-1"></i> กลับไปหน้ารายการบทความ
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,10 +1,13 @@
 import os
 from io import BytesIO
 from datetime import date
+from bs4 import BeautifulSoup
 
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 from docx import Document
 from docx.shared import Pt
@@ -136,9 +139,9 @@ def safety_doc(request, pk):
         '##position##': str(base_report.recorder.position) if not base_report.anonymous else '-',
         '##date##': thai_date(date.today()),
         '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
-        'Rank': "พลอากาศตรี",
-        'Name': "สุนทร สวัสดิ์",
-        'Position': "ผู้อำนวยการกองบิน ๔",
+        'Rank': str(base_report.recorder.rank) if not base_report.anonymous else '-',
+        'Name': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
+        'Position': str(base_report.recorder.position) if not base_report.anonymous else '-',
         '##fiscal-year##': str(base_report.fiscal_year),
         '##affiliation##': str(base_report.affiliation),
         '##event-date##': thai_date(base_report.event_date),
@@ -185,34 +188,94 @@ def safety_doc(request, pk):
     return docx_to_response(doc, f"file-{template_filename}")
 
 
+def insert_html_to_docx(cell, html):
+    """
+    ✅ แปลง HTML จาก RichTextField → ฟอร์แมต Word (หัวข้อ, ย่อหน้า, bullet list)
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+
+    for el in soup.children:
+        if el.name in ["h1", "h2", "h3"]:
+            p = cell.add_paragraph()
+            run = p.add_run(el.get_text(strip=True))
+            run.bold = True
+            run.font.size = Pt(14)
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+
+        elif el.name == "p":
+            p = cell.add_paragraph(el.get_text(strip=True))
+            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+        elif el.name in ["ul", "ol"]:
+            for li in el.find_all("li"):
+                p = cell.add_paragraph(f"• {li.get_text(strip=True)}")
+                p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+        elif isinstance(el, str):
+            if el.strip():
+                p = cell.add_paragraph(el.strip())
+                p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+
+
 def rtaf_message_form(request, base_report_id):
     template_path = os.path.join(settings.BASE_DIR, 'safety', 'Report', 'templates', 'Documents', 'rtaf-message-form-template.docx')
     doc = Document(template_path)
 
-    base_report = BaseReport.objects.get(id=base_report_id)
+    base_report = get_object_or_404(BaseReport, id=base_report_id)
+
+    ground = getattr(base_report, "groundreport", None)
+    aviation = getattr(base_report, "aviationreport", None)
+    participants = base_report.participants.all()
+
+    commander_name = base_report.recorder.get_full_name() if base_report.recorder else "ไม่ระบุ"
+    commander_rank = getattr(base_report.recorder.rank, "short_name", "") if hasattr(base_report.recorder, "rank") else ""
+    commander_position = base_report.affiliation if base_report.affiliation else ""
+    tel = base_report.affiliation.tel if hasattr(base_report.affiliation, "tel") else "ไม่ระบุ"
+
+    report_body = ""
+    if ground:
+        report_body += f"สถานที่เกิดเหตุ: {ground.location or '-'}\n"
+        report_body += f"ประเภทอุบัติเหตุ: {ground.get_accident_type_display() if ground.accident_type else '-'}\n"
+    if aviation:
+        report_body += f"หน่วยบิน: {aviation.squadron or '-'}\n"
+        report_body += f"เครื่องบิน: {aviation.aircraft or '-'}\n"
+    if participants.exists():
+        report_body += "\nผู้เกี่ยวข้อง:\n"
+        for p in participants:
+            report_body += f"- {p.full_name or '-'} ({p.role or '-'}) [{p.get_injury_level_display() if p.injury_level else '-'}]\n"
+
     context = {
         '##report-title##': base_report.title,
         '##event-date-time##': f"{thai_date(base_report.event_date)} เวลา {base_report.event_time.strftime('%H:%M') if base_report.event_time else ''}",
-        '##report-body##': '1.  เนื้อหาของรายงานความปลอดภัยส่วนแรก\n2.  เนื้อหาของรายงานความปลอดภัยส่วนที่สอง\n3.  เนื้อหาของรายงานความปลอดภัยส่วนที่สาม',
-        '##secret-type##':  "ลับมาก",
-        '##sender-action##': "ด่วนที่สุด",
-        '##sender-info##': "ด่วนที่สุด",
-        '##action-list##': "ศปก.ทอ., สนภ.ทอ.",
-        '##info-list##': "ศยอ.ศปก.ทอ., ชอ.",
-        '##name-drafter##': "น.ต.ทดสอบ ระบบ",
-        '##office##': "นภบ.บน.๒",
-        '##tel##': "๒-๐๙๕๐",
-
-
+        '##report-body##': report_body.strip() or base_report.content or "ไม่มีรายละเอียดเพิ่มเติม",
+        '##secret-type##': "ลับมาก" if base_report.priority == "H" else "ปกติ",
+        '##sender-action##': "ด่วนที่สุด" if base_report.priority == "H" else "ปกติ",
+        '##sender-info##': "เรียนเพื่อโปรดทราบ",
+        '##action-list##': base_report.recorder.affiliation or "ไม่ระบุ",
+        '##info-list##': base_report.recorder.affiliation or "ไม่ระบุ",
+        '##name-drafter##': commander_name,
+        '##office##': commander_position,
+        '##tel##': tel,
+        '##commander-rank##': commander_rank,
+        '##commander-name##': commander_name,
+        '##com-position##': commander_position,
+        '##month-year##': thai_date(base_report.created_at.date()).split(" ")[-1], 
+        '##thai-pages##': '',
+        '##eng-page##': '',
     }
-    # replace_placeholders_in_paragraphs(doc, context)
-    table = doc.tables[0]
-    for row in table.rows:
-        for cell in row.cells:
-            for paragraph in cell.paragraphs:
-                for run in paragraph.runs:
-                    for key, value in context.items():
-                        if key in run.text:
-                            run.text = run.text.replace(key, str(value))
 
-    return docx_to_response(doc, f"rtaf-message-{base_report_id}.docx")
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    for run in paragraph.runs:
+                        for key, value in context.items():
+                            if key in run.text:
+                                if key == '##report-body##':
+                                    run.text = ""
+                                    insert_html_to_docx(cell, value)
+                                else:
+                                    run.text = run.text.replace(key, str(value))
+
+    return docx_to_response(doc, f"rtaf-message-{base_report.id}.docx")

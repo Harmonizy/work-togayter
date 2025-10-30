@@ -1,0 +1,87 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}{{ quiz.title }} | แบบทดสอบความรู้{% endblock %}
+
+{% block extra_css %}
+<style>
+  .quiz-card {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .question-block {
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.2rem;
+    border: 1px solid #e5e7eb;
+  }
+  .choice-label {
+    display: block;
+    padding: .4rem .75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .choice-label:hover {
+    background: #f1f5f9;
+  }
+  .quiz-submit {
+    text-align: center;
+    margin-top: 2rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+
+      <div class="quiz-card card shadow-sm">
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <h3 class="fw-bold text-primary">{{ quiz.title }}</h3>
+            {% if quiz.description %}
+              <p class="text-muted">{{ quiz.description }}</p>
+            {% endif %}
+          </div>
+
+          <form method="POST" class="quiz-form">
+            {% csrf_token %}
+
+            {% for question in questions %}
+            <div class="question-block">
+              <p class="fw-semibold mb-2">
+                <span class="badge bg-primary me-1">{{ forloop.counter }}</span>
+                {{ question.question_text }}
+              </p>
+
+              {% for choice in question.choices.all %}
+              <div class="form-check mb-1">
+                <input class="form-check-input"
+                       type="radio"
+                       name="{{ question.id }}"
+                       id="choice_{{ choice.id }}"
+                       value="{{ choice.id }}">
+                <label class="form-check-label choice-label" for="choice_{{ choice.id }}">
+                  {{ choice.choice_text }}
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+            {% endfor %}
+
+            <div class="quiz-submit">
+              <button type="submit" class="btn btn-lg btn-success px-5">
+                <i class="ri-check-line me-1"></i> ส่งคำตอบ
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

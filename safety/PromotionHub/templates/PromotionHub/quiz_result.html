@@ -1,0 +1,69 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}ผลการทำแบบทดสอบ | {{ quiz.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .result-card {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 2rem;
+  }
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    margin: 1rem auto 1.5rem;
+  }
+  .score-pass {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+  }
+  .score-fail {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+
+      <div class="card result-card shadow-lg">
+        <div class="card-body">
+          <h3 class="fw-bold mb-2">{{ quiz.title }}</h3>
+          <p class="text-muted mb-4">ผลคะแนนของคุณ</p>
+
+          {% if result.score >= 50 %}
+            <div class="score-circle score-pass shadow-sm">{{ result.score|floatformat:0 }}%</div>
+            <h5 class="text-success">ยอดเยี่ยม! ผ่านเกณฑ์</h5>
+          {% else %}
+            <div class="score-circle score-fail shadow-sm">{{ result.score|floatformat:0 }}%</div>
+            <h5 class="text-danger">ยังไม่ผ่าน ลองใหม่อีกครั้งนะ!</h5>
+          {% endif %}
+
+          <p class="text-muted mt-3">
+            ทำแบบทดสอบเมื่อ: {{ result.completed_at|date:"d M Y H:i" }}
+          </p>
+
+          <div class="mt-4 d-flex justify-content-center gap-3">
+            <a href="{% url 'promotion:list' %}" class="btn btn-secondary">
+              <i class="ri-arrow-left-line me-1"></i> กลับไปหน้าบทความ
+            </a>
+            <a href="{% url 'promotion:quiz_view' quiz.id %}" class="btn btn-primary">
+              <i class="ri-refresh-line me-1"></i> ทำแบบทดสอบอีกครั้ง
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

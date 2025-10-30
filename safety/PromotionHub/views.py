@@ -8,24 +8,30 @@ from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
 from .forms import PromotionForm
 
 
-
+@login_required
 def list(request):
-    promotions = Promotion.objects.all
+    promotions = Promotion.objects.all().order_by("-created_at")
     context = {
         "promotions": promotions
     }
     return render(request, "PromotionHub/promotion_list.html", context)
 
 
-@login_required
+# @login_required
 def detail(request, pk):
     promotion = get_object_or_404(Promotion, pk=pk)
 
-    PromotionView.objects.create(
+    already_viewed = PromotionView.objects.filter(
         user=request.user,
-        promotion=promotion,
-        viewed_at=timezone.now()
-    )
+        promotion=promotion
+    ).exists()
+
+    if not already_viewed:
+        PromotionView.objects.create(
+            user=request.user,
+            promotion=promotion,
+            viewed_at=timezone.now()
+        )
 
     view_count = PromotionView.objects.filter(promotion=promotion).count()
 
@@ -110,7 +116,7 @@ def quiz_view(request, quiz_id):
         )
 
         messages.success(request, f"คุณได้คะแนน {result.score:.0f}%")
-        return redirect("safety_promotion:quiz_result", result.id)
+        return redirect("promotion:quiz_result", result.id)
 
     context = {
         "quiz": quiz,

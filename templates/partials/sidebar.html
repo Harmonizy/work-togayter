@@ -27,31 +27,6 @@
                 </button>
             </div>
 
-            {% comment %} <div class="dropdown sidebar-user m-1 rounded">
-                <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="d-flex align-items-center gap-2">
-                        <img class="rounded header-profile-user" src="{% static 'images/users/avatar-1.jpg' %}" alt="Header Avatar">
-                        <span class="text-start">
-                            <span class="d-block fw-medium sidebar-user-name-text">Anna Adame</span>
-                            <span class="d-block fs-14 sidebar-user-name-sub-text"><i class="ri ri-circle-fill fs-10 text-success align-baseline"></i> <span class="align-middle">Online</span></span>
-                        </span>
-                    </span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-end">
-                    <!-- item-->
-                    <h6 class="dropdown-header">Welcome Anna!</h6>
-                    <a class="dropdown-item" href="{% url 'pages:pages.profile' %}"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
-                    <a class="dropdown-item" href="{% url 'apps:chat'%}"><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
-                    <a class="dropdown-item" href="{% url 'apps:tasks.kanban' %}"><i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Taskboard</span></a>
-                    <a class="dropdown-item" href="{% url 'pages:pages.faqs' %}"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Help</span></a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'pages:pages.profile' %}"><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Balance : <b>$5971.67</b></span></a>
-                    <a class="dropdown-item" href="{% url 'pages:pages.profile_settings' %}"><span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
-                    <a class="dropdown-item" href="{% url 'pages:authentication.lockscreen_basic' %}"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
-                    <a class="dropdown-item" href="{% url 'pages:authentication.logout_basic' %}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
-                </div>
-            </div> {% endcomment %}
-
             <div id="scrollbar">
                 <div class="container-fluid">
                     
@@ -60,19 +35,6 @@
                     
                     <ul class="navbar-nav" id="navbar-nav">
                         <li class="menu-title"><span data-key="t-menu">Menu</span></li>
-                        {% comment %} <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarDashboard" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarDashboard">
-                                <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
-                            </a>
-                            <div class="collapse menu-dropdown" id="sidebarDashboard">
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="{% url 'safety-dashboard:dashboard-home.index' %}" class="nav-link" data-key="t-safety">สถิติ & ข้อมูล</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li> {% endcomment %}
 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarReports" data-bs-toggle="collapse" role="button"
@@ -81,9 +43,11 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarReports">
                                 <ul class="nav nav-sm flex-column">
+                                    {% if perms.RiskManagment.view_all_hazard_log or perms.RiskManagment.view_affiliation_hazard_log %}
                                     <li class="nav-item">
                                         <a href="{% url 'safety-dashboard:dashboard-home.index' %}" class="nav-link" data-key="t-dashboard">สถิติ & ข้อมูล</a>
                                     </li>
+                                    {% endif %}
                                     <li class="nav-item">
                                         <a href="{% url 'report:safety-report.list' %}" class="nav-link" data-key="t-report">รายงานนิรภัย</a>
                                     </li>
@@ -93,6 +57,10 @@
                                         <a href="{% url 'risk_management:hazard-log' %}" class="nav-link" data-key="t-dashboard">ทะเบียนความเสี่ยง</a>
                                     </li> 
                                     {% endif %}
+                                    <li><hr class="menu-divider"></li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'promotion:list' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์</a>
+                                    </li> 
                                     {% comment %} <li class="nav-item">
                                         <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
                                     </li> {% endcomment %}

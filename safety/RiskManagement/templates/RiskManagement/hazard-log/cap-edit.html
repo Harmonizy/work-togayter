@@ -1,0 +1,20 @@
+{% extends "partials/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+      <h3>แก้ไข CAP: {{ cap.title }}</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">บันทึก</button>
+        <a href="{% url 'risk_management:hazard-detail' hazard.id %}" class="btn btn-secondary">ยกเลิก</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

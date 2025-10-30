@@ -4,4 +4,4 @@ from django.apps import AppConfig
 class DataConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'safety.Data'
-    verbose_name = "3. Safety Basic Data"
+    verbose_name = "0. Safety Basic Data"
