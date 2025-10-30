@@ -190,16 +190,13 @@
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
 
-                                                        {% if report.status == ReportStatusChoices.DRAFT %}
+                                                        {% if perms.report.approve_report and report.status == ReportStatusChoices.DRAFT %}
                                                             <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item text-success" 
-                                                            href="{% url 'report:report.approve' report.id %}">
-                                                            <i class="ri-check-double-line align-bottom me-2"></i> อนุมัติ
+                                                            <a class="dropdown-item text-success" href="{% url 'report:report.approve' report.id %}">
+                                                                <i class="ri-check-double-line align-bottom me-2"></i> อนุมัติ
                                                             </a>
-
-                                                            <a class="dropdown-item text-danger" 
-                                                            href="{% url 'report:report.reject' report.id %}">
-                                                            <i class="ri-close-circle-line align-bottom me-2"></i> ไม่อนุมัติ
+                                                            <a class="dropdown-item text-danger" href="{% url 'report:report.reject' report.id %}">
+                                                                <i class="ri-close-circle-line align-bottom me-2"></i> ไม่อนุมัติ
                                                             </a>
                                                         {% endif %}
 

@@ -147,7 +147,7 @@ def safety_doc(request, pk):
         '##event-date##': thai_date(base_report.event_date),
         '##event-time##': base_report.event_time.strftime("%H:%M") if base_report.event_time else '',
 
-        '##content##': '',  # จะถูกแทนด้วย HTML
+        '##content##': '', 
         '##first_recommendation##': base_report.first_recommendation,
         '##initial_action_taken##': base_report.initial_action_taken,
 
@@ -182,7 +182,6 @@ def safety_doc(request, pk):
         print(f"{key}: {value}")
     print("=== CONTEXT ===")
 
-    # แทนค่าและจัดการ ##content##
     replace_placeholders_in_paragraphs(doc, context, base_report)
 
     return docx_to_response(doc, f"file-{template_filename}")
@@ -249,11 +248,11 @@ def rtaf_message_form(request, base_report_id):
         '##report-title##': base_report.title,
         '##event-date-time##': f"{thai_date(base_report.event_date)} เวลา {base_report.event_time.strftime('%H:%M') if base_report.event_time else ''}",
         '##report-body##': report_body.strip() or base_report.content or "ไม่มีรายละเอียดเพิ่มเติม",
-        '##secret-type##': "ลับมาก" if base_report.priority == "H" else "ปกติ",
-        '##sender-action##': "ด่วนที่สุด" if base_report.priority == "H" else "ปกติ",
-        '##sender-info##': "เรียนเพื่อโปรดทราบ",
+        '##sender-action##': "ด่วนที่สุด" if base_report.priority == "H" else "ด่วน",
+        '##sender-info##': "ด่วนที่สุด" if base_report.priority == "H" else "ด่วน",
+        '##secret-type##': "ลับมาก" if base_report.priority == "H" else "ลับ",
         '##action-list##': base_report.recorder.affiliation or "ไม่ระบุ",
-        '##info-list##': base_report.recorder.affiliation or "ไม่ระบุ",
+        '##info-list##': "สนภ.ทอ., ศปก.ทอ.",
         '##name-drafter##': commander_name,
         '##office##': commander_position,
         '##tel##': tel,

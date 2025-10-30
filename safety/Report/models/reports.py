@@ -65,6 +65,8 @@ class BaseReport(models.Model):
             ("delete_report", "*ลบรายงานได้"),
             ("view_all_report_detail", "*ดูรายละเอียดรายงานทั้งหมดได้"),
             ("view_affiliaiotn_report_detail", "*ดูรายละเอียดรายงานของหน่วยงานตัวเองได้"),
+            ("approve_report", "*อนุมัติรายงานได้"),
+
         ]
 
     def __str__(self):
