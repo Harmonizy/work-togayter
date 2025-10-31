@@ -46,7 +46,7 @@
                                     <li class="nav-item">
                                         <a href="{% url 'report:safety-report.list' %}" class="nav-link" data-key="t-report">รายงานนิรภัย</a>
                                     </li>
-                                    {% if perms.HazardLog.view_all_hazard_log or perms.RiskManagment.view_affiliation_hazard_log %}
+                                    {% if perms.RiskManagement.view_all_hazard_log or perms.RiskManagement.view_affiliation_hazard_log %}
                                     <li class="nav-item">
                                         <a href="{% url 'safety-dashboard:dashboard-home.index' %}" class="nav-link" data-key="t-dashboard">สถิติ & ข้อมูล</a>
                                     </li>
