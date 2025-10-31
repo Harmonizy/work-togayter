@@ -66,7 +66,13 @@ class Promotion(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "1. ประชาสัมพันธ์"
         permissions = [
-            
+            ("view_all_promotion_hub", "*ดูการประชาสัมพันธ์ทั้งหมดได้"),
+            ("view_affiliation_promotion_hub", "*ดูการประชาสัมพันธ์ของหน่วยตนเองได้"),
+            ("create_promotion_hub", "*สร้างการประชาสัมพันธ์ได้"),
+            ("edit_promotion_hub", "*แก้ไขการประชาสัมพันธ์ได้"),
+            ("delete_promotion_hub", "*ลบการประชาสัมพันธ์ได้"),
+            ("detail_promotion_hub", "*ดูรายละเอียดการประชาสัมพันธ์ได้"),
+            ("publish_promotion_hub", "*เผยแพร่การประชาสัมพันธ์ได้"),
         ]
 
     def __str__(self):
@@ -74,7 +80,6 @@ class Promotion(models.Model):
 
     def send_notify(self, user_list : list, url: str = "",):
         send_notification(title=self.title, message=self.content, user_ids=user_list, url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/',)
-
 
 class PromotionView(models.Model):
     user = models.ForeignKey(RTAFUser, verbose_name="ผู้เข้าชม", on_delete=models.SET_NULL, null=True, blank=True)

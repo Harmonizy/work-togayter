@@ -3,17 +3,46 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.utils import timezone
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
 from .forms import PromotionForm
+from .choices import PromotionStatusChoices, PromotionPublishChoices
 
 
 @login_required
 def list(request):
-    promotions = Promotion.objects.all().order_by("-created_at")
-    context = {
-        "promotions": promotions
-    }
+    user = request.user
+
+    # Superuser เห็นหมด
+    if user.is_superuser or user.has_perm("PromotionHub.view_all_promotion_hub"):
+        promotions = Promotion.objects.all()
+
+    # เห็นเฉพาะของหน่วยตัวเอง
+    elif user.has_perm("PromotionHub.view_affiliation_promotion_hub"):
+        promotions = Promotion.objects.filter(
+            user__affiliation=user.affiliation
+        )
+
+    else:
+        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการประชาสัมพันธ์")
+
+    # เพิ่มการกรองเฉพาะที่เผยแพร่แล้ว
+    published = Promotion.objects.filter(
+        status=PromotionStatusChoices.PUBLISHED
+    )
+
+    # รวมกับ logic การเผยแพร่ (หน่วย / ทอ.)
+    visible_promotions = published.filter(
+        publish=PromotionPublishChoices.AIRFORCE
+    ) | published.filter(
+        publish=PromotionPublishChoices.UNIT, user__affiliation=user.affiliation
+    )
+
+    # รวมทั้งหมดแล้วลบซ้ำ
+    promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
+
+    context = {"promotions": promotions}
     return render(request, "PromotionHub/promotion_list.html", context)
 
 
@@ -66,6 +95,11 @@ def create(request):
 @login_required
 def edit(request, pk):
     promotion = get_object_or_404(Promotion, pk=pk)
+    user = request.user
+
+    # ตรวจสิทธิ์
+    if not (user.is_superuser or user.has_perm("PromotionHub.edit_promotion_hub") or promotion.user == user):
+        raise PermissionDenied("คุณไม่มีสิทธิ์แก้ไขบทความนี้")
 
     if request.method == "POST":
         form = PromotionForm(request.POST, request.FILES, instance=promotion)
@@ -73,21 +107,20 @@ def edit(request, pk):
             form.save()
             messages.success(request, "แก้ไขบทความเรียบร้อยแล้ว!")
             return redirect("promotion:detail", pk=promotion.pk)
-        else:
-            messages.error(request, "ไม่สามารถบันทึกได้ กรุณาตรวจสอบข้อมูลอีกครั้ง")
     else:
         form = PromotionForm(instance=promotion)
 
-    context = {
-        "form": form,
-        "promotion": promotion,
-    }
-    return render(request, "PromotionHub/promotion_edit.html", context)
+    return render(request, "PromotionHub/promotion_edit.html", {"form": form, "promotion": promotion})
 
 
 @login_required
 def delete(request, pk):
     promotion = get_object_or_404(Promotion, pk=pk)
+    user = request.user
+
+    if not (user.is_superuser or user.has_perm("PromotionHub.delete_promotion_hub") or promotion.user == user):
+        raise PermissionDenied("คุณไม่มีสิทธิ์ลบบทความนี้")
+
     promotion.delete()
     messages.success(request, "ลบบทความเรียบร้อยแล้ว!")
     return redirect("promotion:list")

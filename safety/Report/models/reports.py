@@ -67,6 +67,8 @@ class BaseReport(models.Model):
             ("view_affiliaiotn_report_detail", "*ดูรายละเอียดรายงานของหน่วยงานตัวเองได้"),
             ("approve_report", "*อนุมัติรายงานได้"),
 
+            ("view_all_dashboard", "*ดูสถิติทั้งหมดได้"),
+            ("view_affiliation_dashboard", "*ดูสถิติของหน่วยงานตัวเองได้"),
         ]
 
     def __str__(self):

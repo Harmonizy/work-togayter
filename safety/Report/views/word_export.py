@@ -117,8 +117,8 @@ def safety_doc(request, pk):
     BASE_TEMPLATE_DIR = os.path.join(settings.BASE_DIR, 'safety', 'Report', 'templates', 'Documents')
 
     report_type_to_template = {
-        ReportTypeChoices.SIMPLE: 'hazard-report.docx',
-        ReportTypeChoices.HAZARD_GROUND: 'ground-hazard-report.docx',
+        ReportTypeChoices.SIMPLE: 'ground-safety-report.docx',
+        ReportTypeChoices.HAZARD_GROUND: 'ground-incident-report.docx',
         ReportTypeChoices.HAZARD_AVIATION: 'aviation-hazard-report.docx',
         ReportTypeChoices.SAFETY_GROUND: 'ground-safety-report.docx',
         ReportTypeChoices.SAFETY_AVIATION: 'aviation-safety-report.docx',
@@ -126,7 +126,7 @@ def safety_doc(request, pk):
     }
 
     template_filename = report_type_to_template.get(base_report.report_type, 'safety-report.docx')
-    template_filename = 'ground-hazard-report.docx'
+    template_filename = 'ground-safety-report.docx'
     template_path = os.path.join(BASE_TEMPLATE_DIR, template_filename)
     
 

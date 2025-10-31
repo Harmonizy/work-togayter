@@ -3,6 +3,9 @@ from datetime import datetime
 from django.shortcuts import render
 from django.db.models import Count
 from django.db.models.functions import ExtractMonth
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+
 from ..models import CalendarEvent
 from safety.Report.models.reports import BaseReport
 from safety.Report.choices import ReportStatusChoices, PriorityChoices, ReportTypeChoices
@@ -14,9 +17,19 @@ THAI_MONTHS = [
     "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
 ]
 
-
+@login_required
 def index(request):
-    report = BaseReport.objects.all()
+    user = request.user
+
+    if user.is_superuser or user.has_perm("Report.view_all_dashboard"):
+        report = BaseReport.objects.all()
+
+    elif user.has_perm("PromotionHub.view_affiliation_dashboard"):
+        report = BaseReport.objects.filter(affiliation=user.affiliation)
+
+    else:
+        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการประชาสัมพันธ์")
+
     report_all = report.count()
     report_draft = report.filter(status=ReportStatusChoices.DRAFT).count()
     report_approved = report.filter(status=ReportStatusChoices.APPROVED).count()
@@ -30,7 +43,7 @@ def index(request):
     selected_year = request.GET.get("year")
     selected_month = request.GET.get("month")
 
-    reports = BaseReport.objects.all()
+    reports = report  
 
     if selected_year and selected_year != "all":
         reports = reports.filter(event_date__year=int(selected_year))
