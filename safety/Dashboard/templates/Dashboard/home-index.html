@@ -18,6 +18,10 @@
         color: #000;
         border: 1px solid #999;
     }
+    #countries_charts {
+        max-height: 500px;
+        overflow-y: auto;
+    }
 </style>
 {% endblock extra_css %}
 
@@ -161,46 +165,45 @@
                                 <div class="card monthly-calendar">
                                     <div class="card-header border-0">
                                         <h6 class="fw-bold text-primary mb-2">📅 ตั้งค่ารายงาน</h6>
+                                        <form id="filter-form" method="get" action="">
+                                            <!-- 🗓️ เลือกเดือน -->
+                                            <div class="mb-3">
+                                                <label class="fw-semibold text-muted mb-1">เดือน</label>
+                                                <select name="month" class="form-select form-select-sm">
+                                                <option value="all" {% if current_month == 'all' %}selected{% endif %}>📆 แสดงทุกเดือน</option>
+                                                {% for m in month_list %}
+                                                    <option value="{{ m.number }}" {% if m.number == current_month %}selected{% endif %}>
+                                                    {{ m.name }}
+                                                    </option>
+                                                {% endfor %}
+                                                </select>
+                                            </div>
 
-                                                        <form id="filter-form" method="get" action="">
-                                                        <!-- 🗓️ เลือกเดือน -->
-                                                        <div class="mb-3">
-                                                            <label class="fw-semibold text-muted mb-1">เดือน</label>
-                                                            <select name="month" class="form-select form-select-sm">
-                                                            <option value="all" {% if current_month == 'all' %}selected{% endif %}>📆 แสดงทุกเดือน</option>
-                                                            {% for m in month_list %}
-                                                                <option value="{{ m.number }}" {% if m.number == current_month %}selected{% endif %}>
-                                                                {{ m.name }}
-                                                                </option>
-                                                            {% endfor %}
-                                                            </select>
-                                                        </div>
+                                            <!-- 📆 เลือกปี -->
+                                            <div class="mb-3">
+                                                <label class="fw-semibold text-muted mb-1">ปี</label>
+                                                <select name="year" class="form-select form-select-sm">
+                                                <option value="all" {% if current_year == 'all' %}selected{% endif %}>📅 แสดงทุกปี</option>
+                                                {% for y in year_list %}
+                                                    <option value="{{ y.number }}" {% if y.number == current_year %}selected{% endif %}>
+                                                    {{ y.name }}
+                                                    </option>
+                                                {% endfor %}
+                                                </select>
+                                            </div>
 
-                                                        <!-- 📆 เลือกปี -->
-                                                        <div class="mb-3">
-                                                            <label class="fw-semibold text-muted mb-1">ปี</label>
-                                                            <select name="year" class="form-select form-select-sm">
-                                                            <option value="all" {% if current_year == 'all' %}selected{% endif %}>📅 แสดงทุกปี</option>
-                                                            {% for y in year_list %}
-                                                                <option value="{{ y.number }}" {% if y.number == current_year %}selected{% endif %}>
-                                                                {{ y.name }}
-                                                                </option>
-                                                            {% endfor %}
-                                                            </select>
-                                                        </div>
+                                            <hr class="my-2">
 
-                                                        <hr class="my-2">
-
-                                                        <!-- 🔘 ปุ่มยืนยันและรีเซ็ต -->
-                                                        <div class="d-flex gap-2">
-                                                            <button type="submit" class="btn btn-sm btn-primary flex-fill">
-                                                            <i class="mdi mdi-check-circle-outline me-1"></i> ยืนยัน
-                                                            </button>
-                                                            <a href="?month=all&year=all" class="btn btn-sm btn-outline-secondary flex-fill">
-                                                            <i class="mdi mdi-refresh me-1"></i> แสดงทั้งหมด
-                                                            </a>
-                                                        </div>
-                                                        </form>
+                                            <!-- 🔘 ปุ่มยืนยันและรีเซ็ต -->
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-sm btn-primary flex-fill">
+                                                <i class="mdi mdi-check-circle-outline me-1"></i> ยืนยัน
+                                                </button>
+                                                <a href="?month=all&year=all" class="btn btn-sm btn-outline-secondary flex-fill">
+                                                <i class="mdi mdi-refresh me-1"></i> แสดงทั้งหมด
+                                                </a>
+                                            </div>
+                                        </form>
                                     </div><!-- end cardheader -->
                                 </div>
                                 <div class="card">
@@ -259,11 +262,11 @@
                                             </div>
 
                                             <div class="card-body">
-                                                    <div 
+                                                <div 
                                                     id="store-visits-source"
                                                     data-report-type='{{ report_type_list|safe }}'
                                                     data-colors='["--vz-primary","--vz-success","--vz-info","--vz-warning","--vz-danger","--vz-secondary"]'>
-                                                    </div>
+                                                </div>
                                             </div>
                                         </div> <!-- .card-->
                                     </div> <!-- .col-->

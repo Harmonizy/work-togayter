@@ -10,6 +10,7 @@ from safety.Report.models import BaseReport
 from safety.Report.forms.fields import content_field
 
 single_select_widget = forms.Select(attrs={'class': 'form-control js-example-basic-single'})
+multi_select_widget = forms.SelectMultiple(attrs={'class': 'js-example-basic-multiple','multiple': 'multiple'})
 
 class HazardLogForm(forms.ModelForm):
     description = content_field(300, "รายละเอียดของอันตราย...")
@@ -29,7 +30,7 @@ class HazardLogForm(forms.ModelForm):
             'initial_severity': single_select_widget,
             'residual_likelihood': single_select_widget,
             'residual_severity': single_select_widget,
-            'source': single_select_widget,
+            'source': multi_select_widget,
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'เช่น อาคารซ่อมบำรุง โซน A'}),
         }

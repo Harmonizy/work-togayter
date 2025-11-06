@@ -31,6 +31,6 @@ class InspectChoices(models.TextChoices):
 
 class CAPStatusChoices(models.TextChoices):
     PLANNING = 'P', 'วางแผน'
-    IN_PROGRESS = 'I', 'กำลังดำเนินการ'
+    IN_PROGRESS = 'I', 'ดำเนินการ'
     COMPLETE = 'C', 'เสร็จสิ้น'
 

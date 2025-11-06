@@ -3,9 +3,10 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_POST
+from django.db.models import Count, Q
 
 from ..models import HazardLog, CAP
-from ..choices import HazardSourceChoices
+from ..choices import HazardSourceChoices, CAPStatusChoices
 from ..forms import HazardLogForm, CAPFormSet
 from ..services.hazard_summary import get_hazard_summary_cards
 
@@ -17,7 +18,13 @@ def list(request):
     elif request.user.has_perm('RiskManagement.view_affiliation_hazard_log'):
         hazard_log = HazardLog.objects.filter(affiliation=request.user.affiliation)
     else:
-        raise PermissionDenied() ## Djano ใช้ PermissionDenied เพื่อส่งไป 403
+        raise PermissionDenied()
+
+    hazard_log = hazard_log.annotate(
+        planning_count=Count("caps", filter=Q(caps__status=CAPStatusChoices.PLANNING)),
+        in_progress_count=Count("caps", filter=Q(caps__status=CAPStatusChoices.IN_PROGRESS)),
+        complete_count=Count("caps", filter=Q(caps__status=CAPStatusChoices.COMPLETE)),
+    )
 
     cards = get_hazard_summary_cards()
     context = {"cards": cards, "hazard_log": hazard_log}
@@ -49,6 +56,7 @@ def handle_create(request, initial_data=None):
 def handle_create_cap(request, hazard_id):
 
     hazard = get_object_or_404(HazardLog, id=hazard_id)
+
 
     if request.method == "POST":
         formset = CAPFormSet(request.POST, instance=hazard)

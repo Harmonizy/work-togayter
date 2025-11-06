@@ -117,7 +117,6 @@
                     <col style="width:6%">
                     <col style="width:6%">
                     <col style="width:6%">
-                    <col style="width:6%">
                     <col style="width:12%">
                   </colgroup>
                   <thead class="table-light text-muted text-center align-middle" style="font-size:1.05em;">
@@ -127,17 +126,16 @@
                       <th rowspan="2">หัวข้อ</th>
                       <th rowspan="2">หน่วยงาน</th>
                       <th rowspan="2">สถานะ</th>
-                      <th colspan="3">เริ่มต้น</th>
-                      <th colspan="3">หลังแก้ไข</th>
+                      <th colspan="2">ความเสี่ยง</th>
+                      <th colspan="3">CAPs</th>
                       <th rowspan="2">Action</th>
                     </tr>
                     <tr>
-                      <th>โอกาส</th>
-                      <th>รุนแรง</th>
-                      <th>ความเสี่ยง</th>
-                      <th>โอกาส</th>
-                      <th>รุนแรง</th>
-                      <th>ความเสี่ยง</th>
+                      <th>เริ่มต้น</th>
+                      <th>หลังแก้ไข</th>
+                      <th>วางแผน</th>
+                      <th>ดำเนินการ</th>
+                      <th>เสร็จสิ้น</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -159,16 +157,16 @@
                       <td>
                         <span class="badge bg-warning-subtle text-warning">{{ hazard.get_inspect_display }}</span>
                       </td>
-                      <td class="text-center">{{ hazard.initial_likelihood }}</td>
-                      <td class="text-center">{{ hazard.initial_severity }}</td>
                       <td class="text-center">
                         {% risk_box_small hazard.initial_risk_level "ก่อนแก้ไข" %}
                       </td>
-                      <td class="text-center">{{ hazard.residual_likelihood }}</td>
-                      <td class="text-center">{{ hazard.residual_severity }}</td>
                       <td class="text-center">
                         {% risk_box_small hazard.residual_risk_level "หลังแก้ไข" %}
                       </td>
+                      <td class="text-center text-secondary">{{ hazard.planning_count }}</td>
+                      <td class="text-center text-warning">{{ hazard.in_progress_count }}</td>
+                      <td class="text-center text-success">{{ hazard.complete_count }}</td>
+                      
                       <td class="text-center">
                         <div class="btn-group" role="group" aria-label="Action buttons">
                           <a href="{% url 'risk_management:hazard-detail' hazard.id %}">

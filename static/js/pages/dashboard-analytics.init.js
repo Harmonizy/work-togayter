@@ -42,6 +42,8 @@ async function loadCharts() {
         // ✅ เตรียมข้อมูลจาก API
         const categories = capData.map(item => item["hazard_log__affiliation__short_name"] || "ไม่ทราบหน่วย");
 
+        const dynamicHeight = Math.max(436, categories.length * 28);
+
         const planningData = capData.map(item => item.planning);
         const inProgressData = capData.map(item => item.in_progress);
         const completeData = capData.map(item => item.complete);
@@ -55,7 +57,7 @@ async function loadCharts() {
             ],
             chart: {
                 type: "bar",
-                height: 436,
+                height: dynamicHeight,
                 stacked: true,
                 toolbar: { show: false }
             },
@@ -66,7 +68,7 @@ async function loadCharts() {
                     dataLabels: { position: "center" }
                 }
             },
-            colors: ["#6c757d", "#f1c40f", "#28a745"],
+            colors: ["#4babffff", "#f1c40f", "#28a745"],
             dataLabels: {
                 enabled: true,
                 style: {
