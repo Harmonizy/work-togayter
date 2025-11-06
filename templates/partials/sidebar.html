@@ -60,10 +60,12 @@
                                         <a href="{% url 'risk_management:cap-list' %}" class="nav-link" data-key="t-dashboard">CAPs</a>
                                     </li>
                                     {% endif %}
+                                    {% if perm.PromotionHub.view_all_promotion_hub or perm.PromotionHub.view_affiliation_promotion_hub %}
                                     <li><hr class="menu-divider"></li>
                                     <li class="nav-item">
                                         <a href="{% url 'promotion:list' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์</a>
                                     </li> 
+                                    {% endif %}
                                     {% comment %} <li class="nav-item">
                                         <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
                                     </li> {% endcomment %}
