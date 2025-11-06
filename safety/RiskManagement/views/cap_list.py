@@ -16,7 +16,7 @@ def cap_list(request):
         cap = CAP.objects.all()
     
     elif request.user.has_perm('RiskManagement.view_affiliation_hazard_log'):
-        cap = CAP.objects.filter(affiliation=request.user.affiliation)
+        cap = CAP.objects.filter(hazard_log__affiliation=request.user.affiliation)
     
     else:
         raise PermissionDenied()
