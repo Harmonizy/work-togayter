@@ -80,8 +80,8 @@ class Promotion(models.Model):
     def __str__(self):
         return self.title
 
-    def send_notify(self, user_list : list, url: str = "",):
-        send_notification(title=self.title, message=self.content, user_ids=user_list, url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/',)
+    def send_notify(self, user_list : list, url: str = ""):
+        send_notification(title=self.title, message=self.content, user_ids=user_list, url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/', using_auth = True)
 
 class PromotionView(models.Model):
     user = models.ForeignKey(RTAFUser, verbose_name="ผู้เข้าชม", on_delete=models.SET_NULL, null=True, blank=True)

@@ -4,10 +4,14 @@ from django.db.models import Count
 from django.utils import timezone
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DetailView
+
 
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
 from .forms import PromotionForm
 from .choices import PromotionStatusChoices, PromotionPublishChoices
+from common.RTAFAuth.views import SuperAppLoginMixins
 
 
 @login_required
@@ -69,6 +73,32 @@ def detail(request, pk):
         "view_count": view_count
     }
     return render(request, "PromotionHub/promotion_detail.html", context)
+
+
+class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
+    model = Promotion
+    template_name = 'PromotionHub/promotion_detail.html'
+    context_object_name = 'promotion'
+
+    def get_success_url(self):
+        return self.request.get_full_path().split('?')[0]
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        view_count = PromotionView.objects.filter(promotion=self.get_object()).count()
+        context['view_count'] = view_count
+        return context
+    
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        if request.user.is_authenticated:
+            PromotionView.objects.update_or_create(
+                user=request.user,
+                promotion=self.get_object(),
+                defaults={'viewed_at': timezone.now()}
+            )
+        return response
 
 
 @login_required
@@ -167,3 +197,25 @@ def quiz_result(request, result_id):
         "quiz": result.quiz,
     }
     return render(request, "PromotionHub/quiz_result.html", context)
+
+
+# @login_required
+# @permission_required("PromotionHub.publish_promotion_hub", raise_exception=True)
+# def publish_promotion(request, pk):
+#     promotion = get_object_or_404(Promotion, pk=pk)
+
+#     if promotion.publish == PromotionPublishChoices.AIRFORCE:
+#         users = RTAFUser.objects.values_list("username", flat=True)
+
+#     elif promotion.publish == PromotionPublishChoices.AFFILIATION:
+#         users = RTAFUser.objects.filter(
+#             affiliation=promotion.user.affiliation
+#         ).values_list("username", flat=True)
+
+#     else:
+#         users = []
+
+#     promotion.send_notify(list(users))
+
+#     messages.success(request, "✅ เผยแพร่ประชาสัมพันธ์เรียบร้อย และส่งการแจ้งเตือนแล้ว.")
+#     return redirect("PromotionHub:promotion.detail", pk=promotion.id)

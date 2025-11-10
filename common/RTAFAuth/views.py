@@ -24,16 +24,16 @@ class SuperAppLoginMixins:
         print("SuperAppLoginMixins get called")
         if salt:
             print("Salt token:", salt)
-            user = Backend().authenticate(request, username="super-app-salt-auth", password=salt)
-            print("User authenticated:", user)
-            if user:
-                login(request, user, backend='common.RTAFAuth.backends.SuperAppBackend')
-                # setup_user(request, user)
-                return self.redirect_success_url(request)
-            
-            print("Authentication failed")
-            return HttpResponse("การยืนยันผ่าน Super App fail", status=401)
-
+            try:
+                user = Backend().authenticate(request, username="super-app-salt-auth", password=salt)
+                print("User authenticated:", user)
+                if user:
+                    login(request, user, backend='common.RTAFAuth.backends.SuperAppBackend')
+                    # setup_user(request, user)
+                    return self.redirect_success_url(request)
+            except Exception as e:            
+                return HttpResponse(f"การยืนยันผ่าน Super App fail. Error {e}", status=401)
+        
         return super().get(request, *args, **kwargs)
 
 

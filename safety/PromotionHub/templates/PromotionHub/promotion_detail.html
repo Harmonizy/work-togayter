@@ -54,11 +54,13 @@
         <div class="col-lg-10 mx-auto">
           <div class="text-center">
             <h2 class="fw-bold">{{ promotion.title }}</h2>
-            <div class="promotion-meta">
-              โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} • 
-              {{ promotion.created_at|date:"d M Y" }} • 
-              เข้าชม {{ view_count }} คน
-            </div>
+              {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %}
+                <div class="promotion-meta">
+                  โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} • 
+                  {{ promotion.created_at|date:"d M Y" }} • 
+                  เข้าชม {{ view_count }} คน
+                </div>
+              {% endif %}
           </div>
         </div>
       </div>
