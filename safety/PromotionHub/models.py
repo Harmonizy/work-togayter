@@ -4,6 +4,8 @@ from .choices import PromotionStatusChoices, PromotionPublishChoices
 from common.RTAFUser.models.RTAFUser import RTAFUser, Affiliation
 from common.Services.super_app_api import send_notification
 
+from ckeditor.fields import RichTextField
+
 class Quiz(models.Model):
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
     description = models.TextField(verbose_name="รายละเอียด", blank=True, null=True)
@@ -53,7 +55,7 @@ class QuizResult(models.Model):
 class Promotion(models.Model):
     image = models.ImageField(verbose_name="รูปภาพ", upload_to='safety_promotion/')
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
-    content = models.TextField(verbose_name="เนื้อหา")
+    content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=PromotionStatusChoices.choices, default=PromotionStatusChoices.DRAFT, null=True, blank=True)
     publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.AIRFORCE, null=True, blank=True)
 

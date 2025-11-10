@@ -10,6 +10,7 @@
 {{ form.media }}
 <style>
   .django-ckeditor-widget { width: 100% !important; }
+  {% comment %} .select2-container { width: 100% !important; } {% endcomment %}
 </style>
 {% endblock extra_css %}
 
@@ -17,16 +18,17 @@
 <div class="main-content">
   <div class="page-content">
     <div class="container-fluid">
-      {% url 'risk_management:hazard-log-list' as safety_report_list_url %}
+      {% url 'risk_management:hazard-log' as safety_report_list_url %}
       {% include "partials/page-title.html" with pagetitle="บันทึกอันตราย" pagetitle_url=safety_report_list_url title="สร้างบันทึกอันตรายใหม่" %}
 
       <form id="hazardLogForm" method="post" enctype="multipart/form-data" class="my-4">
         {% csrf_token %}
         {% crispy form %}
 
-        <button type="submit" class="btn btn-primary">
-            บันทึก
-        </button>
+        <div class="d-flex justify-content-end mt-4">
+          <a href="{% url 'risk_management:hazard-log' %}" class="btn btn-secondary me-2">ยกเลิก</a>
+          <button type="submit" class="btn btn-primary">บันทึก</button>
+        </div>
       </form>
 
     </div>
@@ -43,77 +45,12 @@
 
 <script>
 $(function () {
-  $('.js-example-basic-single').select2({
-    width: '100%',
-    placeholder: 'เลือกตัวเลือก',
-    allowClear: true
-  });
+
+  $('.js-example-basic-single').select2({width: '100%', placeholder: 'เลือกตัวเลือก', allowClear: true});
+  $('.js-example-basic-multiple').select2({width: '100%', placeholder: 'เลือกหลายรายการ', allowClear: true});
 
   $('.django-ckeditor-widget').addClass('w-100');
 
-      let container = $('#formset-container');
-    let totalForms = $('#id_caps-TOTAL_FORMS'); // Replace 'caps' with your actual formset prefix
-
-    $('#add-form').click(function () {
-        let formCount = parseInt(totalForms.val());
-        let newForm = container.children('.formset-form:first').clone(true);
-
-        // Clear input values
-        newForm.find(':input').each(function () {
-            let name = $(this).attr('name');
-            if (name) {
-                let newName = name.replace(/-\d+-/, `-${formCount}-`);
-                let newId = `id_${newName}`;
-                $(this).attr({'name': newName, 'id': newId});
-                if ($(this).is(':checkbox') || $(this).is(':radio')) {
-                    $(this).prop('checked', false);
-                } else {
-                    $(this).val('');
-                }
-            }
-        });
-
-        // Update labels `for` attributes if needed
-        newForm.find('label').each(function () {
-            let newFor = $(this).attr('for')?.replace(/-\d+-/, `-${formCount}-`);
-            if (newFor) $(this).attr('for', newFor);
-        });
-
-        // Append new form and increase TOTAL_FORMS
-        container.append(newForm);
-        totalForms.val(formCount + 1);
-    });
-
-    container.on('click', '.remove-form', function () {
-        let forms = container.children('.formset-form');
-        if (forms.length > 1) {
-            $(this).closest('.formset-form').remove();
-
-            // Re-index form inputs to maintain Django's formset naming
-            let forms = container.children('.formset-form');
-            totalForms.val(forms.length);
-
-            forms.each(function (i) {
-                $(this).find(':input, label').each(function () {
-                    updateAttr($(this), 'name', i);
-                    updateAttr($(this), 'id', i);
-                    updateAttr($(this), 'for', i);
-                });
-            });
-
-            function updateAttr(elem, attr, index) {
-                let value = elem.attr(attr);
-                if (value) {
-                    let updated = value.replace(/caps-(\d+)-/, `caps-${index}-`);
-                    elem.attr(attr, updated);
-                }
-            }
-        } else {
-            alert("ต้องมีอย่างน้อย 1 แผนปฏิบัติการ");
-        }
-    });
-
-  // ยืนยันก่อน submit
   $('#hazardLogForm').on('submit', function(e) {
     e.preventDefault();
     const form = this;
@@ -128,6 +65,7 @@ $(function () {
     }).then((res) => { if (res.isConfirmed) form.submit(); });
   });
 
+  // ✅ แสดง/ซ่อน Related Report ตาม Source
   function toggleRelatedReport() {
     const sourceVal = $('#id_source').val();
     if (sourceVal === '{{ HazardSourceChoices.REPORT }}') {
@@ -139,6 +77,7 @@ $(function () {
   }
   toggleRelatedReport();
   $('#id_source').on('change', toggleRelatedReport);
+
 });
 </script>
 {% endblock %}

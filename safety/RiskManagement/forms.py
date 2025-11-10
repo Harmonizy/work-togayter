@@ -8,9 +8,8 @@ from .models import HazardLog, CAP
 from .choices import HazardSourceChoices
 from safety.Report.models import BaseReport
 from safety.Report.forms.fields import content_field
+from safety.Report.forms.fields import  content_example, content_field, textarea_field, multi_select_widget, single_select_widget
 
-single_select_widget = forms.Select(attrs={'class': 'form-control js-example-basic-single'})
-multi_select_widget = forms.SelectMultiple(attrs={'class': 'js-example-basic-multiple','multiple': 'multiple'})
 
 class HazardLogForm(forms.ModelForm):
     description = content_field(300, "รายละเอียดของอันตราย...")
