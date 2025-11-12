@@ -65,6 +65,8 @@ class Promotion(models.Model):
     created_at = models.DateTimeField(verbose_name="วันที่สร้าง", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วันที่แก้ไข", auto_now=True)
 
+    num_view = models.IntegerField(verbose_name="จํานวนการเข้าชม", default=0)
+
     class Meta:
         verbose_name = verbose_name_plural = "1. ประชาสัมพันธ์"
         permissions = [
@@ -83,6 +85,7 @@ class Promotion(models.Model):
     def send_notify(self, user_list : list, url: str = ""):
         send_notification(title=self.title, message=self.content, user_ids=user_list, url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/', using_auth = True)
 
+
 class PromotionView(models.Model):
     user = models.ForeignKey(RTAFUser, verbose_name="ผู้เข้าชม", on_delete=models.SET_NULL, null=True, blank=True)
     promotion = models.ForeignKey(Promotion, verbose_name="โปรโมชั่น", on_delete=models.SET_NULL, null=True, blank=True)
@@ -94,5 +97,10 @@ class PromotionView(models.Model):
     def __str__(self):
         return f"{self.user} - {self.promotion}"
     
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self.promotion.num_view += 1
+            self.promotion.save()
+        super().save(*args, **kwargs)
 
 

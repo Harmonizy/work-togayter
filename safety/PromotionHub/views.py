@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Count
 from django.utils import timezone
 from django.contrib import messages
@@ -12,6 +12,7 @@ from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
 from .forms import PromotionForm
 from .choices import PromotionStatusChoices, PromotionPublishChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
+from common.RTAFUser.models import RTAFUser
 
 
 @login_required
@@ -199,23 +200,23 @@ def quiz_result(request, result_id):
     return render(request, "PromotionHub/quiz_result.html", context)
 
 
-# @login_required
-# @permission_required("PromotionHub.publish_promotion_hub", raise_exception=True)
-# def publish_promotion(request, pk):
-#     promotion = get_object_or_404(Promotion, pk=pk)
+@login_required
+@permission_required("PromotionHub.publish_promotion_hub", raise_exception=True)
+def publish_promotion(request, pk):
+    promotion = get_object_or_404(Promotion, pk=pk)
 
-#     if promotion.publish == PromotionPublishChoices.AIRFORCE:
-#         users = RTAFUser.objects.values_list("username", flat=True)
+    if promotion.publish == PromotionPublishChoices.AIRFORCE:
+        users = RTAFUser.objects.values_list("username", flat=True)
 
-#     elif promotion.publish == PromotionPublishChoices.AFFILIATION:
-#         users = RTAFUser.objects.filter(
-#             affiliation=promotion.user.affiliation
-#         ).values_list("username", flat=True)
+    elif promotion.publish == PromotionPublishChoices.UNIT:
+        users = RTAFUser.objects.filter(
+            affiliation=promotion.user.affiliation
+        ).values_list("username", flat=True)
 
-#     else:
-#         users = []
+    else:
+        users = []
 
-#     promotion.send_notify(list(users))
+    promotion.send_notify(list(users))
 
-#     messages.success(request, "✅ เผยแพร่ประชาสัมพันธ์เรียบร้อย และส่งการแจ้งเตือนแล้ว.")
-#     return redirect("PromotionHub:promotion.detail", pk=promotion.id)
+    messages.success(request, "✅ เผยแพร่ประชาสัมพันธ์เรียบร้อย และส่งการแจ้งเตือนแล้ว.")
+    return redirect("PromotionHub:promotion.detail", pk=promotion.id)
