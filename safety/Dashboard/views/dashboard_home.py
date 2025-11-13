@@ -24,7 +24,7 @@ def index(request):
     if user.is_superuser or user.has_perm("Report.view_all_dashboard"):
         report = BaseReport.objects.all()
 
-    elif user.has_perm("PromotionHub.view_affiliation_dashboard"):
+    elif user.has_perm("Report.view_affiliation_dashboard"):
         report = BaseReport.objects.filter(affiliation=user.affiliation)
 
     else:
