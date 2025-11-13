@@ -69,6 +69,12 @@
                                     {% comment %} <li class="nav-item">
                                         <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
                                     </li> {% endcomment %}
+                                    {% if request.user.is_superuser or request.user.is_staff %}
+                                    <li><hr class="menu-divider"></li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'admin:index' %}" class="nav-link" data-key="t-dashboard">การตั้งค่า</a>
+                                    </li> 
+                                    {% endif %}
                                 </ul>
                             </div>
                         </li>
