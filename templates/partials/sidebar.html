@@ -69,21 +69,20 @@
                                     {% comment %} <li class="nav-item">
                                         <a href="{% url 'report:mobile_home' %}" class="nav-link" data-key="t-mobile">มือถือ</a>
                                     </li> {% endcomment %}
-                                    {% if request.user.is_superuser or request.user.is_staff %}
+                                    
                                     <li><hr class="menu-divider"></li>
                                     <li class="nav-item">
                                         <a href="{% url 'admin:index' %}" class="nav-link" data-key="t-dashboard">การตั้งค่า</a>
                                     </li> 
-                                    {% endif %}
+                                    
                                 </ul>
                             </div>
                         </li>
 
-                        {% if request.user.is_superuser %}
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarRiskManagement" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarRiskManagement">
-                                <i class="ri-alert-line"></i></i> <span data-key="t-reports">Risk Management</span>
+                            aria-expanded="false" aria-controls="sidebarRiskManagement">
+                            <i class="ri-alert-line"></i></i> <span data-key="t-reports">Risk Management</span>
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarRiskManagement">
                                 <ul class="nav nav-sm flex-column">
@@ -94,6 +93,23 @@
                             </div>
                         </li>
 
+                        {% if request.user.is_superuser or request.user.is_staff %}
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarRiskManagement" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="sidebarRiskManagement">
+                            <i class="ri-alert-line"></i></i> <span data-key="t-reports">Admin</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarRiskManagement">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="{% url 'risk_management:hazard-log' %}" class="nav-link" data-key="t-dashboard">การตั้งค่า</a>
+                                    </li> 
+                                </ul>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if request.user.is_superuser %}
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarDashboards">
