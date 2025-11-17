@@ -50,23 +50,6 @@
                             </div>
                         </li>
 
-                        {% if perms.PromotionHub.view_all_promotion_hub or perm.PromotionHub.view_affiliation_promotion_hub %}
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#sidebarPromotion" data-bs-toggle="collapse" role="button"
-                            aria-expanded="false" aria-controls="sidebarPromotion">
-                            <i class="ri-send-plane-line"></i></i> <span data-key="t-reports">Safety Promotion</span>
-                            </a>
-                            <div class="collapse menu-dropdown" id="sidebarPromotion">
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="{% url 'promotion:list' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์</a>
-                                        <a href="{% url 'promotion:quiz_list' %}" class="nav-link" data-key="t-dashboard">แบบทดสอบ</a>
-                                    </li> 
-                                </ul>
-                            </div>
-                        </li>
-                        {% endif %}
-
                         {% if perms.RiskManagement.view_all_hazard_log or perms.RiskManagement.view_affiliation_hazard_log %}
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarRiskManagement" data-bs-toggle="collapse" role="button"
@@ -98,6 +81,23 @@
                                     <li class="nav-item">
                                         <a href="{% url 'safety-dashboard:dashboard-home.index' %}" class="nav-link" data-key="t-dashboard">สถิติ & ข้อมูล</a>
                                     </li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% endif %}
+
+                        {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %}
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarPromotion" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="sidebarPromotion">
+                            <i class="ri-send-plane-line"></i></i> <span data-key="t-reports">Safety Promotion</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarPromotion">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="{% url 'promotion:list' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์</a>
+                                        <a href="{% url 'promotion:quiz_list' %}" class="nav-link" data-key="t-dashboard">แบบทดสอบ</a>
+                                    </li> 
                                 </ul>
                             </div>
                         </li>

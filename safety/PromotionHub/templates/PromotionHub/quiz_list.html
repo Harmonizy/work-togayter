@@ -24,11 +24,13 @@
                   รายการแบบทดสอบ
                 </h5>
 
+                {% if perms.PromotionHub.create_promotion_quiz %}
                 <div class="flex-shrink-0">
                   <a class="btn btn-primary" href="{% url 'promotion:quiz_create' %}">
                     <i class="ri-add-line me-1"></i> เพิ่มแบบทดสอบใหม่
                   </a>
                 </div>
+                {% endif %}
               </div>
             </div>
 

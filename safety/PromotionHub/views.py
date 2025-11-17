@@ -230,25 +230,25 @@ def quiz_list(request):
 def quiz_create(request):
     if request.method == "POST":
         quiz_form = QuizForm(request.POST)
-        question_formset = QuestionFormSet(request.POST)
+        formset = QuestionFormSet(request.POST)
 
-        if quiz_form.is_valid() and question_formset.is_valid():
+        if quiz_form.is_valid() and formset.is_valid():
             quiz = quiz_form.save()
-            questions = question_formset.save(commit=False)
+            questions = formset.save(commit=False)
 
             for q in questions:
                 q.quiz = quiz
                 q.save()
 
-            return redirect('quiz:list')
+            return redirect("promotion:quiz_list")
 
     else:
         quiz_form = QuizForm()
-        question_formset = QuestionFormSet()
+        formset = QuestionFormSet()
 
     return render(request, "PromotionHub/quiz_create.html", {
         "quiz_form": quiz_form,
-        "question_formset": question_formset,
+        "question_formset": formset
     })
     
 
@@ -267,20 +267,20 @@ def quiz_update(request, id):
 
     if request.method == "POST":
         quiz_form = QuizForm(request.POST, instance=quiz)
-        question_formset = QuestionFormSet(request.POST, instance=quiz)
+        formset = QuestionFormSet(request.POST, instance=quiz)
 
-        if quiz_form.is_valid() and question_formset.is_valid():
+        if quiz_form.is_valid() and formset.is_valid():
             quiz_form.save()
-            question_formset.save()
-            return redirect('quiz:detail', id=quiz.id)
+            formset.save()
+            return redirect("promotion:quiz_detail", id=quiz.id)
 
     else:
         quiz_form = QuizForm(instance=quiz)
-        question_formset = QuestionFormSet(instance=quiz)
+        formset = QuestionFormSet(instance=quiz)
 
     return render(request, "PromotionHub/quiz_update.html", {
         "quiz_form": quiz_form,
-        "question_formset": question_formset,
+        "question_formset": formset,
         "quiz": quiz,
     })
 

@@ -34,7 +34,6 @@ class PromotionForm(forms.ModelForm):
                 Column('title', css_class='form-group col-md-6 mb-0'),
             ),
 
-            # ✅ content ไม่มีหัวข้อ (label="")
             Div(
                 Row(
                     Column(Field('content', css_class='mb-3'), css_class='form-group col-md-12 mb-0'),
@@ -45,6 +44,7 @@ class PromotionForm(forms.ModelForm):
 
             Row(
                 Column('quiz', css_class='form-group col-md-4 mb-0'),
+                Column('priority', css_class='form-group col-md-4 mb-0'),
             ),
         )
 
@@ -52,22 +52,34 @@ class PromotionForm(forms.ModelForm):
 class QuizForm(forms.ModelForm):
     class Meta:
         model = Quiz
-        fields = ['title', 'description']
+        fields = ["title", "description"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.form_show_labels = True
+
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ["text"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.form_show_labels = True
+
 
 QuestionFormSet = inlineformset_factory(
     Quiz,
     Question,
-    form=forms.ModelForm,
-    fields=('text',),
+    form=QuestionForm,
+    fields=["text"],
     extra=1,
-    can_delete=True
-)
-
-ChoiceFormSet = inlineformset_factory(
-    Question,
-    Choice,
-    form=forms.ModelForm,
-    fields=('text', 'is_correct'),
-    extra=2,
     can_delete=True
 )

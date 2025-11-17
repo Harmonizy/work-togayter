@@ -1,41 +1,68 @@
 {% extends "partials/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Create Quiz{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
 
-  <h3 class="mb-3">➕ สร้างแบบทดสอบ</h3>
+      {% include "partials/page-title.html" with pagetitle="Quiz" title="สร้างแบบทดสอบใหม่" %}
 
-  <form method="POST">
-    {% csrf_token %}
+      <div class="row">
+        <div class="col-lg-12">
 
-    <div class="card mb-4">
-      <div class="card-body">
-        <h5>ข้อมูลแบบทดสอบ</h5>
-        {{ quiz_form.as_p }}
-      </div>
-    </div>
+          <form method="POST">
+            {% csrf_token %}
 
-    <div class="card mb-4">
-      <div class="card-body">
-        <h5>คำถาม</h5>
+            <!-- Quiz Info -->
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title mb-0">ข้อมูลแบบทดสอบ</h4>
+              </div>
 
-        {{ question_formset.management_form }}
+              <div class="card-body">
+                {% crispy quiz_form %}
+              </div>
+            </div>
 
-        {% for form in question_formset %}
-        <div class="border p-3 mb-3">
-          <h6>คำถามที่ {{ forloop.counter }}</h6>
-          {{ form.as_p }}
+            <!-- Questions -->
+            <div class="card mt-4">
+              <div class="card-header">
+                <h4 class="card-title mb-0">คำถาม</h4>
+              </div>
+
+              <div class="card-body">
+
+                {{ question_formset.management_form }}
+
+                {% for form in question_formset %}
+                <div class="border rounded p-3 mb-3">
+                  <h6 class="mb-2">คำถามที่ {{ forloop.counter }}</h6>
+                  {% crispy form %}
+                </div>
+                {% endfor %}
+
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="mt-4 d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="ri-save-3-fill me-1"></i> บันทึก
+              </button>
+
+              <a href="{% url 'promotion:quiz_list' %}" class="btn btn-light">
+                <i class="ri-arrow-go-back-line me-1"></i> ยกเลิก
+              </a>
+            </div>
+
+          </form>
+
         </div>
-        {% endfor %}
       </div>
+
     </div>
-
-    <div class="d-flex gap-2">
-      <button type="submit" class="btn btn-success">บันทึก</button>
-      <a href="{% url 'promotion:quiz_list' %}" class="btn btn-secondary">ยกเลิก</a>
-    </div>
-
-  </form>
-
+  </div>
 </div>
 {% endblock %}
-
