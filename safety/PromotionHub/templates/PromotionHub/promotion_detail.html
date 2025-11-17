@@ -85,6 +85,26 @@
         </div>
       </div>
 
+      {% if promotion.priority == "H" %}
+      <div class="row justify-content-center mt-4">
+          <div class="col-lg-8 text-center">
+              <div class="card border-danger shadow-sm">
+                  <div class="card-body">
+                      <h5 class="text-danger fw-bold">
+                          <i class="ri-alert-line me-1"></i> จำเป็นต้องทราบ
+                      </h5>
+                      <p>กรุณากดปุ่มด้านล่างเพื่อยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
+
+                      <!-- ปุ่ม (ยังไม่ต้องทำงาน) -->
+                      <button class="btn btn-danger btn-lg" disabled>
+                          <i class="ri-check-line me-1"></i> รับทราบ (เร็วๆ นี้)
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      {% endif %}
+
       <!-- Quiz Section -->
       {% if promotion.quiz %}
       <div class="row justify-content-center">

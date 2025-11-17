@@ -1,0 +1,40 @@
+{% extends "partials/base.html" %}
+{% block content %}
+<div class="container mt-4">
+
+    <h3>แก้ไขแบบทดสอบ: {{ quiz.title }}</h3>
+    <hr>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>ข้อมูลแบบทดสอบ</h5>
+                {{ quiz_form.as_p }}
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>คำถาม</h5>
+
+                {{ question_formset.management_form }}
+
+                {% for form in question_formset %}
+                <div class="border p-3 mb-2 rounded">
+                    {{ form.as_p }}
+                    {% if form.instance.pk %}
+                        <label>{{ form.DELETE }} ลบคำถามนี้</label>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">บันทึกการแก้ไข</button>
+        <a href="{% url 'quiz:detail' quiz.id %}" class="btn btn-secondary">ยกเลิก</a>
+    </form>
+
+</div>
+{% endblock %}

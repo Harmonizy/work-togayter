@@ -9,7 +9,7 @@ from django.views.generic import DetailView
 
 
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
-from .forms import PromotionForm
+from .forms import PromotionForm, QuizForm, QuestionFormSet
 from .choices import PromotionStatusChoices, PromotionPublishChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
 from common.RTAFUser.models import RTAFUser, Affiliation
@@ -222,20 +222,70 @@ def publish_promotion(request, pk):
     return redirect("PromotionHub:promotion.detail", pk=promotion.id)
 
 
-@login_required
-@permission_required("PromotionHub.publish_promotion_hub", raise_exception=True)
-def publish_form(request, pk):
-    promotion = get_object_or_404(Promotion, pk=pk)
-    affiliations = Affiliation.objects.all()
+def quiz_list(request):
+    quizzes = Quiz.objects.all().order_by('-id')
+    return render(request, 'PromotionHub/quiz_list.html', {'quizzes': quizzes})
 
-    return render(request, "PromotionHub/components/publish_form.html", {
-        "promotion": promotion,
-        "affiliations": affiliations,
+
+def quiz_create(request):
+    if request.method == "POST":
+        quiz_form = QuizForm(request.POST)
+        question_formset = QuestionFormSet(request.POST)
+
+        if quiz_form.is_valid() and question_formset.is_valid():
+            quiz = quiz_form.save()
+            questions = question_formset.save(commit=False)
+
+            for q in questions:
+                q.quiz = quiz
+                q.save()
+
+            return redirect('quiz:list')
+
+    else:
+        quiz_form = QuizForm()
+        question_formset = QuestionFormSet()
+
+    return render(request, "PromotionHub/quiz_create.html", {
+        "quiz_form": quiz_form,
+        "question_formset": question_formset,
     })
     
-    
-def publish_unit_form(request, pk):
-    affiliations = Affiliation.objects.all()
-    return render(request, "PromotionHub/components/publish_unit_select.html", {
-        "affiliations": affiliations
+
+def quiz_detail(request, id):
+    quiz = get_object_or_404(Quiz, id=id)
+    questions = quiz.questions.all().prefetch_related('choices')
+
+    return render(request, "PromotionHub/quiz_detail.html", {
+        'quiz': quiz,
+        'questions': questions
     })
+
+
+def quiz_update(request, id):
+    quiz = get_object_or_404(Quiz, id=id)
+
+    if request.method == "POST":
+        quiz_form = QuizForm(request.POST, instance=quiz)
+        question_formset = QuestionFormSet(request.POST, instance=quiz)
+
+        if quiz_form.is_valid() and question_formset.is_valid():
+            quiz_form.save()
+            question_formset.save()
+            return redirect('quiz:detail', id=quiz.id)
+
+    else:
+        quiz_form = QuizForm(instance=quiz)
+        question_formset = QuestionFormSet(instance=quiz)
+
+    return render(request, "PromotionHub/quiz_update.html", {
+        "quiz_form": quiz_form,
+        "question_formset": question_formset,
+        "quiz": quiz,
+    })
+
+
+def quiz_delete(request, id):
+    quiz = get_object_or_404(Quiz, id=id)
+    quiz.delete()
+    return redirect('quiz:list')

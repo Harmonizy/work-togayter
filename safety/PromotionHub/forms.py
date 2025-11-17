@@ -2,8 +2,9 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Field, Div
 from ckeditor.widgets import CKEditorWidget
+from django.forms import inlineformset_factory
 
-from .models import Promotion
+from .models import Promotion, Quiz, Question, Choice
 
 class PromotionForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditorWidget(), label="")
@@ -46,3 +47,27 @@ class PromotionForm(forms.ModelForm):
                 Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )
+
+
+class QuizForm(forms.ModelForm):
+    class Meta:
+        model = Quiz
+        fields = ['title', 'description']
+
+QuestionFormSet = inlineformset_factory(
+    Quiz,
+    Question,
+    form=forms.ModelForm,
+    fields=('text',),
+    extra=1,
+    can_delete=True
+)
+
+ChoiceFormSet = inlineformset_factory(
+    Question,
+    Choice,
+    form=forms.ModelForm,
+    fields=('text', 'is_correct'),
+    extra=2,
+    can_delete=True
+)
