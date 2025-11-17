@@ -121,10 +121,15 @@
                                                         </a>
 
                                                         <div class="dropdown-divider"></div>
-                                                        <a href"#" class="dropdown-item text-warning">
-                                                            <i class="ri-mail-send-line align-bottom me-2"></i> เผยแพร่
-                                                        </a>
-
+                                                            <a href="#" 
+                                                            class="dropdown-item text-warning"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#publishModal"
+                                                            hx-get="{% url 'promotion:publish_form' promotion.id %}"
+                                                            hx-target="#publishModalContent"
+                                                            hx-swap="innerHTML">
+                                                            <i class="ri-mail-send-line me-2"></i> เผยแพร่
+                                                            </a>
                                                         <div class="dropdown-divider"></div>
                                                         <a href="{% url 'promotion:delete' promotion.id %}" class="dropdown-item text-danger">
                                                             <i class="ri-delete-bin-fill align-bottom me-2"></i> ลบ
@@ -150,6 +155,15 @@
         </div><!-- container-fluid -->
     </div><!-- End Page-content -->
 </div>
+
+<div class="modal fade" id="publishModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="publishModalContent">
+      <!-- HTMX จะโหลดเนื้อหามาใส่ตรงนี้ -->
+    </div>
+  </div>
+</div>
+
 
 {% endblock content %}
 

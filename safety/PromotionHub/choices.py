@@ -8,3 +8,4 @@ class PromotionStatusChoices(models.TextChoices):
 class PromotionPublishChoices(models.TextChoices):
     AIRFORCE = 'A', 'ทอ.'
     UNIT = 'U', 'หน่วย'
+    NONE = 'N', 'ไม่ระบุ'

@@ -10,14 +10,15 @@ class PromotionForm(forms.ModelForm):
 
     class Meta:
         model = Promotion
-        fields = ['image', 'title', 'content', 'status', 'publish', 'quiz']
+        fields = ['image', 'title', 'content', 'quiz']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'หัวข้อประกาศ'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
-            'publish': forms.Select(attrs={'class': 'form-select'}),
             'quiz': forms.Select(attrs={'class': 'form-select'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['content'].required = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,8 +43,6 @@ class PromotionForm(forms.ModelForm):
             ),
 
             Row(
-                Column('status', css_class='form-group col-md-4 mb-0'),
-                Column('publish', css_class='form-group col-md-4 mb-0'),
                 Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )

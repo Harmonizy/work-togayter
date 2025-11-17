@@ -12,7 +12,7 @@ from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
 from .forms import PromotionForm
 from .choices import PromotionStatusChoices, PromotionPublishChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
-from common.RTAFUser.models import RTAFUser
+from common.RTAFUser.models import RTAFUser, Affiliation
 
 
 @login_required
@@ -220,3 +220,22 @@ def publish_promotion(request, pk):
 
     messages.success(request, "✅ เผยแพร่ประชาสัมพันธ์เรียบร้อย และส่งการแจ้งเตือนแล้ว.")
     return redirect("PromotionHub:promotion.detail", pk=promotion.id)
+
+
+@login_required
+@permission_required("PromotionHub.publish_promotion_hub", raise_exception=True)
+def publish_form(request, pk):
+    promotion = get_object_or_404(Promotion, pk=pk)
+    affiliations = Affiliation.objects.all()
+
+    return render(request, "PromotionHub/components/publish_form.html", {
+        "promotion": promotion,
+        "affiliations": affiliations,
+    })
+    
+    
+def publish_unit_form(request, pk):
+    affiliations = Affiliation.objects.all()
+    return render(request, "PromotionHub/components/publish_unit_select.html", {
+        "affiliations": affiliations
+    })

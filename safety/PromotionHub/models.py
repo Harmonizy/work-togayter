@@ -57,7 +57,7 @@ class Promotion(models.Model):
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
     content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=PromotionStatusChoices.choices, default=PromotionStatusChoices.DRAFT, null=True, blank=True)
-    publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.AIRFORCE, null=True, blank=True)
+    publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE , null=True, blank=True)
 
     quiz = models.ForeignKey(Quiz, verbose_name="แบบทดสอบ", on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -82,9 +82,10 @@ class Promotion(models.Model):
     def __str__(self):
         return self.title
 
-    def send_notify(self, user_list : list, url: str = ""):
-        send_notification(title=self.title, message=self.content, user_ids=user_list, url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/', using_auth = True)
+    def send_notify(self, users: list, url: str = ""):
+        formatted_users = [{"user": u} for u in users]
 
+        send_notification(title=self.title,message=self.content,user_ids=formatted_users,url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/',using_auth=True)
 
 class PromotionView(models.Model):
     user = models.ForeignKey(RTAFUser, verbose_name="ผู้เข้าชม", on_delete=models.SET_NULL, null=True, blank=True)
