@@ -3,7 +3,7 @@
 {% load crispy_forms_tags partials %}
 {% load services_tags report_tags risk_tags %}
 
-{% block title %}Hazard Logs{% endblock title %}
+{% block title %}Risk Register{% endblock title %}
 
 {% block extra_css %}    
   <link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
@@ -25,7 +25,7 @@
     <div class="container-fluid">
 
       {% block pagetitle %}
-        {% include "partials/page-title.html" with pagetitle="Hazard Logs" title="Hazard Logs" %}
+        {% include "partials/page-title.html" with pagetitle="Risk Register" title="Risk Register" %}
       {% endblock pagetitle %}
 
       {% comment %} <div class="row">
@@ -40,7 +40,7 @@
 
             <div class="card-header border-0">
               <div class="d-flex align-items-center">
-                <h5 class="card-title mb-0 flex-grow-1">Hazard Logs</h5>
+                <h5 class="card-title mb-0 flex-grow-1">Risk Register</h5>
                 <div class="flex-shrink-0">
                   <div class="d-flex flex-wrap gap-2">
                     <a href="{% url 'risk_management:hazard-log-create' %}">

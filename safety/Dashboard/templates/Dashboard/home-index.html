@@ -570,94 +570,115 @@
 {% endblock content %}
 
 {% block extra_js %}
-<!-- apexcharts -->
 <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js'%}"></script>
-
-<!--Swiper slider js-->
 <script src="{% static 'libs/swiper/swiper-bundle.min.js'%}"></script>
+<script src="{% static 'libs/sweetalert2/dist/sweetalert2.min.js' %}"></script>
 
-<!-- Dashboard init -->
 <script src="{% static 'js/pages/dashboard-ecommerce.init.js'%}"></script>
 <script src="{% static 'js/pages/dashboard-analytics.init.js'%}"></script>
 
 <script>
-  window.priority_datasets = {{ priority_datasets|safe }};
-  document.addEventListener('DOMContentLoaded', function() {
-      // ✅ โหลดแผนที่
-      var map = L.map('map').setView([12.5, 100.5231], 6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
+window.priority_datasets = {{ priority_datasets|safe }};
+document.addEventListener('DOMContentLoaded', function() {
+    // โหลดแผนที่
+    var map = L.map('map').setView([12.5, 100.5231], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-      map.setMinZoom(6);
-      map.setMaxZoom(8);
+    map.setMinZoom(6);
+    map.setMaxZoom(8);
 
-      var airforceBases = [
-          { name: 'บน.1 กองบิน 1', lat: 14.93474, lon: 102.079842, reports: 3 },
-          { name: 'บน.2 กองบิน 2', lat: 14.876038, lon: 100.662143, reports: 5 },
-          { name: 'บน.4 กองบิน 4', lat: 15.273554, lon: 100.295634, reports: 2 },
-          { name: 'บน.5 กองบิน 5', lat: 11.789529, lon: 99.804607, reports: 8 },
-          { name: 'บน.6 กองบิน 6', lat: 13.909421, lon: 100.609366, reports: 1 },
-          { name: 'บน.7 กองบิน 7', lat: 9.135177, lon: 99.137333, reports: 4 },
-          { name: 'บน.21 กองบิน 21', lat: 15.252743, lon: 104.870593, reports: 6 },
-          { name: 'บน.23 กองบิน 23', lat: 17.387867, lon: 102.786205, reports: 7 },
-          { name: 'บน.41 กองบิน 41', lat: 18.773377, lon: 98.967149, reports: 2 },
-          { name: 'บน.46 กองบิน 46', lat: 16.783432, lon: 100.279443, reports: 9 },
-          { name: 'บน.56 กองบิน 56', lat: 6.933478, lon: 100.395185, reports: 3 },
-          { name: 'บน.3 กองบิน 3', lat: 13.769239, lon: 102.316855, reports: 10 }
-      ];
+    var airforceBases = [
+        { name: 'บน.1 กองบิน 1', lat: 14.93474, lon: 102.079842, reports: 3 },
+        { name: 'บน.2 กองบิน 2', lat: 14.876038, lon: 100.662143, reports: 5 },
+        { name: 'บน.4 กองบิน 4', lat: 15.273554, lon: 100.295634, reports: 2 },
+        { name: 'บน.5 กองบิน 5', lat: 11.789529, lon: 99.804607, reports: 8 },
+        { name: 'บน.6 กองบิน 6', lat: 13.909421, lon: 100.609366, reports: 1 },
+        { name: 'บน.7 กองบิน 7', lat: 9.135177, lon: 99.137333, reports: 4 },
+        { name: 'บน.21 กองบิน 21', lat: 15.252743, lon: 104.870593, reports: 6 },
+        { name: 'บน.23 กองบิน 23', lat: 17.387867, lon: 102.786205, reports: 7 },
+        { name: 'บน.41 กองบิน 41', lat: 18.773377, lon: 98.967149, reports: 2 },
+        { name: 'บน.46 กองบิน 46', lat: 16.783432, lon: 100.279443, reports: 9 },
+        { name: 'บน.56 กองบิน 56', lat: 6.933478, lon: 100.395185, reports: 3 },
+        { name: 'บน.3 กองบิน 3', lat: 13.769239, lon: 102.316855, reports: 10 }
+    ];
 
-      airforceBases.forEach(function(base) {
-          L.marker([base.lat, base.lon]).addTo(map)
-              .bindTooltip(base.reports + " reports", { 
-                  permanent: true,
-                  direction: "top",
-                  offset: [0, -10],
-                  className: "reports-label"
-              });
-      });
-  });
+    airforceBases.forEach(function(base) {
+        L.marker([base.lat, base.lon]).addTo(map)
+            .bindTooltip(base.reports + " reports", { 
+                permanent: true,
+                direction: "top",
+                offset: [0, -10],
+                className: "reports-label"
+            });
+    });
+});
 
-  // ✅ ปฏิทิน
-  const markedDates = [
-      "2025-09-11",
-      "2025-09-12",
-      "2025-09-25",
-      "2025-09-22"
-  ];
+// ปฏิทิน
+const markedDates = [
+    "2025-09-11",
+    "2025-09-12",
+    "2025-09-25",
+    "2025-09-22"
+];
 
-  flatpickr("#calendar", {
+flatpickr("#calendar", {
     inline: true,
     dateFormat: "d M, Y",
     defaultDate: "today",
     onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const date = dayElem.dateObj;
-      const dateStr = date.toISOString().slice(0, 10);
-      if (markedDates.includes(dateStr)) {
+    const date = dayElem.dateObj;
+    const dateStr = date.toISOString().slice(0, 10);
+    if (markedDates.includes(dateStr)) {
         dayElem.classList.add("marked-date");
-      }
     }
-  });
+    }
+});
 
-  // ✅ Donut Chart จาก datasets ที่ views ส่งมา
-  document.addEventListener("DOMContentLoaded", function() {
-      const datasets = {{ report_datasets|safe }};
-      console.log("📊 Datasets:", datasets);
+// Donut Chart จาก datasets ที่ views ส่งมา
+document.addEventListener("DOMContentLoaded", function() {
+    const datasets = {{ report_datasets|safe }};
+    console.log("📊 Datasets:", datasets);
 
-      const labels = datasets.map(item => item.label);
-      const series = datasets.map(item => item.data.reduce((a, b) => a + b, 0));
+    const labels = datasets.map(item => item.label);
+    const series = datasets.map(item => item.data.reduce((a, b) => a + b, 0));
 
-      const options = {
-          series: series,
-          labels: labels,
-          chart: { type: 'donut', height: 350 },
-          legend: { position: 'bottom' },
-          dataLabels: { dropShadow: { enabled: false } },
-          colors: ["#556ee6","#34c38f","#50a5f1","#f1b44c","#f46a6a","#74788d"]
-      };
+    const options = {
+        series: series,
+        labels: labels,
+        chart: { type: 'donut', height: 350 },
+        legend: { position: 'bottom' },
+        dataLabels: { dropShadow: { enabled: false } },
+        colors: ["#556ee6","#34c38f","#50a5f1","#f1b44c","#f46a6a","#74788d"]
+    };
 
-      const chart = new ApexCharts(document.querySelector("#store-visits-source"), options);
-      chart.render();
-  });
+    const chart = new ApexCharts(document.querySelector("#store-visits-source"), options);
+    chart.render();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // SweetAlert2 Logout Confirm
+    const logoutLink = document.querySelector('a[href*="logout"]');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = this.href;
+                }
+            });
+        });
+    }
+});
 </script>
 {% endblock extra_js %}

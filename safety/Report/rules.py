@@ -17,7 +17,7 @@ can_create_report = (
     lambda user: Q(),  # สามารถดูทุก report ที่ตัวเองสร้าง
 )
 
-# 2. Can view hazard log
+# 2. Can view risk register
 can_view_hazard_log = (
     lambda user, obj=None: user.has_perm("safety.view_hazardlog"),
     lambda user: Q(type="hazard"),  # filter เฉพาะ hazard
