@@ -11,7 +11,7 @@ class PromotionForm(forms.ModelForm):
 
     class Meta:
         model = Promotion
-        fields = ['image', 'title', 'content', 'quiz']
+        fields = ['image', 'title', 'content', 'quiz', 'priority', 'type']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'หัวข้อประกาศ'}),
@@ -43,8 +43,9 @@ class PromotionForm(forms.ModelForm):
             ),
 
             Row(
-                Column('quiz', css_class='form-group col-md-4 mb-0'),
                 Column('priority', css_class='form-group col-md-4 mb-0'),
+                Column('type', css_class='form-group col-md-4 mb-0'),
+                Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )
 
@@ -81,5 +82,27 @@ QuestionFormSet = inlineformset_factory(
     form=QuestionForm,
     fields=["text"],
     extra=1,
+    can_delete=True
+)
+
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = Choice
+        fields = ["text", "is_correct"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.form_show_labels = True
+
+
+ChoiceFormSet = inlineformset_factory(
+    Question,
+    Choice,
+    form=ChoiceForm,
+    fields=['text', 'is_correct'],
+    extra=2,
     can_delete=True
 )

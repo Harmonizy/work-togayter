@@ -9,9 +9,15 @@ class PromotionStatusChoices(models.TextChoices):
 class PromotionPublishChoices(models.TextChoices):
     AIRFORCE = 'A', 'ทอ.'
     UNIT = 'U', 'หน่วย'
+    GROUP = 'G', 'กลุ่ม'
     NONE = 'N', 'ไม่ระบุ'
 
 
 class PromotionPriorityChoices(models.TextChoices):
     HIGH = 'H', 'จำเป็นต้องทราบ'
     NONE = 'N', 'ไม่ระบุ'
+
+
+class PromotionTypeChoices(models.TextChoices):
+    GROUND = 'G', 'ภาคพื้น'
+    AIR = 'A', 'ภาคอากาศ'

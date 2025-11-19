@@ -6,45 +6,92 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
+from django.http import JsonResponse
 
 
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
 from .forms import PromotionForm, QuizForm, QuestionFormSet
-from .choices import PromotionStatusChoices, PromotionPublishChoices
+from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
 from common.RTAFUser.models import RTAFUser, Affiliation
 
 
 @login_required
-def list(request):
+def list_ground(request):
     user = request.user
 
-    # Superuser เห็นหมด
+    # Superuser เห็นหมด (เฉพาะ GROUND)
     if user.is_superuser or user.has_perm("PromotionHub.view_all_promotion_hub"):
-        promotions = Promotion.objects.all()
+        promotions = Promotion.objects.filter(type=PromotionTypeChoices.GROUND)
 
-    # เห็นเฉพาะของหน่วยตัวเอง
+    # เห็นเฉพาะของหน่วยตัวเอง (เฉพาะ GROUND)
     elif user.has_perm("PromotionHub.view_affiliation_promotion_hub"):
         promotions = Promotion.objects.filter(
-            user__affiliation=user.affiliation
+            user__affiliation=user.affiliation,
+            type=PromotionTypeChoices.GROUND
         )
 
     else:
         raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการประชาสัมพันธ์")
 
-    # เพิ่มการกรองเฉพาะที่เผยแพร่แล้ว
+    # เฉพาะที่เผยแพร่แล้ว
     published = Promotion.objects.filter(
-        status=PromotionStatusChoices.PUBLISHED
+        status=PromotionStatusChoices.PUBLISHED,
+        type=PromotionTypeChoices.GROUND
     )
 
-    # รวมกับ logic การเผยแพร่ (หน่วย / ทอ.)
-    visible_promotions = published.filter(
-        publish=PromotionPublishChoices.AIRFORCE
-    ) | published.filter(
-        publish=PromotionPublishChoices.UNIT, user__affiliation=user.affiliation
+    # เผยแพร่ระดับ ทอ. หรือเฉพาะหน่วย
+    visible_promotions = (
+        published.filter(publish=PromotionPublishChoices.AIRFORCE)
+        |
+        published.filter(
+            publish=PromotionPublishChoices.UNIT,
+            user__affiliation=user.affiliation
+        )
     )
 
-    # รวมทั้งหมดแล้วลบซ้ำ
+    # รวม + distinct + sort
+    promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
+
+    context = {"promotions": promotions}
+    return render(request, "PromotionHub/promotion_list.html", context)
+
+
+@login_required
+def list_air(request):
+    user = request.user
+
+    # Superuser เห็นหมด (เฉพาะ AIR)
+    if user.is_superuser or user.has_perm("PromotionHub.view_all_promotion_hub"):
+        promotions = Promotion.objects.filter(type=PromotionTypeChoices.AIR)
+
+    # เห็นเฉพาะของหน่วยตัวเอง (เฉพาะ AIR)
+    elif user.has_perm("PromotionHub.view_affiliation_promotion_hub"):
+        promotions = Promotion.objects.filter(
+            user__affiliation=user.affiliation,
+            type=PromotionTypeChoices.AIR
+        )
+
+    else:
+        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการประชาสัมพันธ์")
+
+    # เฉพาะที่เผยแพร่แล้ว
+    published = Promotion.objects.filter(
+        status=PromotionStatusChoices.PUBLISHED,
+        type=PromotionTypeChoices.AIR
+    )
+
+    # เผยแพร่ระดับ ทอ. หรือเฉพาะหน่วย
+    visible_promotions = (
+        published.filter(publish=PromotionPublishChoices.AIRFORCE)
+        |
+        published.filter(
+            publish=PromotionPublishChoices.UNIT,
+            user__affiliation=user.affiliation
+        )
+    )
+
+    # รวม + distinct + sort
     promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
 
     context = {"promotions": promotions}
@@ -52,28 +99,24 @@ def list(request):
 
 
 # @login_required
-def detail(request, pk):
-    promotion = get_object_or_404(Promotion, pk=pk)
+# def detail(request, pk):
+#     promotion = get_object_or_404(Promotion, pk=pk)
 
-    already_viewed = PromotionView.objects.filter(
-        user=request.user,
-        promotion=promotion
-    ).exists()
+#     # ต้องแยกออกเป็นสองตัวแปร ไม่ใช่ตัวเดียว
+#     promotion_view, created = PromotionView.objects.get_or_create(
+#         user=request.user,
+#         promotion=promotion,
+#         defaults={'viewed_at': timezone.now()}
+#     )
 
-    if not already_viewed:
-        PromotionView.objects.create(
-            user=request.user,
-            promotion=promotion,
-            viewed_at=timezone.now()
-        )
+#     view_count = PromotionView.objects.filter(promotion=promotion).count()
 
-    view_count = PromotionView.objects.filter(promotion=promotion).count()
-
-    context = {
-        "promotion": promotion,
-        "view_count": view_count
-    }
-    return render(request, "PromotionHub/promotion_detail.html", context)
+#     context = {
+#         "promotion": promotion,
+#         "promotion_view": promotion_view,  # <- ตอนนี้เป็น instance จริง
+#         "view_count": view_count,
+#     }
+#     return render(request, "PromotionHub/promotion_detail.html", context)
 
 
 class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
@@ -81,25 +124,35 @@ class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
     template_name = 'PromotionHub/promotion_detail.html'
     context_object_name = 'promotion'
 
-    def get_success_url(self):
-        return self.request.get_full_path().split('?')[0]
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        view_count = PromotionView.objects.filter(promotion=self.get_object()).count()
-        context['view_count'] = view_count
+
+        promotion = self.get_object()
+
+        # ⭐ ดึง PromotionView ให้แน่นอน
+        promotion_view, created = PromotionView.objects.get_or_create(
+            user=self.request.user,
+            promotion=promotion,
+            defaults={'viewed_at': timezone.now()}
+        )
+
+        context['promotion_view'] = promotion_view
+        context['view_count'] = PromotionView.objects.filter(promotion=promotion).count()
         return context
     
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
+
+        # ⭐ นับ view เฉพาะตอนแรกที่สร้างเท่านั้น (ตาม save() ของคุณ)
         if request.user.is_authenticated:
-            PromotionView.objects.update_or_create(
+            PromotionView.objects.get_or_create(
                 user=request.user,
                 promotion=self.get_object(),
                 defaults={'viewed_at': timezone.now()}
             )
+
         return response
+
 
 
 @login_required
@@ -236,9 +289,9 @@ def quiz_create(request):
             quiz = quiz_form.save()
             questions = formset.save(commit=False)
 
-            for q in questions:
-                q.quiz = quiz
-                q.save()
+            for questions in questions:
+                questions.quiz = quiz
+                questions.save()
 
             return redirect("promotion:quiz_list")
 
@@ -288,4 +341,18 @@ def quiz_update(request, id):
 def quiz_delete(request, id):
     quiz = get_object_or_404(Quiz, id=id)
     quiz.delete()
-    return redirect('quiz:list')
+    return redirect('promotion:quiz_list')
+
+
+@login_required
+def accept(request, pk):
+    view = get_object_or_404(PromotionView, pk=pk, user=request.user)
+
+    if request.method == "POST":
+        view.accepted = True
+        view.save()
+
+    return redirect("promotion:detail", pk=view.promotion.pk)
+
+
+

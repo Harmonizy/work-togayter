@@ -121,7 +121,11 @@
                                                         </a>
 
                                                         <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item" href="#">
+                                                           <a 
+                                                            hx-get="{% url 'PromotionHub:promotion.publish_modal' promotion.id %}" 
+                                                            hx-target="#dialog" 
+                                                            hx-trigger="click"
+                                                            class="dropdown-item" href="#">
                                                                 <i class="ri-mail-send-line me-2 ms-3 text-warning"></i> เผยแพร่
                                                             </a>
                                                         <div class="dropdown-divider"></div>
