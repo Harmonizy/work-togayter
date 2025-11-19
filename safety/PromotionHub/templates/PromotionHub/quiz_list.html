@@ -1,0 +1,163 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block title %}Quiz List{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+
+      {% include "partials/page-title.html" with pagetitle="Quiz" title="แบบทดสอบ" %}
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card" id="quizList">
+
+            <!-- Header -->
+            <div class="card-header border-0">
+              <div class="d-flex align-items-center flex-column flex-md-row">
+                <h5 class="card-title mb-2 mb-md-0 flex-grow-1">
+                  รายการแบบทดสอบ
+                </h5>
+
+                {% if perms.PromotionHub.create_promotion_quiz %}
+                <div class="flex-shrink-0">
+                  <a class="btn btn-primary" href="{% url 'promotion:quiz_create' %}">
+                    <i class="ri-add-line me-1"></i> เพิ่มแบบทดสอบใหม่
+                  </a>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Search -->
+            <div class="card-body border border-dashed border-start-0 border-end-0">
+              <form method="get" class="w-100">
+                <div class="row g-3">
+                  <div class="ms-auto col-xxl-4 col-sm-12">
+                    <div class="search-box">
+                      <input type="text" name="search" value="{{ search }}"
+                        class="form-control search bg-light border-light"
+                        placeholder="ค้นหาชื่อแบบทดสอบ...">
+                      <i class="ri-search-line search-icon"></i>
+                    </div>
+                  </div>
+
+                  <div class="col-xxl-2 col-sm-4">
+                    <button class="btn btn-soft-primary h-100 w-100">
+                      <i class="ri-search-line me-1"></i> ค้นหา
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Table -->
+            <div class="card-body">
+              <div class="table-responsive table-card mb-4 p-2">
+                <table class="table table-bordered table-striped table-hover align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th>#</th>
+                      <th>หัวข้อ</th>
+                      <th>รายละเอียด</th>
+                      <th>จำนวนคำถาม</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {% for quiz in quizzes %}
+                    <tr>
+                      <td>#{{ quiz.id|stringformat:"04d" }}</td>
+
+                      <td>
+                        <a href="{% url 'promotion:quiz_detail' quiz.id %}" class="link-primary fw-bold">
+                          {{ quiz.title|truncatechars:50 }}
+                        </a>
+                      </td>
+
+                      <td>{{ quiz.description|truncatechars:60|default:"-" }}</td>
+
+                      <td>{{ quiz.questions.count }}</td>
+
+                      <td>
+                        <div class="dropdown">
+                          <button class="btn btn-link text-muted p-1" data-bs-toggle="dropdown">
+                            <i data-feather="more-horizontal"></i>
+                          </button>
+
+                          <div class="dropdown-menu dropdown-menu-end">
+
+                            <a class="dropdown-item" href="{% url 'promotion:quiz_detail' quiz.id %}">
+                              <i class="ri-eye-fill text-primary me-2"></i> รายละเอียด
+                            </a>
+
+                            <a class="dropdown-item" href="{% url 'promotion:quiz_update' quiz.id %}">
+                              <i class="ri-pencil-fill text-warning me-2"></i> แก้ไข
+                            </a>
+
+                            <div class="dropdown-divider"></div>
+
+                            <a href="#" class="dropdown-item text-danger btn-delete"
+                               data-url="{% url 'promotion:quiz_delete' quiz.id %}">
+                              <i class="ri-delete-bin-fill me-2"></i> ลบ
+                            </a>
+
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td colspan="5" class="text-center">ไม่พบข้อมูล</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+
+              {% include "PromotionHub/pagination.html" with page_obj=quizzes %}
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.querySelectorAll(".btn-delete").forEach(btn => {
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+    let url = this.dataset.url;
+
+    Swal.fire({
+      title: "ยืนยันการลบ?",
+      text: "ข้อมูลนี้จะถูกลบถาวร",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ลบ",
+      cancelButtonText: "ยกเลิก"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(url, {
+          method: "POST",
+          headers: { "X-CSRFToken": "{{ csrf_token }}" }
+        }).then(() => location.reload());
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

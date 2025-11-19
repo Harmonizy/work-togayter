@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import HazardCategory, HazardLog, CAP
+from .models import HazardCategory, HazardLog, CAP, HazardSource
 
 
 @admin.register(HazardCategory)
@@ -34,3 +34,9 @@ class CAPAdmin(admin.ModelAdmin):
     list_display = ("title", "hazard_log", "status", "due_date", "updated_at")
     list_filter = ("status",)
     search_fields = ("title", "description", "hazard_log__code")
+
+
+@admin.register(HazardSource)
+class HazardSourceAdmin(admin.ModelAdmin):
+    list_display = ("name", 'description')
+    search_fields = ("name", 'description')

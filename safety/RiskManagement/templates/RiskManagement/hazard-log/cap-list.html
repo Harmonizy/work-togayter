@@ -1,0 +1,110 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% load crispy_forms_tags partials %}
+{% load services_tags report_tags risk_tags %}
+
+{% block title %}Corrective Action Plan (CAP){% endblock title %}
+
+{% block extra_css %}    
+  <link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
+  <style>
+    .badge-cap {
+      font-size: .85rem;
+      padding: .35rem .55rem;
+      border-radius: .35rem;
+      font-weight: 600;
+    }
+  </style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+
+      {% include "partials/page-title.html" with pagetitle="CAP List" title="Corrective Action Plans" %}
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card" id="capList">
+
+            <div class="card-header border-0">
+              <div class="d-flex align-items-center">
+                <h5 class="card-title mb-0 flex-grow-1">Corrective Action Plans (CAP)</h5>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive table-card mb-4 p-2" style="min-height:300px;">
+                <table class="table align-middle table-nowrap table-bordered table-striped table-hover mb-0">
+                  <thead class="table-light text-muted text-center align-middle" style="font-size:1.05em;">
+                    <tr>
+                      <th style="width:5%">#</th>
+                      <th style="width:25%">หัวข้อ</th>
+                      <th style="width:18%">รายละเอียด</th>
+                      <th style="width:12%">ผู้รับผิดชอบ</th>
+                      <th style="width:10%">ครบกำหนด</th>
+                      <th style="width:8%">สถานะ</th>
+                      <th style="width:10%">ทะเบียนความเสี่ยง</th>
+                      {% comment %} <th style="width:12%">Action</th> {% endcomment %}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                  {% for cap in cap %}
+                    <tr id="row-{{ cap.id }}">
+                      <td class="text-center">{{ forloop.counter }}</td>
+                      <td class="fw-medium">{{ cap.title }}</td>
+                      <td class="text-muted small">{{ cap.description|default:"-"|truncatechars:60 }}</td>
+                      <td class="text-center">{{ cap.assign_to|default:"-" }}</td>
+                      <td class="text-center">
+                        {{ cap.due_date|thai_date }}
+                      </td>
+                      <td class="text-center">
+                        {% if cap.status == "P" %}
+                            <span class="badge-cap bg-secondary-subtle text-secondary">วางแผน</span>
+                        {% elif cap.status == "I" %}
+                            <span class="badge-cap bg-warning-subtle text-warning">กำลังดำเนินการ</span>
+                        {% elif cap.status == "C" %}
+                            <span class="badge-cap bg-success-subtle text-success">เสร็จสิ้น</span>
+                        {% else %}
+                            <span class="badge-cap bg-secondary-subtle text-secondary">-</span>
+                        {% endif %}
+                        </td>
+                      <td class="text-center">
+                        <a href="{% url 'risk_management:hazard-detail' cap.hazard_log.id %}">
+                          {{ cap.hazard_log.code }}({{ cap.hazard_log.affiliation }})
+                        </a>
+                      </td>
+                      {% comment %} <td class="text-center">
+                        <a href="{% url 'risk_management:hazard-detail' cap.hazard_log.id %}">
+                          <button type="button" class="btn btn-sm border text-primary p-2">
+                            <i class="ri-eye-fill"></i>
+                          </button>
+                        </a>
+                      </td> {% endcomment %}
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="8" class="text-center text-muted py-4">
+                        — ไม่มีรายการ CAP —
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div><!-- end card -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+  <script src="{% static 'libs/sweetalert2/dist/sweetalert2.min.js' %}"></script>
+{% endblock extra_js %}

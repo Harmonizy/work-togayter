@@ -190,17 +190,14 @@
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
 
-                                                        {% if report.status == ReportStatusChoices.DRAFT %}
-                                                            <div class="dropdown-divider"></div>
-                                                            <a class="dropdown-item text-success" 
-                                                            href="{% url 'report:report.approve' report.id %}">
+                                                        {% if perms.report.approve_report and report.status == ReportStatusChoices.DRAFT %}
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item text-success" href="{% url 'report:report.approve' report.id %}">
                                                             <i class="ri-check-double-line align-bottom me-2"></i> อนุมัติ
-                                                            </a>
-
-                                                            <a class="dropdown-item text-danger" 
-                                                            href="{% url 'report:report.reject' report.id %}">
+                                                        </a>
+                                                        <a class="dropdown-item text-danger" href="{% url 'report:report.reject' report.id %}">
                                                             <i class="ri-close-circle-line align-bottom me-2"></i> ไม่อนุมัติ
-                                                            </a>
+                                                        </a>
                                                         {% endif %}
 
                                                         <div class="dropdown-divider"></div>
@@ -274,7 +271,7 @@
                     <label for="reportType" class="form-label">ประเภทการรายงาน</label>
                     <select class="form-select" id="reportType" name="report_type" required>
                         <option value="">-- เลือกประเภท --</option>
-                        <option value="S" selected>รายงานขั้นต้น</option>
+                        <option value="S" selected>รายงานอันตราย</option>
                         <option value="O">สังเกตการณ์พฤติกรรม</option>
                     </select>
                 </div>
@@ -320,8 +317,8 @@
                     <select class="form-select" id="reportType" name="report_type" required>
                         <option value="" selected>-- เลือกประเภท --</option>
                         <option value="HG">รายงานอุบัติการณ์ภาคพื้น</option>
-                        <option value="HA">รายงานอากาศยานอุบัติการณ์</option>
                         <option value="SG">รายงานอุบัติเหตุภาคพื้น</option>
+                        <option value="HA">รายงานอากาศยานอุบัติการณ์</option>
                         <option value="SA">รายงานอากาศยานอุบัติเหตุ</option>
                     </select>
                 </div>

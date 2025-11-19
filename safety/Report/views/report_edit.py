@@ -16,15 +16,18 @@ logger = logging.getLogger("report")
 
 
 @login_required
-@permission_required("Report.edit_report", raise_exception=True)
 def edit_report(request, report_id):
     """แก้ไขรายงานได้ทั้งแบบพื้นฐานและแบบเจ้าหน้าที่"""
     report = get_object_or_404(BaseReport, pk=report_id)
 
     # ตรวจสิทธิ์
-    if report.status != ReportStatusChoices.DRAFT:
+    if report.status == ReportStatusChoices.DRAFT:
+        if report.recorder != request.user and not request.user.has_perm("Report.edit_report"):
+            messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานฉบับร่างของผู้อื่น")
+            return redirect("report:safety-report.list")
+    else:
         if not request.user.has_perm("Report.edit_report"):
-            messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานสถานะนี้")
+            messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานนี้ เนื่องจากรายงานนี้ได้รับการอนุมัติแล้ว")
             return redirect("report:safety-report.list")
 
     # เตรียมฟอร์มหลัก
@@ -45,8 +48,9 @@ def edit_report(request, report_id):
             additional_form = AviationReportForm(request.POST, instance=report, prefix="aviation")
 
         # ตรวจสอบความถูกต้องทั้งหมด
-        form_list = [base_form, image_formset, rec_formset, file_formset,
-                     participant_formset, reference_formset]
+        form_list = [
+                base_form, image_formset, rec_formset, file_formset, participant_formset, reference_formset
+            ]
         if additional_form:
             form_list.append(additional_form)
 
@@ -101,8 +105,6 @@ def edit_report(request, report_id):
     }
     return render(request, "Report/safety-reports/report-edit.html", context)
 
-
-# --- Helper Functions ---
 
 def save_formset_with_parent(formset, parent):
     """บันทึกฟอร์มเซ็ตพร้อม parent"""

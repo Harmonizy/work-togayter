@@ -1,18 +1,27 @@
 from django import forms
-from django.urls import reverse
 from django.forms import inlineformset_factory
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Div, Row, Column, Layout, Field, HTML
-from crispy_forms.layout import Layout, Fieldset, Submit
+from crispy_forms.layout import Layout, Row, Column, Div, Field, HTML
 from ckeditor.widgets import CKEditorWidget
 
-from safety.Report.models import BaseReport, AviationReport, GroundReport
-# , SafetyReport, ObservationReport
-from .fields import  content_example, content_field, textarea_field, multi_select_widget, single_select_widget
-from ..models import BaseReport, Image, Recommendation, File, AviationReport, GroundReport, Participant, ReferenceReport
-from ..choices import ReportTypeChoices, InjuryLevelChoices
+from .fields import content_example, content_field, textarea_field, multi_select_widget, single_select_widget
+from ..models import (
+    BaseReport, Image, Recommendation, File, AviationReport, GroundReport,
+    Participant, ReferenceReport
+)
+from ..choices import ReportTypeChoices
 from common.RTAFUser.models.RTAFUser import Affiliation
+
+
+class BaseInlineFormSet(forms.BaseInlineFormSet):
+    """This enables CrispyForms to respect each subform's layout."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.disable_csrf = True
 
 
 class BaseReportForm(forms.ModelForm):
@@ -37,89 +46,77 @@ class BaseReportForm(forms.ModelForm):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-
-        report_type = self.initial.get("report_type", "") 
+        report_type = self.initial.get("report_type", "")
         affiliation = self.initial.get("affiliation", None)
-        
+
         if report_type:
-            self.fields["report_type"].choices = [(choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type]
+            self.fields["report_type"].choices = [
+                (choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type
+            ]
+
         if affiliation:
-            # if affiliation is integer
             if isinstance(affiliation, int):
                 affiliation = Affiliation.objects.get(id=affiliation)
-            self.fields['affiliation'].queryset = self.fields['affiliation'].queryset.filter(id=affiliation.id)
 
+            self.fields['affiliation'].queryset = Affiliation.objects.filter(id=affiliation.id)
+
+        # Crispy Layout
+        self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('report_type', css_class='form-group col-6 col-md-3 mb-0'),
-                Column('affiliation', css_class='form-group col-6 col-md-3 mb-0'),
-                Column('event_date', css_class='form-group col-6 col-md-3 mb-0'),
-                Column('event_time', css_class='form-group col-6 col-md-3 mb-0'),
+                Column('report_type', css_class='col-6 col-md-3'),
+                Column('affiliation', css_class='col-6 col-md-3'),
+                Column('event_date', css_class='col-6 col-md-3'),
+                Column('event_time', css_class='col-6 col-md-3')
             ),
             Div(
-                Row(Column('title', css_class='form-group col-md-12 mb-0')),
-                Row(Column(Field('content'), css_class='form-group col-md-12 mb-0')),
+                Row(Column('title', css_class='col-md-12')),
+                Row(Column(Field('content'), css_class='col-md-12')),
                 css_id="title-content-part",
-                css_class="my-wrapper-class",
             ),
             Row(
-                Column('first_recommendation', css_class='form-group col-md-6 mb-0'),
-                Column('initial_action_taken', css_class='form-group col-md-6 mb-0'),
+                Column('first_recommendation', css_class='col-md-6'),
+                Column('initial_action_taken', css_class='col-md-6'),
             ),
             'comment',
-            'anonymous',
+            'anonymous'
         )
 
 
 class GroundReportForm(forms.ModelForm):
     class Meta:
         model = GroundReport
-        fields = [
-            "accident_type",
-            "category",
-            "location",
-            
-        ]
-        widgets = {            
-            'category': single_select_widget,
-        }
+        fields = ["accident_type", "category", "location"]
+        widgets = {'category': single_select_widget}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
-        self.helper.form_tag = False  
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('accident_type', css_class='form-group col-md-4 mb-0'),
-                Column('category', css_class='form-group col-md-4 mb-0'),
-                Column('location', css_class='form-group col-md-4 mb-0'),
-            ),
+                Column('accident_type', css_class='col-md-4'),
+                Column('category', css_class='col-md-4'),
+                Column('location', css_class='col-md-4'),
+            )
         )
 
 
 class AviationReportForm(forms.ModelForm):
     class Meta:
         model = AviationReport
-        fields = [
-            'squadron',
-            'aircraft',
-            'system',
-            'flight_phase',
-            'plane_number',
-            'air_control',
-        ]
+        fields = ['squadron', 'aircraft', 'system', 'flight_phase', 'plane_number', 'air_control']
         widgets = {
             'squadron': single_select_widget,
             'aircraft': single_select_widget,
             'system': multi_select_widget,
             'flight_phase': multi_select_widget,
-            
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         affiliation = self.initial.get("affiliation", None)
         if affiliation:
             self.fields['squadron'].queryset = self.fields['squadron'].queryset.filter(affiliation=affiliation)
@@ -129,68 +126,27 @@ class AviationReportForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('squadron', css_class='form-group col-md-4 mb-0'),
-                Column('plane_number', css_class='form-group col-md-4 mb-0'),
-                Column('air_control', css_class='form-group col-md-4 mb-0'),
+                Column('squadron', css_class='col-md-4'),
+                Column('plane_number', css_class='col-md-4'),
+                Column('air_control', css_class='col-md-4'),
             ),
             Row(
-                Column('aircraft', css_class='form-group col-md-4 mb-0'),
-                Column('system', css_class='form-group col-md-4 mb-0'),
-                Column('flight_phase', css_class='form-group col-md-4 mb-0'),
-            ),
+                Column('aircraft', css_class='col-md-4'),
+                Column('system', css_class='col-md-4'),
+                Column('flight_phase', css_class='col-md-4'),
+            )
         )
 
 
-# ========== Attachment Forms ==========
 class ParticipantForm(forms.ModelForm):
     class Meta:
         model = Participant
         fields = ["full_name", "role", "injury_level", "note"]
         widgets = {
-            "note": forms.TextInput(attrs={"class": "form-control"}),  # ให้เป็นช่อง input text
-        }
-
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.form_tag = False 
-        # Layout
-        self.helper.layout = Layout(
-            Row(
-                Column('full_name', css_class='form-group col-md-3 mb-0'),
-                Column('role', css_class='form-group col-md-3 mb-0'),
-                Column('injury_level', css_class='form-group col-md-3 mb-0'),
-                Column('note', css_class='form-group col-md-3 mb-0'),
-            ),
-        )
-
-
-class ImageForm(forms.ModelForm):
-    class Meta:
-        model = Image
-        fields = ["image", "comment"]
-
-
-class FileForm(forms.ModelForm):
-    class Meta:
-        model = File
-        fields = ["file", "comment"]
-
-
-class RecommendationForm(forms.ModelForm):
-    class Meta:
-        model = Recommendation
-        fields = ["note", "comment"]
-
-
-class ReferenceReportForm(forms.ModelForm):
-    class Meta:
-        model = ReferenceReport
-        fields = ["report", "note"]
-        widgets = {
-            "note": forms.TextInput(attrs={"class": "form-control"}),
+            'full_name': single_select_widget,
+            'role': single_select_widget,
+            'injury_level': single_select_widget,
+            'note': forms.TextInput(attrs={'placeholder': 'หมายเหตุเพิ่มเติม...'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -200,17 +156,122 @@ class ReferenceReportForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column("report", css_class="form-group col-md-6 mb-0"),
-                Column("note", css_class="form-group col-md-6 mb-0"),
+                Column('full_name', css_class='col-md-3'),
+                Column('role', css_class='col-md-3'),
+                Column('injury_level', css_class='col-md-3'),
+                Column('note', css_class='col-md-3'),
             )
         )
 
 
-# ========== Formsets ==========
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ['image', 'comment']
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+            'comment': forms.TextInput(attrs={'placeholder': 'หมายเหตุเพิ่มเติม...'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['image'].required = False
+        self.fields['comment'].label = ''
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Row(
+                Column('image', css_class='col-md-8'),
+                Column('comment', css_class='col-md-4'),
+            )
+        )
+
+
+class FileForm(forms.ModelForm):
+    class Meta:
+        model = File
+        fields = ['file', 'comment']
+        widgets = {
+            'file': forms.ClearableFileInput(attrs={
+                'accept': (
+                    'application/pdf,'
+                    'application/msword,'
+                    'application/vnd.ms-excel,'
+                    'application/vnd.ms-powerpoint,'
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document,'
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,'
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                )
+            }),
+            'comment': forms.TextInput(attrs={'placeholder': 'หมายเหตุเพิ่มเติม...'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['file'].required = False
+        self.fields['comment'].label = ''
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Row(
+                Column('file', css_class='col-md-8'),
+                Column('comment', css_class='col-md-4'),
+            )
+        )
+
+
+class RecommendationForm(forms.ModelForm):
+    class Meta:
+        model = Recommendation
+        fields = ['note', 'comment']
+        widgets = {
+            'note': textarea_field(2),
+            'comment': forms.TextInput(attrs={'placeholder': 'หมายเหตุเพิ่มเติม...'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['note'].required = False
+        self.fields['comment'].label = ''
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Row(
+                Column('note', css_class='col-md-8'),
+                Column('comment', css_class='col-md-4'),
+            )
+        )
+
+
+class ReferenceReportForm(forms.ModelForm):
+    class Meta:
+        model = ReferenceReport
+        fields = ["report", "note"]
+        widgets = {
+            'report': single_select_widget,
+            'note': forms.Textarea(attrs={'placeholder': 'หมายเหตุเพิ่มเติม...'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Row(
+                Column('report', css_class='col-md-6'),
+                Column('note', css_class='col-md-6'),
+            )
+        )
+
 
 ParticipantFormSet = inlineformset_factory(
     BaseReport, Participant,
     form=ParticipantForm,
+    formset=BaseInlineFormSet,
     fk_name='base_report',
     extra=1,
     can_delete=True
@@ -219,6 +280,7 @@ ParticipantFormSet = inlineformset_factory(
 ImageFormSet = inlineformset_factory(
     BaseReport, Image,
     form=ImageForm,
+    formset=BaseInlineFormSet,
     fk_name='base_report',
     extra=1,
     can_delete=True
@@ -227,6 +289,7 @@ ImageFormSet = inlineformset_factory(
 FileFormSet = inlineformset_factory(
     BaseReport, File,
     form=FileForm,
+    formset=BaseInlineFormSet,
     fk_name='base_report',
     extra=1,
     can_delete=True
@@ -235,6 +298,7 @@ FileFormSet = inlineformset_factory(
 RecommendationFormSet = inlineformset_factory(
     BaseReport, Recommendation,
     form=RecommendationForm,
+    formset=BaseInlineFormSet,
     fk_name='base_report',
     extra=1,
     can_delete=True
@@ -243,6 +307,7 @@ RecommendationFormSet = inlineformset_factory(
 ReferenceReportFormSet = inlineformset_factory(
     BaseReport, ReferenceReport,
     form=ReferenceReportForm,
+    formset=BaseInlineFormSet,
     fk_name="base_report",
     extra=1,
     can_delete=True

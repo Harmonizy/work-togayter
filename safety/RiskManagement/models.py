@@ -20,7 +20,14 @@ class HazardCategory(models.Model):
 
 
 class HazardSource(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(verbose_name="ชื่อ", max_length=100)
+    description = models.CharField(verbose_name="รายละเอียด", max_length=100, null=True, blank=True)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "4. แหล่งที่มา"
+
+    def __str__(self):
+        return self.name
 
 
 class HazardLog(models.Model):

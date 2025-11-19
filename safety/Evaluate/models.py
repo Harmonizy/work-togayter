@@ -44,6 +44,7 @@ class QuestionSet(models.Model):
 class EvaluationQuestion(models.Model):
     question_set = models.ForeignKey(QuestionSet, related_name='questions', on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField(verbose_name="คำถามประเมิน", max_length=256)
+    note = models.TextField(verbose_name="หมายเหตุ", blank=True, null=True)
 
     next_if_yes = models.ForeignKey('self', null=True, blank=True, related_name='prev_yes', on_delete=models.SET_NULL)
     next_if_no = models.ForeignKey('self', null=True, blank=True, related_name='prev_no', on_delete=models.SET_NULL)
