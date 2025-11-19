@@ -43,6 +43,7 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarReport">
                                 <ul class="nav nav-sm flex-column">
+                                    <span data-key="t-reports" class="text-white">Safety Report</span>
                                     <li class="nav-item">
                                         <a href="{% url 'report:safety-report.list' %}" class="nav-link" data-key="t-report">รายงานนิรภัย</a>
                                     </li>
@@ -58,6 +59,7 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarRiskManagement">
                                 <ul class="nav nav-sm flex-column">
+                                    <span data-key="t-reports" class="text-white">Safety Risk Management</span>
                                     <li class="nav-item">
                                         <a href="{% url 'risk_management:hazard-log' %}" class="nav-link" data-key="t-dashboard">การจัดการความเสี่ยง</a>
                                     </li>
@@ -78,6 +80,7 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarAssurance">
                                 <ul class="nav nav-sm flex-column">
+                                    <span data-key="t-reports" class="text-white">Safety Assurance</span>
                                     <li class="nav-item">
                                         <a href="{% url 'safety-dashboard:dashboard-home.index' %}" class="nav-link" data-key="t-dashboard">สถิติ & ข้อมูล</a>
                                     </li>
@@ -94,6 +97,7 @@
                             </a>
                             <div class="collapse menu-dropdown" id="sidebarPromotion">
                                 <ul class="nav nav-sm flex-column">
+                                    <span data-key="t-reports" class="text-white">Safety Promotion</span>
                                     <li class="nav-item">
                                         <a href="{% url 'promotion:list_ground' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์ภาคพื้น</a>
                                         <a href="{% url 'promotion:list_air' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์ภาคพื้น</a>

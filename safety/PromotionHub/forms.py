@@ -103,6 +103,6 @@ ChoiceFormSet = inlineformset_factory(
     Choice,
     form=ChoiceForm,
     fields=['text', 'is_correct'],
-    extra=2,
+    extra=3,
     can_delete=True
 )

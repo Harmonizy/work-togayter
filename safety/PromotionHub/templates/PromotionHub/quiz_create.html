@@ -26,20 +26,36 @@
               </div>
             </div>
 
-            <!-- Questions -->
+            <!-- Questions + Choices -->
             <div class="card mt-4">
               <div class="card-header">
-                <h4 class="card-title mb-0">คำถาม</h4>
+                <h4 class="card-title mb-0">คำถาม และตัวเลือก</h4>
               </div>
 
               <div class="card-body">
 
                 {{ question_formset.management_form }}
 
-                {% for form in question_formset %}
+                {% for qform, cforms in question_and_choices %}
                 <div class="border rounded p-3 mb-3">
+
+                  <!-- Question -->
                   <h6 class="mb-2">คำถามที่ {{ forloop.counter }}</h6>
-                  {% crispy form %}
+                  {% crispy qform %}
+
+                  <!-- Choices -->
+                  <div class="mt-3 p-3 bg-light rounded border">
+                    <h6 class="mb-2">ตัวเลือก</h6>
+
+                    {{ cforms.management_form }}
+
+                    {% for cform in cforms %}
+                      <div class="mb-2 p-2 border rounded bg-white">
+                        {% crispy cform %}
+                      </div>
+                    {% endfor %}
+                  </div>
+
                 </div>
                 {% endfor %}
 

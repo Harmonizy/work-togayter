@@ -10,7 +10,7 @@ from django.http import JsonResponse
 
 
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
-from .forms import PromotionForm, QuizForm, QuestionFormSet
+from .forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet
 from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
 from common.RTAFUser.models import RTAFUser, Affiliation
@@ -283,27 +283,52 @@ def quiz_list(request):
 def quiz_create(request):
     if request.method == "POST":
         quiz_form = QuizForm(request.POST)
-        formset = QuestionFormSet(request.POST)
+        question_formset = QuestionFormSet(request.POST)
 
-        if quiz_form.is_valid() and formset.is_valid():
+        choice_formsets = []
+
+        if quiz_form.is_valid() and question_formset.is_valid():
             quiz = quiz_form.save()
-            questions = formset.save(commit=False)
+            questions = question_formset.save(commit=False)
 
-            for questions in questions:
-                questions.quiz = quiz
-                questions.save()
+            for index, q in enumerate(questions):
+                q.quiz = quiz
+                q.save()
+
+                # สร้าง ChoiceFormSet สำหรับคำถามแต่ละข้อ
+                choice_formset = ChoiceFormSet(
+                    request.POST,
+                    instance=q,
+                    prefix=f"choice_{index}"
+                )
+
+                if choice_formset.is_valid():
+                    choice_formset.save()
+                else:
+                    print("Choice error:", choice_formset.errors)
 
             return redirect("promotion:quiz_list")
 
     else:
         quiz_form = QuizForm()
-        formset = QuestionFormSet()
+        question_formset = QuestionFormSet()
+
+        # choice formsets ตามจำนวน question form
+        choice_formsets = [
+            ChoiceFormSet(prefix=f"choice_{i}")
+            for i, _ in enumerate(question_formset)
+        ]
+
+    # ⬅⬅⬅ สำคัญ! รวมคู่ Question + ChoiceFormSets
+    question_and_choices = zip(question_formset, choice_formsets)
 
     return render(request, "PromotionHub/quiz_create.html", {
         "quiz_form": quiz_form,
-        "question_formset": formset
+        "question_formset": question_formset,
+        "choice_formsets": choice_formsets,
+        "question_and_choices": question_and_choices,  # ⬅ ส่งเข้าหน้า HTML
     })
-    
+
 
 def quiz_detail(request, id):
     quiz = get_object_or_404(Quiz, id=id)
