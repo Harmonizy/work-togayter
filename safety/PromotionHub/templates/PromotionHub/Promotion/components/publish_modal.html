@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
 
-            <form hx-post="{% url 'PromotionHub:promotion.publish_confirm' promotion.id %}"
+            <form hx-post="{% url 'promotion:publish_confirm' promotion.id %}"
                   hx-target="#modal-area" hx-swap="innerHTML">
 
                 <div class="modal-header">
