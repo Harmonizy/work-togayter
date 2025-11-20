@@ -122,7 +122,14 @@
                                     {% endif %}
 
                                     <li class="nav-item">
-                                        <a href="{% url 'account_logout' %}" class="nav-link" data-key="t-dashboard">ออกจากระบบ</a>
+                                        <a href="#" class="nav-link" onclick="confirmLogout(event)">
+                                            <span data-key="t-logout">ออกจากระบบ</span>
+                                        </a>
+
+                                        <!-- ฟอร์มซ่อน -->
+                                        <form id="logout-form" action="{% url 'account_logout' %}" method="post" style="display:none;">
+                                            {% csrf_token %}
+                                        </form>
                                     </li>
                                 </ul>
                             </div>
@@ -137,5 +144,25 @@
         <!-- Left Sidebar End -->
         <!-- Vertical Overlay-->
         <div class="vertical-overlay"></div>
+
+    <script>
+        function confirmLogout(event) {
+            event.preventDefault(); // ป้องกันไม่ให้ form ส่งทันที
+
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit();
+                }
+            });
+        }
+    </script>
 {% endblock sidebar %}
     
