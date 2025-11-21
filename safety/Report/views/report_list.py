@@ -99,7 +99,6 @@ def mobile_create(request):
 @login_required
 @permission_required("Report.approve_report", raise_exception=True)
 def approve_report(request, report_id):
-    """อนุมัติรายงาน"""
     report = get_object_or_404(BaseReport, id=report_id)
 
     if report.status != ReportStatusChoices.APPROVED:
@@ -109,13 +108,12 @@ def approve_report(request, report_id):
     else:
         messages.info(request, "รายงานนี้ได้รับการอนุมัติแล้ว")
 
-    return redirect("report:safety-report.list")
+    return redirect(request.META.get("HTTP_REFERER", "report:safety-report.list"))
 
 
 @login_required
 @permission_required("Report.approve_report", raise_exception=True)
 def reject_report(request, report_id):
-    """ไม่อนุมัติรายงาน"""
     report = get_object_or_404(BaseReport, id=report_id)
 
     if report.status != ReportStatusChoices.REJECTED:
@@ -125,4 +123,4 @@ def reject_report(request, report_id):
     else:
         messages.info(request, "รายงานนี้ถูกปฏิเสธไปแล้ว")
 
-    return redirect("report:safety-report.list")
+    return redirect(request.META.get("HTTP_REFERER", "report:safety-report.list"))
