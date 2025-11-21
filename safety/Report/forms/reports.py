@@ -52,6 +52,7 @@ class BaseReportForm(forms.ModelForm):
                 attrs={'type': 'time'}
             )
         )
+        self.fields['event_time'].label = "เวลาเกิดเหตุ"
 
         report_type = self.initial.get("report_type", "")
         affiliation = self.initial.get("affiliation", None)
