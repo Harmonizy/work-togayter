@@ -89,7 +89,6 @@
                         </li>
                         {% endif %}
 
-                        {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %}
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarPromotion" data-bs-toggle="collapse" role="button"
                             aria-expanded="false" aria-controls="sidebarPromotion">
@@ -99,14 +98,15 @@
                                 <ul class="nav nav-sm flex-column">
                                     <span data-key="t-reports" class="text-white">Safety Promotion</span>
                                     <li class="nav-item">
+                                        <a href="#" class="nav-link" data-key="t-dashboard">การแจ้งเตือน</a>
                                         <a href="{% url 'promotion:list_ground' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์ภาคพื้น</a>
                                         <a href="{% url 'promotion:list_air' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์ภาคอากาศ</a>
                                         <a href="{% url 'promotion:quiz_list' %}" class="nav-link" data-key="t-dashboard">แบบทดสอบ</a>
+                                        <a href="#" class="nav-link" data-key="t-dashboard">แบบสำรวจ</a>
                                     </li> 
                                 </ul>
                             </div>
                         </li>
-                        {% endif %}
 
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sidebarAdmin" data-bs-toggle="collapse" role="button"

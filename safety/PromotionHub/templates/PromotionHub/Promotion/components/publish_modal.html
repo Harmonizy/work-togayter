@@ -1,54 +1,54 @@
-<div class="modal fade show" style="display:block;">
-    <div class="modal-dialog">
-        <div class="modal-content">
+<form
+    hx-post="{% url 'promotion:publish_promotion' promotion.id %}"
+    hx-target="#publishModalBody"
+    hx-swap="innerHTML"
+>
+    {% csrf_token %}
 
-            <form hx-post="{% url 'promotion:publish_confirm' promotion.id %}"
-                  hx-target="#modal-area" hx-swap="innerHTML">
+    <label class="form-label fw-bold">เลือกการเผยแพร่</label>
 
-                <div class="modal-header">
-                    <h5 class="modal-title">เผยแพร่ประชาสัมพันธ์</h5>
-                    <button type="button" class="btn-close"
-                            hx-get="{% url 'PromotionHub:promotion.empty_modal' %}"
-                            hx-target="#modal-area"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <label class="form-label">เลือกประเภทการเผยแพร่</label>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="publish" value="A">
-                        <label class="form-check-label">ทอ. ทั้งหมด</label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="publish" value="U">
-                        <label class="form-check-label">เฉพาะหน่วย</label>
-                    </div>
-
-                    <div class="mt-3">
-                        <label class="form-label">เลือกกลุ่มที่ต้องการเผยแพร่</label>
-                        <select name="groups" class="form-control" multiple size="6">
-                            {% for g in groups %}
-                                <option value="{{ g.id }}">{{ g.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <small class="text-muted">เลือกหลายกลุ่มได้</small>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            hx-get="{% url 'PromotionHub:promotion.empty_modal' %}"
-                            hx-target="#modal-area">
-                        ปิด
-                    </button>
-                    <button type="submit" class="btn btn-primary">เผยแพร่</button>
-                </div>
-
-            </form>
-
-        </div>
+    <div class="form-check">
+        <input 
+            class="form-check-input" 
+            type="radio" 
+            name="publish_type" 
+            value="A"
+            hx-get="{% url 'promotion:publish_dynamic_options' promotion.id %}"
+            hx-target="#publishDynamic"
+            hx-swap="innerHTML"
+        >
+        <label class="form-check-label">ทอ. (AIRFORCE)</label>
     </div>
-</div>
+
+    <div class="form-check">
+        <input 
+            class="form-check-input" 
+            type="radio" 
+            name="publish_type" 
+            value="U"
+            hx-get="{% url 'promotion:publish_dynamic_options' promotion.id %}"
+            hx-target="#publishDynamic"
+            hx-swap="innerHTML"
+        >
+        <label class="form-check-label">หน่วย (UNIT)</label>
+    </div>
+
+    <div class="form-check">
+        <input 
+            class="form-check-input" 
+            type="radio" 
+            name="publish_type" 
+            value="G"
+            hx-get="{% url 'promotion:publish_dynamic_options' promotion.id %}"
+            hx-target="#publishDynamic"
+            hx-swap="innerHTML"
+        >
+        <label class="form-check-label">กลุ่ม (GROUP)</label>
+    </div>
+
+    <div id="publishDynamic" class="mt-3">
+        <!-- HTMX จะโหลด field ของแต่ละ type มาใส่ -->
+    </div>
+
+    <button class="btn btn-primary mt-3">ยืนยันเผยแพร่</button>
+</form>

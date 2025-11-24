@@ -29,7 +29,7 @@
                                 </h5>
                                 <div class="flex-shrink-0">
                                     <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2">
-                                        {% if perms.Promotion.create_promotion_hub %}
+                                        {% if perms.PromotionHub.create_promotion_hub %}
                                         <a class="btn btn-primary" href="{% url 'promotion:create' %}">
                                             <i class="ri-add-line align-bottom me-1"></i> เพิ่มบทความใหม่
                                         </a>
@@ -120,14 +120,19 @@
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
 
+                                                        {% if perms.PromotionHub.publish_promotion_hub %}
                                                         <div class="dropdown-divider"></div>
-                                                           <a 
-                                                            hx-get="#" 
-                                                            hx-target="#dialog" 
-                                                            hx-trigger="click"
-                                                            class="dropdown-item" href="#">
+                                                            <a
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#publishModal"
+                                                                hx-get="{% url 'promotion:publish_modal' promotion.id %}"
+                                                                hx-target="#publishModalBody"
+                                                                hx-swap="innerHTML"
+                                                                class="dropdown-item"
+                                                            >
                                                                 <i class="ri-mail-send-line me-2 ms-3 text-warning"></i> เผยแพร่
                                                             </a>
+                                                        {% endif %}
                                                         <div class="dropdown-divider"></div>
                                                         <a href="{% url 'promotion:delete' promotion.id %}" class="dropdown-item text-danger">
                                                             <i class="ri-delete-bin-fill align-bottom me-2"></i> ลบ
@@ -152,6 +157,23 @@
 
         </div><!-- container-fluid -->
     </div><!-- End Page-content -->
+</div>
+
+<div class="modal fade" id="publishModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">เผยแพร่ประชาสัมพันธ์</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body" id="publishModalBody">
+        <!-- HTMX จะโหลดข้อมูลมาใส่ตรงนี้ -->
+      </div>
+
+    </div>
+  </div>
 </div>
 
 

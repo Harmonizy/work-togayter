@@ -43,11 +43,13 @@
                 <h5 class="card-title mb-0 flex-grow-1">Risk Register</h5>
                 <div class="flex-shrink-0">
                   <div class="d-flex flex-wrap gap-2">
+                    {% if perms.RiskManagement.create_hazard_log %}
                     <a href="{% url 'risk_management:hazard-log-create' %}">
                       <button class="btn btn-secondary">
                         <i class="ri-add-line align-bottom me-1"></i> สร้างทะเบียนความเสี่ยงใหม่
                       </button>
                     </a>
+                    {% endif %}
                   </div>
                 </div>
               </div>
