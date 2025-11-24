@@ -274,6 +274,10 @@ def publish_promotion(request, pk):
             groups__id__in=group_ids
         ).distinct().values_list("username", flat=True)
 
+    promotion.status = PromotionStatusChoices.PUBLISHED
+    promotion.publish = publish_type
+    promotion.save()
+
     promotion.send_notify(list(users))
 
     return HttpResponse("<p class='text-success'>เผยแพร่เรียบร้อยแล้ว</p>")
