@@ -98,11 +98,11 @@
                                 <ul class="nav nav-sm flex-column">
                                     <span data-key="t-reports" class="text-white">Safety Promotion</span>
                                     <li class="nav-item">
-                                        <a href="#" class="nav-link" data-key="t-dashboard">การแจ้งเตือน</a>
+                                        {% comment %} <a href="#" class="nav-link" data-key="t-dashboard">การแจ้งเตือน</a> {% endcomment %}
                                         <a href="{% url 'promotion:list_ground' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์ภาคพื้น</a>
                                         <a href="{% url 'promotion:list_air' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์ภาคอากาศ</a>
                                         <a href="{% url 'promotion:quiz_list' %}" class="nav-link" data-key="t-dashboard">แบบทดสอบ</a>
-                                        <a href="#" class="nav-link" data-key="t-dashboard">แบบสำรวจ</a>
+                                        {% comment %} <a href="#" class="nav-link" data-key="t-dashboard">แบบสำรวจ</a> {% endcomment %}
                                     </li> 
                                 </ul>
                             </div>
