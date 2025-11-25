@@ -73,6 +73,11 @@ class BaseReport(models.Model):
 
     def __str__(self):
         return f"{self.id}: {self.title}"
+    
+    def save(self, *args, **kwargs):
+        if self.event_time:
+            self.event_time = self.event_time.replace(second=0, microsecond=0)
+        super().save(*args, **kwargs)
 
 
 class BaseAbsoluteURL:

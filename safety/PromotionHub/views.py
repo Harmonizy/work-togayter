@@ -1,19 +1,21 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils import timezone
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 from django.http import JsonResponse
+from django.contrib.auth.models import Group
+from django.http import HttpResponse
 
-
-from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
+from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile
 from .forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet
 from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
 from common.RTAFUser.models import RTAFUser, Affiliation
+
 
 
 @login_required
@@ -32,7 +34,7 @@ def list_ground(request):
         )
 
     else:
-        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการประชาสัมพันธ์")
+        promotions = Promotion.objects.none()
 
     # เฉพาะที่เผยแพร่แล้ว
     published = Promotion.objects.filter(
@@ -73,7 +75,7 @@ def list_air(request):
         )
 
     else:
-        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการประชาสัมพันธ์")
+        promotions = Promotion.objects.none()
 
     # เฉพาะที่เผยแพร่แล้ว
     published = Promotion.objects.filter(
@@ -129,7 +131,6 @@ class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
 
         promotion = self.get_object()
 
-        # ⭐ ดึง PromotionView ให้แน่นอน
         promotion_view, created = PromotionView.objects.get_or_create(
             user=self.request.user,
             promotion=promotion,
@@ -143,7 +144,6 @@ class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
 
-        # ⭐ นับ view เฉพาะตอนแรกที่สร้างเท่านั้น (ตาม save() ของคุณ)
         if request.user.is_authenticated:
             PromotionView.objects.get_or_create(
                 user=request.user,
@@ -152,7 +152,6 @@ class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
             )
 
         return response
-
 
 
 @login_required
@@ -258,21 +257,30 @@ def quiz_result(request, result_id):
 def publish_promotion(request, pk):
     promotion = get_object_or_404(Promotion, pk=pk)
 
-    if promotion.publish == PromotionPublishChoices.AIRFORCE:
+    publish_type = request.POST.get("publish_type")
+    users = []
+
+    if publish_type == "A":  # AIRFORCE
         users = RTAFUser.objects.values_list("username", flat=True)
 
-    elif promotion.publish == PromotionPublishChoices.UNIT:
+    elif publish_type == "U":  # UNIT
         users = RTAFUser.objects.filter(
             affiliation=promotion.user.affiliation
         ).values_list("username", flat=True)
 
-    else:
-        users = []
+    elif publish_type == "G":  # GROUP
+        group_ids = request.POST.getlist("groups")
+        users = RTAFUser.objects.filter(
+            groups__id__in=group_ids
+        ).distinct().values_list("username", flat=True)
+
+    promotion.status = PromotionStatusChoices.PUBLISHED
+    promotion.publish = publish_type
+    promotion.save()
 
     promotion.send_notify(list(users))
 
-    messages.success(request, "✅ เผยแพร่ประชาสัมพันธ์เรียบร้อย และส่งการแจ้งเตือนแล้ว.")
-    return redirect("PromotionHub:promotion.detail", pk=promotion.id)
+    return HttpResponse("<p class='text-success'>เผยแพร่เรียบร้อยแล้ว</p>")
 
 
 def quiz_list(request):
@@ -380,4 +388,58 @@ def accept(request, pk):
     return redirect("promotion:detail", pk=view.promotion.pk)
 
 
+def quiz_result_modal(request, quiz_id):
+    quiz = Quiz.objects.get(id=quiz_id)
+    results = QuizResult.objects.filter(quiz_id=quiz_id).select_related("user")
+    return render(request, "PromotionHub/Quiz/components/quiz_result_modal.html", {
+        "quiz": quiz,
+        "results": results
+    })
 
+
+@login_required
+@permission_required("PromotionHub.publish_promotion_hub", raise_exception=True)
+def publish_modal(request, pk):
+    promotion = get_object_or_404(Promotion, pk=pk)
+    affiliations = Affiliation.objects.all()
+    groups = Group.objects.all()
+
+    return render(request, "PromotionHub/Promotion/components/publish_modal.html", {
+        "promotion": promotion,
+        "groups": groups,
+        "affiliations": affiliations
+    })
+    
+
+@login_required
+def publish_dynamic_options(request, pk):
+    promotion = get_object_or_404(Promotion, pk=pk)
+    publish_type = request.GET.get("publish_type")
+
+    groups = Group.objects.all()
+
+    return render(request, "PromotionHub/Promotion/components/publish_dynamic_options.html", {
+        "publish_type": publish_type,
+        "groups": groups
+    })
+
+
+@login_required
+def document_list(request):
+    search = request.GET.get("search", "").strip()
+
+    documents = Document.objects.all()
+
+    if search:
+        documents = documents.filter(
+            Q(title__icontains=search) |
+            Q(promotion__title__icontains=search)
+        )
+
+    documents = documents.order_by("-created_at")
+
+    context = {
+        "documents": documents,
+        "search": search,
+    }
+    return render(request, "PromotionHub/document_list.html", context)

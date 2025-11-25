@@ -36,7 +36,6 @@ class BaseReportForm(forms.ModelForm):
         ]
         widgets = {
             'event_date': forms.DateInput(attrs={'type': 'date', 'data-provider': 'flatpickr'}),
-            'event_time': forms.TimeInput(attrs={'type': 'time'}),
             "anonymous": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             "first_recommendation": textarea_field(),
             "initial_action_taken": textarea_field(),
@@ -45,6 +44,15 @@ class BaseReportForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
+        self.fields['event_time'] = forms.TimeField(
+            input_formats=['%H:%M'],
+            widget=forms.TimeInput(
+                format='%H:%M',
+                attrs={'type': 'time'}
+            )
+        )
+        self.fields['event_time'].label = "เวลาเกิดเหตุ"
 
         report_type = self.initial.get("report_type", "")
         affiliation = self.initial.get("affiliation", None)
@@ -57,7 +65,6 @@ class BaseReportForm(forms.ModelForm):
         if affiliation:
             if isinstance(affiliation, int):
                 affiliation = Affiliation.objects.get(id=affiliation)
-
             self.fields['affiliation'].queryset = Affiliation.objects.filter(id=affiliation.id)
 
         # Crispy Layout
@@ -68,7 +75,7 @@ class BaseReportForm(forms.ModelForm):
                 Column('report_type', css_class='col-6 col-md-3'),
                 Column('affiliation', css_class='col-6 col-md-3'),
                 Column('event_date', css_class='col-6 col-md-3'),
-                Column('event_time', css_class='col-6 col-md-3')
+                Column('event_time', css_class='col-6 col-md-3'),
             ),
             Div(
                 Row(Column('title', css_class='col-md-12')),
@@ -82,6 +89,7 @@ class BaseReportForm(forms.ModelForm):
             'comment',
             'anonymous'
         )
+
 
 
 class GroundReportForm(forms.ModelForm):

@@ -1,0 +1,23 @@
+<h6>แบบทดสอบ: {{ quiz.title }}</h6>
+<p>จำนวนผู้ทำทั้งหมด: {{ results.count }} คน</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ชื่อ</th>
+            <th>คะแนน</th>
+            <th>วันที่ทำ</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in results %}
+        <tr>
+            <td>
+                {% comment %} <a href="{% url 'promotion:quiz_detail' quiz.id %}"> {% endcomment %}
+                {{ r.user.rank }} {{ r.user.first_name }} {{ r.user.last_name }}</td>
+            <td>{{ r.score }}</td>
+            <td>{{ r.completed_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

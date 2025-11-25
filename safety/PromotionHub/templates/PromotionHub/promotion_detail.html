@@ -61,92 +61,73 @@
   <div class="page-content">
     <div class="container-fluid">
 
-      <!-- Header -->
-      <div class="row mb-4">
-        <div class="col-lg-10 mx-auto">
-          <div class="text-center">
-            <h2 class="fw-bold">{{ promotion.title }}</h2>
+      <!-- OUTER CARD -->
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
 
-            {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %}
-            <div class="promotion-meta">
-              โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} • 
-              {{ promotion.created_at|date:"d M Y" }} • 
-              เข้าชม {{ promotion.num_view }} คน
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
+              <!-- Header -->
+              <div class="text-center mb-4">
+                <h2 class="fw-bold">{{ promotion.title }}</h2>
+              </div>
 
-      <!-- Image -->
-      {% if promotion.image %}
-      <div class="row mb-4 justify-content-center">
-        <div class="col-lg-8 text-center">
-          <img src="{{ promotion.image.url }}" 
-               class="promotion-main-img shadow-sm" 
-               alt="{{ promotion.title }}">
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Content -->
-      <div class="row mb-4 justify-content-center">
-        <div class="col-lg-8">
-          <div class="card shadow-sm">
-            <div class="card-body promotion-content ck-content">
-              {{ promotion.content|safe }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Priority Alert -->
-      {% if promotion.priority == "H" %}
-      <div class="row justify-content-center mt-4">
-        <div class="col-lg-8 text-center">
-          <div class="card border-danger shadow-sm">
-            <div class="card-body">
-              <h5 class="text-danger fw-bold">
-                <i class="ri-alert-line me-1"></i> จำเป็นต้องทราบ
-              </h5>
-              <p>กรุณากดปุ่มด้านล่างเพื่อยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
-
-              {% if not promotion_view.accepted %}
-              <form method="POST" action="{% url 'promotion:accept' promotion_view.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger btn-lg">
-                  <i class="ri-check-line me-1"></i> รับทราบ
-                </button>
-              </form>
-              {% else %}
-              <div class="text-success fw-bold">
-                ✔ ท่านได้ยืนยันการรับทราบแล้ว
+              <!-- Image -->
+              {% if promotion.image %}
+              <div class="text-center mb-4">
+                <img src="{{ promotion.image.url }}" 
+                  class="promotion-main-img shadow-sm" 
+                  alt="{{ promotion.title }}">
               </div>
               {% endif %}
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endif %}
 
-      <!-- Quiz -->
-      {% if promotion.quiz %}
-      <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-          <div class="card border-info shadow-sm">
-            <div class="card-body">
-              <h5 class="text-info">
-                <i class="ri-question-answer-fill me-1"></i> แบบทดสอบหลังเรียน
-              </h5>
-              <p>เพื่อทดสอบความเข้าใจในเนื้อหาที่ท่านอ่าน</p>
-              <a href="{% url 'promotion:quiz_view' promotion.quiz.id %}" class="btn btn-outline-primary">
-                เริ่มทำแบบทดสอบ
-              </a>
-            </div>
-          </div>
+              <!-- Content -->
+              <div class="card shadow-sm mb-4 border-0">
+                <div class="card-body promotion-content ck-content">
+                  {{ promotion.content|safe }}
+                </div>
+              </div>
+
+              <!-- Priority Alert -->
+              {% if promotion.priority == "H" %}
+              <div class="card border-danger shadow-sm mb-4">
+                <div class="card-body text-center">
+                  <h5 class="text-danger fw-bold">
+                    <i class="ri-alert-line me-1"></i> จำเป็นต้องทราบ
+                  </h5>
+                  <p>กรุณากดปุ่มด้านล่างเพื่อยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
+
+                  {% if not promotion_view.accepted %}
+                  <form method="POST" action="{% url 'promotion:accept' promotion_view.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg">
+                      <i class="ri-check-line me-1"></i> รับทราบ
+                    </button>
+                  </form>
+                  {% else %}
+                  <div class="text-success fw-bold mt-2">
+                    ✔ ท่านได้ยืนยันการรับทราบแล้ว
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              {% endif %}
+
+              <!-- Meta info -->
+              {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %}
+              <div class="text-center mt-3">
+                <div class="promotion-meta">
+                  โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} •
+                  {{ promotion.created_at|date:"d M Y" }} • 
+                  เข้าชม {{ promotion.num_view }} คน
+                </div>
+              </div>
+              {% endif %}
+
+            </div> <!-- /card-body -->
+          </div> <!-- /card -->
         </div>
       </div>
-      {% endif %}
 
     </div>
   </div>

@@ -1,0 +1,14 @@
+{% if publish_type == 'G' %}
+    <label class="form-label fw-bold">เลือกกลุ่ม (เลือกได้หลายอัน)</label>
+
+    {% for g in groups %}
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="groups" value="{{ g.id }}">
+        <label class="form-check-label">{{ g.name }}</label>
+    </div>
+    {% endfor %}
+{% elif publish_type == 'U' %}
+    <p class="text-info">จะเผยแพร่ให้เฉพาะหน่วยของผู้สร้าง</p>
+{% elif publish_type == 'A' %}
+    <p class="text-info">จะเผยแพร่ให้กำลังพลทั้งหมด (AIRFORCE)</p>
+{% endif %}

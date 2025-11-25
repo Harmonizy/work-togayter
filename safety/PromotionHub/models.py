@@ -4,6 +4,7 @@ from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionP
 from common.RTAFUser.models.RTAFUser import RTAFUser, Affiliation
 from common.Services.super_app_api import send_notification
 
+import mimetypes
 from ckeditor.fields import RichTextField
 
 class Quiz(models.Model):
@@ -33,7 +34,7 @@ class Choice(models.Model):
     is_correct = models.BooleanField(verbose_name="ถูกต้อง", default=False)
 
     class Meta:
-        verbose_name = verbose_name_plural = "6. ตัวเลือก"
+        verbose_name = verbose_name_plural = "5.5 ตัวเลือก"
 
     def __str__(self):
         return self.text
@@ -60,9 +61,7 @@ class Promotion(models.Model):
     publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE , null=True, blank=True)
     priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PromotionPriorityChoices.choices, default=PromotionPriorityChoices.NONE , null=True, blank=True)
     type = models.CharField(verbose_name="ประเภท", max_length=1, choices=PromotionTypeChoices.choices, default=PromotionTypeChoices.GROUND , null=True, blank=True)
-
-    quiz = models.ForeignKey(Quiz, verbose_name="แบบทดสอบ", on_delete=models.SET_NULL, null=True, blank=True)
-
+    # quiz = models.ForeignKey(Quiz, verbose_name="แบบทดสอบ", on_delete=models.SET_NULL, null=True, blank=True)
     user = models.ForeignKey(RTAFUser, verbose_name="ผู้สร้าง", on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(verbose_name="วันที่สร้าง", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วันที่แก้ไข", auto_now=True)
@@ -110,3 +109,45 @@ class PromotionView(models.Model):
         super().save(*args, **kwargs)
 
 
+class Document(models.Model):
+    title = models.CharField("ชื่อ", max_length=255, blank=True)
+    description = models.TextField("คำอธิบาย", blank=True)
+    promotion = models.OneToOneField(Promotion, verbose_name="โปรโมชั่น", on_delete=models.CASCADE, related_name="documents", null=True, blank=True)
+
+    user = models.ForeignKey(RTAFUser, verbose_name="ผู้สร้าง", on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField("วันที่สร้าง", auto_now_add=True)
+    updated_at = models.DateTimeField("วันที่แก้ไข", auto_now=True)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "6. แฟ้มเอกสาร"
+
+    def __str__(self):
+        return f"{self.promotion}"
+    
+
+
+class DocumentFile(models.Model):
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="files", verbose_name="แฟ้มเอกสาร")
+    file = models.FileField(verbose_name="ไฟล์",upload_to="promotion/documents/")
+    title = models.CharField("ชื่อไฟล์", max_length=255, blank=True)
+    description = models.TextField("คำอธิบาย", blank=True)
+    order = models.PositiveIntegerField("ลำดับ", default=0)
+
+    user = models.ForeignKey(RTAFUser, verbose_name="ผู้สร้าง", on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField("วันที่เพิ่ม", auto_now_add=True)
+    updated_at = models.DateTimeField("วันที่แก้ไข", auto_now=True)
+
+    class Meta:
+        ordering = ["order", "-created_at"]
+        verbose_name = verbose_name_plural = "6.5 ไฟล์ในเอกสาร"
+
+    def __str__(self):
+        return self.title or self.file.name
+
+    @property
+    def file_type(self):
+        """คืน type เช่น pdf, image, video"""
+        type_, _ = mimetypes.guess_type(self.file.url)
+        if not type_:
+            return "other"
+        return type_.split("/")[0] 
