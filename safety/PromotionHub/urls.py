@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import list_air, list_ground, PromotionDetailView, create, edit, delete, quiz_view, quiz_result, publish_promotion, quiz_list, quiz_create, quiz_detail, quiz_update, quiz_delete, accept, quiz_result_modal, publish_modal, publish_dynamic_options
+from .views import list_air, list_ground, PromotionDetailView, create, edit, delete, quiz_view, quiz_result, publish_promotion, quiz_list, quiz_create, quiz_detail, quiz_update, quiz_delete, accept, quiz_result_modal, publish_modal, publish_dynamic_options, document_list
 
 app_name = 'promotion'
 
@@ -25,6 +25,8 @@ main_urlpatterns = [
     path('quiz/update/<int:id>/', quiz_update, name='quiz_update'),
     path('quiz/delete/<int:id>/', quiz_delete, name='quiz_delete'),
     path('quiz/results/partial/<int:quiz_id>/', quiz_result_modal, name='quiz_result_modal'),
+
+    path("documents/", document_list, name="document_list"),
 
 ]
 

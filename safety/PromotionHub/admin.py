@@ -51,13 +51,13 @@ class PromotionAdmin(admin.ModelAdmin):
     list_filter = ("status", "publish", "created_at")
     search_fields = ("title", "content")
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ("user", "quiz")
+    autocomplete_fields = ("user",)
     date_hierarchy = "created_at"
 
     fieldsets = (
         (None, {"fields": ("image", "title", "content")}),
         ("สถานะและการเผยแพร่", {"fields": ("status", "publish")}),
-        ("ข้อมูลอื่น ๆ", {"fields": ("quiz", "user", "created_at", "updated_at")}),
+        ("ข้อมูลอื่น ๆ", {"fields": ("user", "created_at", "updated_at")}),
     )
 
 

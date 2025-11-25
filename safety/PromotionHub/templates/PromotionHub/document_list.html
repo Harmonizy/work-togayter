@@ -1,0 +1,211 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Document Library{% endblock title %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="{% static 'libs/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet">
+<style>
+    .file-icon {
+        font-size: 1.5rem;
+        margin-right: 8px;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+
+            {% include "partials/page-title.html" with pagetitle="Document Library" title="เอกสารประกอบบทความ" %}
+
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">รายการแฟ้มเอกสาร</h5>
+                        </div>
+
+                        <div class="card-body border border-dashed border-start-0 border-end-0">
+                            <form method="get">
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <input type="text"
+                                               name="search"
+                                               value="{{ search|default:'' }}"
+                                               class="form-control"
+                                               placeholder="ค้นหาชื่อเอกสาร / บทความ...">
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary w-100 h-100">
+                                            <i class="ri-search-line"></i> ค้นหา
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive table-card mb-3 p-2" style="min-height: 300px;">
+                                <table class="table table-bordered table-striped table-hover align-middle">
+                                    <thead class="table-light text-muted">
+                                        <tr>
+                                            <th style="width: 5%;">#</th>
+                                            <th style="width: 20%;">ชื่อเอกสาร</th>
+                                            <th style="width: 20%;">บทความที่เกี่ยวข้อง</th>
+                                            <th style="width: 25%;">ไฟล์ทั้งหมด</th>
+                                            <th style="width: 10%;">ผู้สร้าง</th>
+                                            <th style="width: 10%;">วันที่สร้าง</th>
+                                            <th style="width: 10%;">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for doc in documents %}
+                                        <tr>
+                                            <td>#{{ doc.id|stringformat:"04d" }}</td>
+
+                                            <td>
+                                                <a href="{% url 'promotion:document_detail' doc.id %}"
+                                                   class="fw-semibold link-primary">
+                                                    {{ doc.title|default:"(ไม่มีชื่อ)" }}
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                {% if doc.promotion %}
+                                                    <a href="{% url 'promotion:detail' doc.promotion.id %}"
+                                                       class="text-secondary">
+                                                        {{ doc.promotion.title }}
+                                                    </a>
+                                                {% else %}
+                                                    <span class="text-muted">ไม่มี</span>
+                                                {% endif %}
+                                            </td>
+
+                                            <td>
+                                                {% if doc.files.all %}
+                                                    {% for f in doc.files.all %}
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            {% if f.file_type == 'image' %}
+                                                                <i class="ri-image-line file-icon text-info"></i>
+                                                            {% elif f.file_type == 'video' %}
+                                                                <i class="ri-video-line file-icon text-warning"></i>
+                                                            {% elif f.file_type == 'application' %}
+                                                                <i class="ri-file-line file-icon text-primary"></i>
+                                                            {% else %}
+                                                                <i class="ri-file-unknow-line file-icon text-muted"></i>
+                                                            {% endif %}
+                                                            <a href="{{ f.file.url }}" download class="me-2">
+                                                                {{ f.title|default:f.file.name|truncatechars:40 }}
+                                                            </a>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <span class="text-muted">ไม่มีไฟล์</span>
+                                                {% endif %}
+                                            </td>
+
+                                            <td>{{ doc.user.get_full_name|default:"-" }}</td>
+
+                                            <td>{{ doc.created_at|date:"d M Y" }}</td>
+
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-link text-muted p-1 mt-n1 fs-15"
+                                                            data-bs-toggle="dropdown">
+                                                        <i data-feather="more-horizontal"></i>
+                                                    </button>
+
+                                                    <div class="dropdown-menu dropdown-menu-end">
+
+                                                        <a class="dropdown-item"
+                                                           href="{% url 'promotion:document_detail' doc.id %}">
+                                                            <i class="ri-eye-fill me-2 text-primary"></i> ดูรายละเอียด
+                                                        </a>
+
+                                                        <a class="dropdown-item"
+                                                           href="{% url 'promotion:document_edit' doc.id %}">
+                                                            <i class="ri-pencil-fill me-2 text-warning"></i> แก้ไข
+                                                        </a>
+
+                                                        <div class="dropdown-divider"></div>
+
+                                                        <a class="dropdown-item text-danger btn-delete"
+                                                           data-id="{{ doc.id }}"
+                                                           data-url="{% url 'promotion:document_delete' doc.id %}">
+                                                            <i class="ri-delete-bin-fill me-2"></i> ลบ
+                                                        </a>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">
+                                                ไม่พบข้อมูลเอกสาร
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {% include "PromotionHub/pagination.html" with page_obj=documents %}
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.querySelectorAll(".btn-delete").forEach(btn => {
+    btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        
+        let url = this.dataset.url;
+
+        Swal.fire({
+            title: "ลบแฟ้มเอกสาร?",
+            text: "คุณต้องการลบแฟ้มเอกสารนี้หรือไม่?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "ยืนยัน",
+            cancelButtonText: "ยกเลิก"
+        }).then(result => {
+            if (result.isConfirmed) {
+
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    }
+                }).then(() => {
+                    window.location.reload();
+                });
+
+            }
+        });
+    });
+});
+</script>
+{% endblock extra_js %}

@@ -11,7 +11,7 @@ class PromotionForm(forms.ModelForm):
 
     class Meta:
         model = Promotion
-        fields = ['image', 'title', 'content', 'quiz', 'priority', 'type']
+        fields = ['image', 'title', 'content', 'priority', 'type']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'หัวข้อประกาศ'}),
@@ -45,7 +45,6 @@ class PromotionForm(forms.ModelForm):
             Row(
                 Column('priority', css_class='form-group col-md-4 mb-0'),
                 Column('type', css_class='form-group col-md-4 mb-0'),
-                Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )
 
