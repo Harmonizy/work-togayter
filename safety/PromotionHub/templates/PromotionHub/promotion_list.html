@@ -210,4 +210,30 @@ document.querySelectorAll(".btn-delete").forEach(btn => {
     });
 });
 </script>
+
+<script>
+document.addEventListener("htmx:load", () => {
+    const form = document.querySelector("#publishForm");
+    const btn = document.querySelector("#btnPublish");
+
+    if (!form || !btn) return;
+
+    btn.addEventListener("click", function () {
+
+        Swal.fire({
+            title: "ยืนยันการเผยแพร่?",
+            text: "บทความนี้จะถูกส่งแจ้งเตือนไปยังผู้ที่เกี่ยวข้อง",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "ยืนยัน",
+            cancelButtonText: "ยกเลิก",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                htmx.trigger(form, "submit");
+            }
+        });
+
+    });
+});
+</script>
 {% endblock extra_js %}

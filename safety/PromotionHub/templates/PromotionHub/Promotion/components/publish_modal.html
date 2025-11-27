@@ -1,4 +1,5 @@
 <form
+    id="publishForm"
     hx-post="{% url 'promotion:publish_promotion' promotion.id %}"
     hx-target="#publishModalBody"
     hx-swap="innerHTML"
@@ -50,5 +51,7 @@
         <!-- HTMX จะโหลด field ของแต่ละ type มาใส่ -->
     </div>
 
-    <button class="btn btn-primary mt-3">ยืนยันเผยแพร่</button>
+    <button type="button" id="btnPublish" class="btn btn-primary mt-3">
+        ยืนยันเผยแพร่
+    </button>
 </form>
