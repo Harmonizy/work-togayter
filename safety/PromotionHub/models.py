@@ -1,3 +1,4 @@
+from django.utils.html import strip_tags
 from django.db import models
 
 from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
@@ -86,7 +87,15 @@ class Promotion(models.Model):
         return self.title
 
     def send_notify(self, users: list, url: str = ""):
-        send_notification(title=self.title,message=self.content,user_ids=users,url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/',using_auth=True)
+        plain_text = strip_tags(self.content or "")
+
+        send_notification(
+            title=self.title,
+            message=plain_text,
+            user_ids=users,
+            url=f'https://safety-analysis.rtaf.mi.th/promotion/detail/{self.id}/',
+            using_auth=True
+        )
 
 
 class PromotionView(models.Model):
