@@ -133,8 +133,8 @@ def safety_doc(request, pk):
         ReportTypeChoices.OBSERVATION: 'OBSERVATION.docx',
     }
 
-    template_filename = report_type_to_template.get(base_report.report_type, 'safety-report.docx')
-    template_filename = 'ground-safety-report.docx'
+    template_filename = report_type_to_template.get(base_report.report_type, 'SIMPLE.docx')
+    template_filename = 'SIMPLE.docx'
     template_path = os.path.join(BASE_TEMPLATE_DIR, template_filename)
 
     doc = Document(template_path)
