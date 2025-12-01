@@ -18,6 +18,11 @@ class Quiz(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def num_completed(self):
+        return QuizResult.objects.filter(quiz=self).count()
+
+
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, verbose_name="แบบทดสอบ", on_delete=models.CASCADE, related_name='questions')
     text = models.TextField(verbose_name="คำถาม")
@@ -55,7 +60,7 @@ class QuizResult(models.Model):
 
 
 class Promotion(models.Model):
-    image = models.ImageField(verbose_name="รูปภาพ", upload_to='safety_promotion/')
+    image = models.ImageField(verbose_name="รูปภาพ", upload_to='safety_promotion/', null=True, blank=True)
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
     content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=PromotionStatusChoices.choices, default=PromotionStatusChoices.DRAFT, null=True, blank=True)

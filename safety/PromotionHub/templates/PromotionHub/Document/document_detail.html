@@ -1,0 +1,37 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block title %}{{ document.title }} | Safety Promotion{% endblock %}
+
+{% block content %}
+
+<div class="container mt-3">
+
+    <h2>{{ document.title }}</h2>
+    <p>{{ document.description }}</p>
+
+    {% if document.promotion %}
+        <p><strong>โปรโมชั่น:</strong> {{ document.promotion.title }}</p>
+    {% endif %}
+
+    <hr>
+
+    <h4>ไฟล์แนบ</h4>
+    <ul>
+        {% for f in document.files.all %}
+        <li>
+            <a href="{{ f.file.url }}" target="_blank">{{ f.title|default:f.file.name }}</a>
+        </li>
+        {% empty %}
+        <li>ไม่มีไฟล์แนบ</li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+
+    <a href="{% url 'promotion:document_edit' document.pk %}" class="btn btn-warning">เพิ่มไฟล์</a>
+    <a href="{% url 'promotion:document_delete' document.pk %}" class="btn btn-danger">ลบ</a>
+
+</div>
+
+{% endblock %}

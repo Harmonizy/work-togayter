@@ -59,7 +59,9 @@ class PromotionAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {"fields": ("image", "title", "content")}),
+        ("ความสำคัญและประเภท", {"fields": ("priority", "type")}),
         ("สถานะและการเผยแพร่", {"fields": ("status", "publish")}),
+        ("แบบทดสอบ", {"fields": ("quiz",)}),
         ("ข้อมูลอื่น ๆ", {"fields": ("user", "created_at", "updated_at")}),
     )
 

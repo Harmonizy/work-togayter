@@ -88,6 +88,24 @@
                 </div>
               </div>
 
+              {% if quiz %}
+              <div class="text-center my-4">
+
+                  {% if not user_completed_quiz %}
+                  <a href="{% url 'promotion:' quiz.id %}" 
+                    class="btn btn-primary btn-lg">
+                      <i class="ri-questionnaire-line me-1"></i>
+                      ทำแบบทดสอบ
+                  </a>
+
+                  {% else %}
+                  <div class="alert alert-success text-center">
+                      ✔ คุณทำแบบทดสอบนี้แล้ว
+                  </div>
+                  {% endif %}
+              </div>
+              {% endif %}
+
               <!-- Priority Alert -->
               {% if promotion.priority == "H" %}
               <div class="card border-danger shadow-sm mb-4">
@@ -120,7 +138,8 @@
                   โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} •
                   {{ promotion.created_at|date:"d M Y" }} • 
                   เข้าชม {{ promotion.num_view }} คน • 
-                  รับทราบ {{ promotion.num_accepted }} คน
+                  ทำแบบทดสอบ {{ quiz_completed_count }} คน • 
+                  รับทราบ {{ promotion.num_accepted }} คน 
                 </div>
               </div>
               {% endif %}

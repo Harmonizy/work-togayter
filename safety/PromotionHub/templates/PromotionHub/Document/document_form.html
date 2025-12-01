@@ -1,0 +1,23 @@
+{% extends "partials/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title mb-0">สร้างเอกสารแจ้งเตือน</h4>
+    </div>
+
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            {% crispy form %}
+        </form>
+    </div>
+</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

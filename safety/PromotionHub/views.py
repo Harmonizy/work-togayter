@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponse
 
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile
-from .forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet
+from .forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet, DocumentForm, DocumentFileFormSet
 from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
 from common.RTAFUser.models import RTAFUser, Affiliation
@@ -144,19 +144,21 @@ class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
 
         context['promotion_view'] = promotion_view
         context['view_count'] = PromotionView.objects.filter(promotion=promotion).count()
+
+        quiz = promotion.quiz
+        if quiz:
+            context["quiz"] = quiz
+            context["quiz_completed_count"] = quiz.num_completed
+
+            user_done = QuizResult.objects.filter(
+                quiz=quiz,
+                user=self.request.user
+            ).exists()
+            context["user_completed_quiz"] = user_done
+        else:
+            context["quiz"] = None
+
         return context
-    
-    def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
-
-        if request.user.is_authenticated:
-            PromotionView.objects.get_or_create(
-                user=request.user,
-                promotion=self.get_object(),
-                defaults={'viewed_at': timezone.now()}
-            )
-
-        return response
 
 
 @login_required
@@ -447,4 +449,73 @@ def document_list(request):
         "documents": documents,
         "search": search,
     }
-    return render(request, "PromotionHub/document_list.html", context)
+    return render(request, "PromotionHub/Document/document_list.html", context)
+
+
+@login_required
+def document_detail(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+
+    context = {
+        "document": document,
+        "files": document.files.all()
+    }
+    return render(request, "PromotionHub/Document/document_detail.html", context)
+
+
+@login_required
+def document_create(request):
+    if request.method == "POST":
+        form = DocumentForm(request.POST)
+
+        if form.is_valid():
+            document = form.save(commit=False)
+            document.user = request.user     # ตั้งค่าเจ้าของ
+            document.save()
+
+            # หากต้อง redirect ไปหน้า detail ของ promotion
+            if document.promotion:
+                return redirect("promotion:detail", pk=document.promotion.id)
+
+            return redirect("document:list")  # หรือจะ redirect ที่อื่นก็ได้
+
+    else:
+        form = DocumentForm()
+
+    return render(request, "PromotionHub/Document/document_form.html", {
+        "form": form
+    })
+
+
+@login_required
+def document_edit(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+
+    if request.method == "POST":
+        form = DocumentForm(request.POST, instance=document)
+
+        if form.is_valid():
+            doc = form.save(commit=False)
+            doc.user = request.user  # อัปเดตผู้แก้ไขคนล่าสุดก็ได้
+            doc.save()
+
+            # หากต้อง redirect ไป promotion detail
+            if doc.promotion:
+                return redirect("promotion:detail", pk=doc.promotion.id)
+
+            return redirect("document:list")
+    else:
+        form = DocumentForm(instance=document)
+
+    return render(request, "PromotionHub/Document/document_form.html", {
+        "form": form,
+        "document": document
+    })
+
+
+@login_required
+def document_delete(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+    document.delete()
+    messages.success(request, "ลบเอกสารสำเร็จ")
+    return redirect("promotion:document_list")

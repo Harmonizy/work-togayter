@@ -1,4 +1,7 @@
 import os
+import zipfile
+import re
+
 from io import BytesIO
 from datetime import date
 from bs4 import BeautifulSoup
@@ -7,10 +10,10 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 from docx import Document
 from docx.shared import Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from html2docx import html2docx
 
 from ..models import BaseReport, AviationReport, GroundReport
@@ -18,126 +21,104 @@ from ..choices import ReportTypeChoices
 from common.Services.thaidate import thai_date
 
 
-# ---------------------------------------------------------
-# 🔶 แปลงเลขอารบิก → ไทย
-# ---------------------------------------------------------
-def to_thai_digits(text: str) -> str:
-    if not text:
-        return text
+def convert_docx_numbers_everywhere(docx_bytes):
     thai_map = str.maketrans("0123456789", "๐๑๒๓๔๕๖๗๘๙")
-    return text.translate(thai_map)
+
+    zin = zipfile.ZipFile(BytesIO(docx_bytes), 'r')
+    zout_buffer = BytesIO()
+    zout = zipfile.ZipFile(zout_buffer, 'w', zipfile.ZIP_DEFLATED)
+
+    for item in zin.infolist():
+        xml = zin.read(item.filename)
+
+        if item.filename.endswith('.xml') or item.filename.endswith('.rels'):
+            try:
+                text = xml.decode('utf-8')
+                text = re.sub(
+                    r">([^<]+)<",
+                    lambda m: ">" + m.group(1).translate(thai_map) + "<",
+                    text
+                )
+                xml = text.encode('utf-8')
+            except:
+                pass
+
+        zout.writestr(item, xml)
+
+    zin.close()
+    zout.close()
+    return zout_buffer.getvalue()
 
 
-# ---------------------------------------------------------
-# 🔶 แปลงเลขไทยทั่วทั้งเอกสาร DOCX
-# ---------------------------------------------------------
-def convert_doc_numbers_to_thai(doc: Document):
-    # paragraphs
-    for p in doc.paragraphs:
-        for run in p.runs:
-            run.text = to_thai_digits(run.text)
-
-    # tables
-    for table in doc.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                for p in cell.paragraphs:
-                    for run in p.runs:
-                        run.text = to_thai_digits(run.text)
-
-
-# ---------------------------------------------------------
-# 🔶 ใส่ HTML ลง paragraph ใน docx
-# ---------------------------------------------------------
-def insert_html_at_paragraph(doc: Document, paragraph, html_content: str):
-    if not html_content:
+def safe_insert_html(paragraph, html):
+    if not html:
         return
 
-    docx_stream = html2docx(html_content, title="My Document")
+    docx_stream = html2docx(html, title="HTMLContent")
     temp_doc = Document(docx_stream)
 
-    insert_index = doc.paragraphs.index(paragraph)
-
-    paragraph.clear()
-
-    for para in reversed(temp_doc.paragraphs):
-        new_para = doc.add_paragraph()
+    runs_data = []
+    for para in temp_doc.paragraphs:
         for run in para.runs:
-            r = new_para.add_run(run.text)
-            r.bold = run.bold
-            r.italic = run.italic
-            r.underline = run.underline
-            if run.font.color and run.font.color.rgb:
-                r.font.color.rgb = run.font.color.rgb
-            r.font.size = Pt(16)
-            r.font.name = 'TH Sarabun New'
+            runs_data.append({
+                "text": run.text,
+                "bold": run.bold,
+                "italic": run.italic,
+                "underline": run.underline,
+                "color": run.font.color.rgb if run.font.color else None
+            })
 
-        p = doc.paragraphs[-1]._element
-        doc.paragraphs[insert_index]._element.addprevious(p)
+    for r in paragraph.runs:
+        r.text = ""
+
+    for item in runs_data:
+        r = paragraph.add_run(item["text"])
+        r.bold = item["bold"]
+        r.italic = item["italic"]
+        r.underline = item["underline"]
+        if item["color"]:
+            r.font.color.rgb = item["color"]
+        r.font.size = Pt(16)
+        r.font.name = 'TH Sarabun New'
 
 
-# ---------------------------------------------------------
-# 🔶 แทนค่า placeholder + ใส่ HTML
-# ---------------------------------------------------------
 def replace_placeholders_in_paragraphs(doc, context, base_report=None):
     paragraphs = list(doc.paragraphs)
 
-    for i, paragraph in enumerate(paragraphs):
+    for paragraph in paragraphs:
         for key, value in context.items():
-            if key in paragraph.text:
-                if key == "##content##":
-                    for run in paragraph.runs:
-                        if key in run.text:
-                            run.text = run.text.replace(key, "")
+            if key not in paragraph.text:
+                continue
 
-                    if base_report and base_report.content:
-                        docx_stream = html2docx(base_report.content, title="Content")
-                        temp_doc = Document(docx_stream)
-
-                        insert_index = i + 1
-
-                        for para in reversed(temp_doc.paragraphs):
-                            new_para = doc.add_paragraph()
-                            for run in para.runs:
-                                r = new_para.add_run(run.text)
-                                r.bold = run.bold
-                                r.italic = run.italic
-                                r.underline = run.underline
-                                if run.font.color and run.font.color.rgb:
-                                    r.font.color.rgb = run.font.color.rgb
-                                r.font.size = Pt(16)
-                                r.font.name = 'TH Sarabun New'
-
-                            p = doc.paragraphs[-1]._element
-                            doc.paragraphs[insert_index-1]._element.addnext(p)
-                else:
-                    for run in paragraph.runs:
-                        if key in run.text:
-                            run.text = run.text.replace(key, str(value))
+            if key == "##content##":
+                for run in paragraph.runs:
+                    run.text = run.text.replace(key, "")
+                if base_report and base_report.content:
+                    safe_insert_html(paragraph, base_report.content)
+            else:
+                for run in paragraph.runs:
+                    if key in run.text:
+                        run.text = run.text.replace(key, str(value))
 
 
-# ---------------------------------------------------------
-# 🔶 return file
-# ---------------------------------------------------------
 def docx_to_response(doc, filename):
     buffer = BytesIO()
     doc.save(buffer)
     buffer.seek(0)
+
+    final_docx = convert_docx_numbers_everywhere(buffer.getvalue())
+
     response = HttpResponse(
-        buffer.getvalue(),
+        final_docx,
         content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     )
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response['Content-Disposition'] = f'attachment; filename="%s"' % filename
     return response
 
 
-# ---------------------------------------------------------
-# 🔶 export safety report
-# ---------------------------------------------------------
 @login_required
 def safety_doc(request, pk):
     base_report = BaseReport.objects.get(id=pk)
-
     aviation_report = AviationReport.objects.filter(base_report=base_report).first()
     ground_report = GroundReport.objects.filter(base_report=base_report).first()
 
@@ -179,7 +160,6 @@ def safety_doc(request, pk):
         '##comment##': str(base_report.comment),
         '##created_at##': base_report.created_at,
         '##updated_at##': base_report.updated_at,
-        '##example##': 'ตัวอย่าง ข้อความ',
     }
 
     ground_context = {}
@@ -202,15 +182,9 @@ def safety_doc(request, pk):
 
     replace_placeholders_in_paragraphs(doc, context, base_report)
 
-    # 🔶 แปลงเลขไทยทั่วเอกสารก่อนส่งออก
-    convert_doc_numbers_to_thai(doc)
-
     return docx_to_response(doc, f"file-{template_filename}")
 
 
-# ---------------------------------------------------------
-# 🔶 insert HTML into message form
-# ---------------------------------------------------------
 def insert_html_to_docx(cell, html):
     soup = BeautifulSoup(html or "", "html.parser")
 
@@ -228,7 +202,7 @@ def insert_html_to_docx(cell, html):
 
         elif el.name in ["ul", "ol"]:
             for li in el.find_all("li"):
-                p = cell.add_paragraph(f"• {li.get_text(strip=True)}")
+                p = cell.add_paragraph("• " + li.get_text(strip=True))
                 p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
         elif isinstance(el, str):
@@ -237,17 +211,14 @@ def insert_html_to_docx(cell, html):
                 p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
 
-# ---------------------------------------------------------
-# 🔶 export RTAF message form
-# ---------------------------------------------------------
 def rtaf_message_form(request, base_report_id):
     template_path = os.path.join(
         settings.BASE_DIR,
         'safety', 'Report', 'templates', 'Documents',
         'rtaf-message-form-template.docx'
     )
-    doc = Document(template_path)
 
+    doc = Document(template_path)
     base_report = get_object_or_404(BaseReport, id=base_report_id)
 
     ground = getattr(base_report, "groundreport", None)
@@ -304,7 +275,4 @@ def rtaf_message_form(request, base_report_id):
                                 else:
                                     run.text = run.text.replace(key, str(value))
 
-    # 🔶 แปลงเลขไทยทั้งไฟล์
-    convert_doc_numbers_to_thai(doc)
-
-    return docx_to_response(doc, f"rtaf-message-{base_report.id}.docx")
+    return docx_to_response(doc, f"rtaf-message-{base_report_id}.docx")

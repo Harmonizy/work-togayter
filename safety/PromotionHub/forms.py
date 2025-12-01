@@ -1,17 +1,17 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column, Field, Div
+from crispy_forms.layout import Layout, Row, Column, Field, Div, Submit
 from ckeditor.widgets import CKEditorWidget
 from django.forms import inlineformset_factory
 
-from .models import Promotion, Quiz, Question, Choice
+from .models import Promotion, Quiz, Question, Choice, Document, DocumentFile
 
 class PromotionForm(forms.ModelForm):
     content = forms.CharField(widget=CKEditorWidget(), label="")
 
     class Meta:
         model = Promotion
-        fields = ['image', 'title', 'content', 'priority', 'type']
+        fields = ['image', 'title', 'content', 'priority', 'type', 'quiz']
         widgets = {
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'หัวข้อประกาศ'}),
@@ -45,6 +45,7 @@ class PromotionForm(forms.ModelForm):
             Row(
                 Column('priority', css_class='form-group col-md-4 mb-0'),
                 Column('type', css_class='form-group col-md-4 mb-0'),
+                Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )
 
@@ -105,3 +106,40 @@ ChoiceFormSet = inlineformset_factory(
     extra=3,
     can_delete=True
 )
+
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ["title", "description", "promotion"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+
+        self.helper.layout = Layout(
+            Row(
+                Column("title", css_class="col-md-6"),
+                Column("promotion", css_class="col-md-6"),
+            ),
+            "description",
+
+            # ⭐ ปุ่มบันทึกที่คุณลบออกไป ต้องใส่กลับมา ⭐
+            Submit("submit", "บันทึก", css_class="btn btn-primary mt-3")
+        )
+
+
+class DocumentFileFormSet(forms.ModelForm):
+    class Meta:
+        model = DocumentFile
+        fields = ["file"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.form_show_labels = True
+        
