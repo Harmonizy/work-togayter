@@ -62,7 +62,9 @@ class Promotion(models.Model):
     publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE , null=True, blank=True)
     priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PromotionPriorityChoices.choices, default=PromotionPriorityChoices.NONE , null=True, blank=True)
     type = models.CharField(verbose_name="ประเภท", max_length=1, choices=PromotionTypeChoices.choices, default=PromotionTypeChoices.GROUND , null=True, blank=True)
-    # quiz = models.ForeignKey(Quiz, verbose_name="แบบทดสอบ", on_delete=models.SET_NULL, null=True, blank=True)
+    
+    quiz = models.ForeignKey(Quiz, verbose_name="แบบทดสอบ", on_delete=models.SET_NULL, null=True, blank=True)
+    
     user = models.ForeignKey(RTAFUser, verbose_name="ผู้สร้าง", on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(verbose_name="วันที่สร้าง", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วันที่แก้ไข", auto_now=True)
@@ -85,6 +87,14 @@ class Promotion(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def num_accepted(self):
+        return PromotionView.objects.filter(
+            promotion=self,
+            accepted=True
+        ).count()
+
 
     def send_notify(self, users: list, url: str = ""):
         plain_text = strip_tags(self.content or "")
@@ -128,7 +138,7 @@ class Document(models.Model):
     updated_at = models.DateTimeField("วันที่แก้ไข", auto_now=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "6. แฟ้มเอกสาร"
+        verbose_name = verbose_name_plural = "6. เอกสารแจ้งเตือน"
 
     def __str__(self):
         return f"{self.promotion}"
@@ -148,7 +158,7 @@ class DocumentFile(models.Model):
 
     class Meta:
         ordering = ["order", "-created_at"]
-        verbose_name = verbose_name_plural = "6.5 ไฟล์ในเอกสาร"
+        verbose_name = verbose_name_plural = "6.5 ไฟล์ - เอกสารแจ้งเตือน"
 
     def __str__(self):
         return self.title or self.file.name

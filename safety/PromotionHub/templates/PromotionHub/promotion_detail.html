@@ -119,7 +119,8 @@
                 <div class="promotion-meta">
                   โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} •
                   {{ promotion.created_at|date:"d M Y" }} • 
-                  เข้าชม {{ promotion.num_view }} คน
+                  เข้าชม {{ promotion.num_view }} คน • 
+                  รับทราบ {{ promotion.num_accepted }} คน
                 </div>
               </div>
               {% endif %}

@@ -1,19 +1,22 @@
 from django.contrib import admin
-from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult
+from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile
 
 
-# --- Choice inline (สำหรับ QuestionAdmin) ---
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 2
     min_num = 1
 
 
-# --- Question inline (สำหรับ QuizAdmin) ---
 class QuestionInline(admin.StackedInline):
     model = Question
     extra = 1
     show_change_link = True
+
+
+class DocumentFileInline(admin.StackedInline):
+    model = DocumentFile
+    extra = 1
 
 
 # --- Quiz Admin ---
@@ -64,8 +67,8 @@ class PromotionAdmin(admin.ModelAdmin):
 # --- Promotion View (ผู้เข้าชม) ---
 @admin.register(PromotionView)
 class PromotionViewAdmin(admin.ModelAdmin):
-    list_display = ("promotion", "user", "viewed_at")
-    list_filter = ("viewed_at",)
+    list_display = ("promotion", "user", "accepted", "viewed_at")
+    list_filter = ("viewed_at", "accepted")
     search_fields = ("promotion__title", "user__username")
 
 
@@ -76,3 +79,11 @@ class QuizResultAdmin(admin.ModelAdmin):
     list_filter = ("quiz", "completed_at")
     search_fields = ("user__username", "quiz__title")
     readonly_fields = ("completed_at",)
+
+
+@admin.register(Document)
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ("title", "promotion")
+    search_fields = ("title", "promotion__title")
+    autocomplete_fields = ("promotion",)
+    inlines = [DocumentFileInline] 

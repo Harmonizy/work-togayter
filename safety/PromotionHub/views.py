@@ -17,7 +17,6 @@ from common.RTAFAuth.views import SuperAppLoginMixins
 from common.RTAFUser.models import RTAFUser, Affiliation
 
 
-
 @login_required
 def list_ground(request):
     user = request.user
@@ -55,7 +54,10 @@ def list_ground(request):
     # รวม + distinct + sort
     promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
 
-    context = {"promotions": promotions}
+    context = {
+        "promotions": promotions,
+        "type": "ภาคพื้น"
+    }
     return render(request, "PromotionHub/promotion_list.html", context)
 
 
@@ -96,7 +98,10 @@ def list_air(request):
     # รวม + distinct + sort
     promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
 
-    context = {"promotions": promotions}
+    context = {
+        "promotions": promotions,
+        "type": "ภาคอากาศ"
+    }
     return render(request, "PromotionHub/promotion_list.html", context)
 
 
