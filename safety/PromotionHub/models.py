@@ -85,7 +85,9 @@ class Promotion(models.Model):
             ("edit_promotion_hub", "*แก้ไขการประชาสัมพันธ์ได้"),
             ("delete_promotion_hub", "*ลบการประชาสัมพันธ์ได้"),
             ("detail_promotion_hub", "*ดูรายละเอียดการประชาสัมพันธ์ได้"),
+
             ("publish_promotion_hub", "*เผยแพร่การประชาสัมพันธ์ได้"),
+            ("publish_promotion_hub_airforce", "*เผยแพร่การประชาสัมพันธ์ทั้งทอ.ได้"),
 
             ("create_promotion_quiz", "*สร้างแบบทดสอบได้"),
         ]

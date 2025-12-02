@@ -92,7 +92,7 @@
               <div class="text-center my-4">
 
                   {% if not user_completed_quiz %}
-                  <a href="{% url 'promotion:' quiz.id %}" 
+                  <a href="{% url 'promotion:quiz_view' quiz.id %}" 
                     class="btn btn-primary btn-lg">
                       <i class="ri-questionnaire-line me-1"></i>
                       ทำแบบทดสอบ

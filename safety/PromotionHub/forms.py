@@ -57,10 +57,8 @@ class QuizForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.form_show_labels = True
 
 
 class QuestionForm(forms.ModelForm):
@@ -70,20 +68,18 @@ class QuestionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.form_show_labels = True
 
 
 QuestionFormSet = inlineformset_factory(
     Quiz,
     Question,
     form=QuestionForm,
-    fields=["text"],
     extra=1,
     can_delete=True
 )
+
 
 class ChoiceForm(forms.ModelForm):
     class Meta:
@@ -92,18 +88,15 @@ class ChoiceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.helper.form_show_labels = True
 
 
 ChoiceFormSet = inlineformset_factory(
     Question,
     Choice,
     form=ChoiceForm,
-    fields=['text', 'is_correct'],
-    extra=3,
+    extra=1,
     can_delete=True
 )
 
@@ -131,15 +124,19 @@ class DocumentForm(forms.ModelForm):
         )
 
 
-class DocumentFileFormSet(forms.ModelForm):
+class DocumentFileForm(forms.ModelForm):
     class Meta:
         model = DocumentFile
-        fields = ["file"]
+        fields = ["file", "title", "description"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.form_show_labels = True
+        self.helper.form_tag = False 
+        self.helper.layout = Layout(
+            "file",
+            "title",
+            "description",
+        )
+
         

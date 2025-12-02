@@ -223,6 +223,20 @@
         {# ===================== RIGHT: SIDEBAR ===================== #}
         <div class="col-lg-3 order-2">
 
+          {% if sixA_summary %}
+          <div class="card mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center section-title">
+                <span>6A</span>
+              </div>
+              <div class="card-body">
+                  {% for item in sixA_summary %}
+                    {{ item.question__code }} ({{ item.true_count }}), 
+                  {% endfor %}
+              </div>
+          </div>
+          {% endif %}
+
+
           {# รูปภาพ #}
           <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center section-title">
@@ -259,7 +273,7 @@
           {# ไฟล์แนบ #}
           <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center section-title">
-              <span>ไฟล์แนบ (Attachments)</span>
+              <span>ไฟล์แนบ</span>
             </div>
             <div class="card-body">
               {% if files %}

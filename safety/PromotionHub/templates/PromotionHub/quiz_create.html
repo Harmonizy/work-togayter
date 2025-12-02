@@ -3,82 +3,181 @@
 {% block title %}Create Quiz{% endblock %}
 
 {% block content %}
+
 <div class="main-content">
   <div class="page-content">
     <div class="container-fluid">
 
       {% include "partials/page-title.html" with pagetitle="Quiz" title="สร้างแบบทดสอบใหม่" %}
 
-      <div class="row">
-        <div class="col-lg-12">
+      <form method="POST">
+        {% csrf_token %}
 
-          <form method="POST">
-            {% csrf_token %}
+        <!-- Quiz -->
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title mb-0">ข้อมูลแบบทดสอบ</h4>
+          </div>
+          <div class="card-body">
+            {% crispy quiz_form %}
+          </div>
+        </div>
 
-            <!-- Quiz Info -->
-            <div class="card">
-              <div class="card-header">
-                <h4 class="card-title mb-0">ข้อมูลแบบทดสอบ</h4>
-              </div>
+        <!-- Questions -->
+        {{ question_formset.management_form }}
 
-              <div class="card-body">
-                {% crispy quiz_form %}
-              </div>
-            </div>
+        <div class="card mt-4">
+          <div class="card-header">
+            <h4 class="card-title mb-0">คำถาม และตัวเลือก</h4>
+          </div>
 
-            <!-- Questions + Choices -->
-            <div class="card mt-4">
-              <div class="card-header">
-                <h4 class="card-title mb-0">คำถาม และตัวเลือก</h4>
-              </div>
+          <div class="card-body" id="question-container">
 
-              <div class="card-body">
+            {% for qform, cforms in question_and_choices %}
+            <div class="question-item border rounded p-3 mb-3" data-q="{{ forloop.counter0 }}">
 
-                {{ question_formset.management_form }}
+              <h6>คำถามที่ {{ forloop.counter }}</h6>
+              {% crispy qform %}
 
-                {% for qform, cforms in question_and_choices %}
-                <div class="border rounded p-3 mb-3">
+              <div class="mt-3 p-3 bg-light rounded border">
+                <h6>ตัวเลือก</h6>
 
-                  <!-- Question -->
-                  <h6 class="mb-2">คำถามที่ {{ forloop.counter }}</h6>
-                  {% crispy qform %}
+                <div class="choice-container" data-q="{{ forloop.counter0 }}">
+                  {{ cforms.management_form }}
 
-                  <!-- Choices -->
-                  <div class="mt-3 p-3 bg-light rounded border">
-                    <h6 class="mb-2">ตัวเลือก</h6>
-
-                    {{ cforms.management_form }}
-
-                    {% for cform in cforms %}
-                      <div class="mb-2 p-2 border rounded bg-white">
-                        {% crispy cform %}
-                      </div>
-                    {% endfor %}
+                  {% for cform in cforms %}
+                  <div class="choice-item mb-2 p-2 border rounded bg-white">
+                    {% crispy cform %}
                   </div>
-
+                  {% endfor %}
                 </div>
-                {% endfor %}
+
+                <button type="button"
+                        class="btn btn-sm btn-outline-primary add-choice-btn"
+                        data-q="{{ forloop.counter0 }}">
+                  + เพิ่มตัวเลือก
+                </button>
 
               </div>
+
             </div>
+            {% endfor %}
 
-            <!-- Buttons -->
-            <div class="mt-4 d-flex gap-2">
-              <button type="submit" class="btn btn-primary">
-                <i class="ri-save-3-fill me-1"></i> บันทึก
-              </button>
+          </div>
 
-              <a href="{% url 'promotion:quiz_list' %}" class="btn btn-light">
-                <i class="ri-arrow-go-back-line me-1"></i> ยกเลิก
-              </a>
-            </div>
-
-          </form>
+          <button type="button" id="add-question-btn" class="btn btn-outline-primary mt-3">
+            + เพิ่มคำถาม
+          </button>
 
         </div>
-      </div>
+
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary">บันทึกแบบทดสอบ</button>
+        </div>
+
+      </form>
 
     </div>
   </div>
 </div>
+
+
+<!-- Template: Question -->
+<div id="question-template" class="d-none">
+  <div class="question-item border rounded p-3 mb-3" data-q="__qindex__">
+
+    <h6>คำถามที่ __qnum__</h6>
+    __qform__
+
+    <div class="mt-3 p-3 bg-light rounded border">
+      <h6>ตัวเลือก</h6>
+
+      <div class="choice-container" data-q="__qindex__">
+        __c_mgmt__
+        __cform__
+      </div>
+
+      <button type="button"
+              class="btn btn-sm btn-outline-primary add-choice-btn"
+              data-q="__qindex__">
+        + เพิ่มตัวเลือก
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Template: Choice -->
+<div id="choice-template" class="d-none">
+  <div class="choice-item mb-2 p-2 border rounded bg-white">
+    __cform__
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const questionContainer = document.getElementById("question-container");
+
+    const qTemplate = document.getElementById("question-template").innerHTML;
+    const cTemplate = document.getElementById("choice-template").innerHTML;
+
+    const emptyQ = `{{ empty_question_html|escapejs }}`;
+    const emptyC = `{{ empty_choice_html|escapejs }}`;
+    const emptyCMgmt = `{{ empty_choice_mgmt|escapejs }}`;
+
+    const qTotal = document.getElementById("id_questions-TOTAL_FORMS");
+
+    // ----------------------------------------------------
+    // เพิ่มคำถาม
+    // ----------------------------------------------------
+    document.getElementById("add-question-btn").onclick = () => {
+        const qIndex = parseInt(qTotal.value);
+
+        let html = qTemplate
+            .replace(/__qindex__/g, qIndex)
+            .replace(/__qnum__/g, qIndex + 1)
+            .replace(/__qform__/g, emptyQ.replace(/__qindex__/g, qIndex))
+            .replace(/__c_mgmt__/g, emptyCMgmt.replace(/__qindex__/g, qIndex))
+            .replace(/__cform__/g,
+                emptyC.replace(/__qindex__/g, qIndex).replace(/__cindex__/g, 0)
+            );
+
+        questionContainer.insertAdjacentHTML("beforeend", html);
+
+        qTotal.value = qIndex + 1;
+    };
+
+
+    // ----------------------------------------------------
+    // เพิ่มตัวเลือก
+    // ----------------------------------------------------
+    document.addEventListener("click", function (e) {
+
+        if (!e.target.classList.contains("add-choice-btn")) return;
+
+        const qIndex = e.target.dataset.q;
+        const container = document.querySelector(`.choice-container[data-q="${qIndex}"]`);
+
+        const totalInput = container.querySelector(`#id_choice_${qIndex}-TOTAL_FORMS`);
+        const cIndex = parseInt(totalInput.value);
+
+        let html = emptyC
+            .replace(/__qindex__/g, qIndex)
+            .replace(/__cindex__/g, cIndex);
+
+        container.insertAdjacentHTML("beforeend", html);
+
+        totalInput.value = cIndex + 1;
+    });
+
+});
+</script>
 {% endblock %}

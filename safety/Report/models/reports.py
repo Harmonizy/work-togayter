@@ -32,12 +32,13 @@ class ReportManager(models.Manager):
 
 class BaseReport(models.Model):
     fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ",default=current_fiscal_year)
-    affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยงาน",on_delete=models.SET_NULL,null=True,blank=True)
+    affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยรับผิดชอบ",related_name='base_reports',on_delete=models.SET_NULL,null=True,blank=True)
+    location_affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยที่เกิดเหตุ",related_name='location_base_reports',on_delete=models.SET_NULL,null=True,blank=True)
     event_date = models.DateField(verbose_name="วันที่เกิดเหตุ",default=date.today)
     event_time = models.TimeField(verbose_name="เวลาเกิดเหตุ",default=timezone.now)
 
     report_type = models.CharField(verbose_name="ประเภทรายงาน",max_length=2,choices=ReportTypeChoices.choices,default=ReportTypeChoices.SIMPLE)
-    priority = models.CharField(verbose_name="ความสำคัญ",max_length=1,choices=PriorityChoices.choices,null=True,blank=True)
+    priority = models.CharField(verbose_name="ความสำคัญ",max_length=1,choices=PriorityChoices.choices)
     status = models.IntegerField(verbose_name="สถานะ",choices=ReportStatusChoices.choices,default=ReportStatusChoices.DRAFT)
 
     title = models.CharField(verbose_name="หัวข้อรายงาน",max_length=255)
@@ -64,8 +65,10 @@ class BaseReport(models.Model):
             ("edit_report", "*แก้ไขรายงานได้"),
             ("delete_report", "*ลบรายงานได้"),
             ("view_all_report_detail", "*ดูรายละเอียดรายงานทั้งหมดได้"),
-            ("view_affiliaiotn_report_detail", "*ดูรายละเอียดรายงานของหน่วยงานตัวเองได้"),
+            ("view_affiliation_report_detail", "*ดูรายละเอียดรายงานของหน่วยงานตัวเองได้"),
             ("approve_report", "*อนุมัติรายงานได้"),
+
+            ("create_sixA", "*ประเมิน 6A ได้"),
 
             ("view_all_dashboard", "*ดูสถิติทั้งหมดได้"),
             ("view_affiliation_dashboard", "*ดูสถิติของหน่วยงานตัวเองได้"),
@@ -97,7 +100,7 @@ class GroundReport(BaseAbsoluteURL, models.Model):
     accident_type = models.IntegerField(verbose_name="ประเภทอุบัติเหตุ", choices=AccidentTypeChoices.choices, null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "2. ภาคพื้น"
+        verbose_name = verbose_name_plural = "1.1 ภาคพื้น"
 
 
 class AviationReport(BaseAbsoluteURL, models.Model):
@@ -111,7 +114,7 @@ class AviationReport(BaseAbsoluteURL, models.Model):
     air_control = models.CharField(verbose_name="หน่วยควบคุมการจราจรทางอากาศ", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "3. ภาคอากาศ"
+        verbose_name = verbose_name_plural = "1.2 ภาคอากาศ"
 
 
 class Participant(models.Model):
@@ -122,7 +125,7 @@ class Participant(models.Model):
     note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "4. บุคคลเกี่ยวข้อง"
+        verbose_name = verbose_name_plural = "1.3 บุคคลเกี่ยวข้อง"
 
 
 class ReferenceReport(models.Model):
@@ -131,7 +134,7 @@ class ReferenceReport(models.Model):
     note = models.TextField(verbose_name="หมายเหตุ", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "5. รายงานอ้างอิง"
+        verbose_name = verbose_name_plural = "1.4 รายงานอ้างอิง"
 
 
 # class ObservationReport(BaseAbsoluteURL, models.Model):

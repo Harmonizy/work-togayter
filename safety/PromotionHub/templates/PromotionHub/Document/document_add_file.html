@@ -1,0 +1,18 @@
+{% load crispy_forms_tags %}
+
+<form
+    hx-post="{% url 'promotion:document_add_file' document.pk %}"
+    hx-target="#modal-body"
+    hx-swap="innerHTML"
+    enctype="multipart/form-data"
+    method="POST"
+>
+    {% csrf_token %}
+    {% crispy form %}
+    <button class="btn btn-primary mt-3" type="submit">บันทึก</button>
+</form>
+
+
+
+
+

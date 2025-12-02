@@ -1,37 +1,121 @@
 {% extends "partials/base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
-{% block title %}{{ document.title }} | Safety Promotion{% endblock %}
+{% block title %}รายละเอียดเอกสาร | {{ document.title }}{% endblock %}
 
 {% block content %}
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
 
-<div class="container mt-3">
-
-    <h2>{{ document.title }}</h2>
-    <p>{{ document.description }}</p>
-
+    <!-- Promotion Section -->
     {% if document.promotion %}
-        <p><strong>โปรโมชั่น:</strong> {{ document.promotion.title }}</p>
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if document.promotion.image %}
+                    <img src="{{ document.promotion.image.url }}" class="img-fluid rounded-start" alt="Promotion Image">
+                {% else %}
+                    ไม่มีรูปภาพ
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">{{ document.promotion.title }}</h4>
+
+                    <p class="text-muted mb-1">
+                        ประเภท: {{ document.promotion.get_type_display }}
+                    </p>
+
+                    <p class="text-muted mb-1">
+                        สถานะ: {{ document.promotion.get_status_display }}
+                    </p>
+
+                    <p class="text-muted">
+                        เผยแพร่: {{ document.promotion.get_publish_display }}
+                    </p>
+
+                    <a class="btn btn-outline-primary mt-2"
+                       href="{% url 'promotion:detail' document.promotion.id %}">
+                        ดูรายละเอียดประชาสัมพันธ์
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
-    <hr>
 
-    <h4>ไฟล์แนบ</h4>
-    <ul>
-        {% for f in document.files.all %}
-        <li>
-            <a href="{{ f.file.url }}" target="_blank">{{ f.title|default:f.file.name }}</a>
-        </li>
-        {% empty %}
-        <li>ไม่มีไฟล์แนบ</li>
-        {% endfor %}
-    </ul>
+    <!-- Document Info -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h3 class="fw-bold">{{ document.title }}</h3>
 
-    <hr>
+            {% if document.description %}
+                <p class="mt-2">{{ document.description }}</p>
+            {% endif %}
 
-    <a href="{% url 'promotion:document_edit' document.pk %}" class="btn btn-warning">เพิ่มไฟล์</a>
-    <a href="{% url 'promotion:document_delete' document.pk %}" class="btn btn-danger">ลบ</a>
+            <p class="text-muted small mt-3">
+                สร้างโดย: {{ document.user }} |
+                วันที่สร้าง: {{ document.created_at|date:"d/m/Y H:i" }} |
+                แก้ไขล่าสุด: {{ document.updated_at|date:"d/m/Y H:i" }}
+            </p>
+        </div>
+    </div>
 
+
+    <!-- Files Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="fw-bold mb-0">ไฟล์แนบ</h5>
+        </div>
+
+        <div class="card-body" id="file-list"
+            hx-get="{% url 'promotion:document_file_list' document.pk %}"
+            hx-trigger="load"
+            hx-swap="outerHTML">
+        </div>
+    </div>
+
+
+    <!-- Actions -->
+    <div class="d-flex gap-2">
+        <button
+            class="btn btn-primary"
+            hx-get="{% url 'promotion:document_add_file' document.pk %}"
+            hx-target="#modal-body"
+            hx-swap="innerHTML"
+            data-bs-toggle="modal"
+            data-bs-target="#modalUploadFile"
+            data-bs-backdrop="true"
+        >
+            เพิ่มไฟล์
+        </button>
+    </div>
+
+</div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalUploadFile" tabindex="-1" data-bs-backdrop="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">เพิ่มไฟล์</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body" id="modal-body">
+      </div>
+
+    </div>
+  </div>
 </div>
 
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import list_air, list_ground, PromotionDetailView, create, edit, delete, quiz_view, quiz_result, publish_promotion, quiz_list, quiz_create, quiz_detail, quiz_update, quiz_delete, accept, quiz_result_modal, publish_modal, publish_dynamic_options, document_list, document_detail, document_create, document_edit, document_delete
+from .views import list_air, list_ground, PromotionDetailView, create, edit, delete, quiz_view, quiz_result, publish_promotion, quiz_list, quiz_create, quiz_detail, quiz_update, quiz_delete, accept, quiz_result_modal, publish_modal, publish_dynamic_options, document_list, document_detail, document_create, document_edit, document_delete, document_add_file, document_file_list, document_file_delete
 
 app_name = 'promotion'
 
@@ -31,6 +31,10 @@ main_urlpatterns = [
     path("documents/create/", document_create, name="document_create"),
     path("documents/<int:pk>/edit/", document_edit, name="document_edit"),
     path("documents/<int:pk>/delete/", document_delete, name="document_delete"),
+    path("documents/add-file/<int:pk>", document_add_file, name="document_add_file"),
+    path("documents/files/<int:pk>", document_file_list, name="document_file_list"),
+    path("documents/files/delete/<int:file_id>/", document_file_delete, name="document_file_delete"),
+
 
 ]
 

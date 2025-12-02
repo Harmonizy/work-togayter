@@ -8,10 +8,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 from django.http import JsonResponse
 from django.contrib.auth.models import Group
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.core.paginator import Paginator
+
 
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile
-from .forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet, DocumentForm, DocumentFileFormSet
+from .forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet, DocumentForm, DocumentFileForm
 from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
 from common.RTAFUser.models import RTAFUser, Affiliation
@@ -296,52 +298,70 @@ def quiz_list(request):
 
 
 def quiz_create(request):
+
+    # ใช้ prefix มาตรฐาน
+    q_prefix = "questions"
+
     if request.method == "POST":
         quiz_form = QuizForm(request.POST)
-        question_formset = QuestionFormSet(request.POST)
-
-        choice_formsets = []
+        question_formset = QuestionFormSet(request.POST, prefix=q_prefix)
 
         if quiz_form.is_valid() and question_formset.is_valid():
             quiz = quiz_form.save()
-            questions = question_formset.save(commit=False)
 
-            for index, q in enumerate(questions):
-                q.quiz = quiz
-                q.save()
+            for q_index, q_form in enumerate(question_formset):
+                question = q_form.save(commit=False)
+                question.quiz = quiz
+                question.save()
 
-                # สร้าง ChoiceFormSet สำหรับคำถามแต่ละข้อ
                 choice_formset = ChoiceFormSet(
                     request.POST,
-                    instance=q,
-                    prefix=f"choice_{index}"
+                    prefix=f"choice_{q_index}",
+                    instance=question
                 )
 
                 if choice_formset.is_valid():
                     choice_formset.save()
-                else:
-                    print("Choice error:", choice_formset.errors)
 
             return redirect("promotion:quiz_list")
 
     else:
         quiz_form = QuizForm()
-        question_formset = QuestionFormSet()
+        question_formset = QuestionFormSet(prefix=q_prefix)
 
-        # choice formsets ตามจำนวน question form
-        choice_formsets = [
-            ChoiceFormSet(prefix=f"choice_{i}")
-            for i, _ in enumerate(question_formset)
-        ]
+    # --------------------------------------------
+    # empty form สำหรับ JS clone
+    # --------------------------------------------
 
-    # ⬅⬅⬅ สำคัญ! รวมคู่ Question + ChoiceFormSets
+    # empty question form
+    q_empty = QuestionFormSet(prefix=q_prefix).empty_form.as_p()
+    q_empty = q_empty.replace(f"{q_prefix}-__prefix__", f"{q_prefix}-__qindex__")
+
+    # empty choice form
+    c_empty = ChoiceFormSet(prefix="choice_EMPTY").empty_form.as_p()
+    c_empty = c_empty.replace("choice_EMPTY-__prefix__", "choice___qindex__-__cindex__")
+
+    # empty choice management_form
+    c_mgmt = ChoiceFormSet(prefix="choice_EMPTY").management_form.as_p()
+    c_mgmt = c_mgmt.replace("choice_EMPTY", "choice___qindex__")
+
+    # --------------------------------------------
+
+    choice_formsets = [
+        ChoiceFormSet(prefix=f"choice_{i}")
+        for i in range(question_formset.total_form_count())
+    ]
+
     question_and_choices = zip(question_formset, choice_formsets)
 
     return render(request, "PromotionHub/quiz_create.html", {
         "quiz_form": quiz_form,
         "question_formset": question_formset,
-        "choice_formsets": choice_formsets,
-        "question_and_choices": question_and_choices,  # ⬅ ส่งเข้าหน้า HTML
+        "question_and_choices": question_and_choices,
+
+        "empty_question_html": q_empty,
+        "empty_choice_html": c_empty,
+        "empty_choice_mgmt": c_mgmt,
     })
 
 
@@ -519,3 +539,52 @@ def document_delete(request, pk):
     document.delete()
     messages.success(request, "ลบเอกสารสำเร็จ")
     return redirect("promotion:document_list")
+
+
+@login_required
+def document_add_file(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+
+    if request.method == "POST":
+        form = DocumentFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.document = document
+            obj.user = request.user
+            obj.save()
+            response = HttpResponse("")
+            response["HX-Redirect"] = reverse("promotion:document_detail", args=[pk])
+            return response
+
+    form = DocumentFileForm()
+    return render(request, "PromotionHub/Document/document_add_file.html", {
+        "form": form,
+        "document": document,
+    })
+
+
+@login_required
+def document_file_list(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+
+    page = request.GET.get("page", 1)
+
+    paginator = Paginator(document.files.all(), 5)
+    page_obj = paginator.get_page(page)
+
+    return render(
+        request,
+        "PromotionHub/Document/components/file_list.html",
+        {"document": document, "page_obj": page_obj},
+    )
+    
+
+@login_required
+def document_file_delete(request, file_id):
+    if request.method == "POST":
+        file_obj = get_object_or_404(DocumentFile, id=file_id)
+        doc_pk = file_obj.document.pk
+        file_obj.delete()
+        return document_file_list(request, doc_pk)
+
+    return HttpResponseBadRequest("Invalid request")

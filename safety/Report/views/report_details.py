@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count, Q
 from django.contrib import messages
 
 from ..models.reports import BaseReport, AviationReport, GroundReport, Participant, ReferenceReport
 from ..models.attachments import Image, File, Recommendation
 from ..choices import ReportTypeChoices
-
+from safety.Report.models.sixA import SixA, Answer
 from safety.Evaluate.models import BaseReportEvaluation, EvaluationAnswer
 
 
@@ -23,7 +23,7 @@ def main_page(request, pk):
     if request.user.has_perm("report.view_all_report_detail"):
         pass
     elif request.user.has_perm("report.view_affiliation_report_detail"):
-        if report.affiliation != request.user.affiliation:
+        if report.affiliation != request.user.affiliation and report.location_affiliation != request.user.affiliation:
             messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานหน่วยอื่นได้")
             return redirect("report:safety-report.list")
     else:
@@ -79,6 +79,32 @@ def main_page(request, pk):
         "is_observation_report": is_type(report, ReportTypeChoices.OBSERVATION),
     }
 
+    sixA_all = SixA.objects.filter(report=report)
+
+    sixA_answers = (
+        Answer.objects
+        .filter(sixA__in=sixA_all, answer=True)  # เฉพาะ True
+        .select_related("question")
+        .order_by("question__category", "question__code")
+    )
+
+    sixA_summary = (
+        Answer.objects
+        .filter(sixA__in=sixA_all)
+        .values(
+            "question__id",
+            "question__code",
+            "question__definition",
+            "question__description",
+            "question__category",
+        )
+        .annotate(
+            true_count=Count("id", filter=Q(answer=True))
+        )
+        .filter(true_count__gt=0)   # เอาเฉพาะข้อที่มี True อย่างน้อย 1
+        .order_by("question__category", "question__code")
+    )
+
     context = {
         "base_report": report,
         "aviation_report": aviation_report,
@@ -94,6 +120,8 @@ def main_page(request, pk):
         "evaluation": evaluation,
         "evaluation_answers": evaluation.answers.all() if evaluation else [],
         "report_type_label": report.get_report_type_display(),
+
+        "sixA_summary": sixA_summary,
 
         **flags,
         "is_missing_ground_report": flags["is_ground_report"] and not ground_report,

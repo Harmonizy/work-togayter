@@ -34,7 +34,10 @@ def list(request):
     if request.user.has_perm('Report.view_all_report_list'):
         reports = BaseReport.objects.all()
     elif request.user.has_perm('Report.view_affiliation_report_list'):
-        reports = BaseReport.objects.filter(affiliation=request.user.affiliation)
+        reports = BaseReport.objects.filter(
+            Q(affiliation=request.user.affiliation) |
+            Q(location_affiliation=request.user.affiliation)
+        )
     else:
         reports = BaseReport.objects.filter(recorder=request.user)
 

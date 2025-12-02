@@ -27,15 +27,21 @@
     <div class="d-flex flex-wrap justify-content-start justify-content-lg-end gap-2 w-100 w-lg-auto mt-2 mt-lg-0">
       {% if perms.RiskManagment.view_all_hazard_log or perms.RiskManagment.view_affiliation_hazard_log %}
         {% if base_report.id %}
+
+          <button class="btn btn-warning w-sm-auto"
+                    onclick="window.location.href='{% url 'report:sixA.sixA_create_view' base_report.id %}'">
+              ประเมิน 6A
+          </button>
+
           {% if not base_report.hazard_log.all.exists %}
             <button class="btn btn-primary w-sm-auto"
                     onclick="window.location.href='{% url 'risk_management:hazard-log.create-by-report' base_report.id %}'">
-              สร้าง Hazard - log
+              สร้างทะเบียนความเสี่ยง
             </button>
           {% else %}
             <button class="btn btn-secondary w-sm-auto"
                     onclick="window.location.href='{% url 'risk_management:hazard-detail' base_report.hazard_log.all.first.id %}'">
-              ดู Hazard - log ของ Report
+              ดูทะเบียนความเสี่ยง
             </button>
           {% endif %}
         {% endif %}

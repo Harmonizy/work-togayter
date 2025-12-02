@@ -52,9 +52,9 @@ class ReferenceReportInline(admin.TabularInline):
 # ---------- BaseReport Admin ----------
 @admin.register(BaseReport)
 class BaseReportAdmin(admin.ModelAdmin):
-    list_display = ('title', 'fiscal_year', 'event_date', 'report_type', 'status', 'priority', 'recorder', 'created_at')
-    list_editable = ('status',)
-    list_filter = ('fiscal_year', 'status', 'report_type')
+    list_display = ('title', 'fiscal_year', 'event_date', 'report_type', 'affiliation', 'location_affiliation', 'status', 'priority', 'created_at')
+    list_editable = ('status', 'priority')
+    list_filter = ('fiscal_year', 'status', 'report_type', 'affiliation')
     search_fields = ('title',)
     list_select_related = ('recorder', 'recorder__rank')
     autocomplete_fields = ('recorder',)

@@ -1,0 +1,78 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}แบบประเมิน 6A{% endblock title %}
+
+{% block content %}
+<div class="main-content">
+<div class="page-content">
+    <div class="container-fluid">
+
+    {% url 'report:safety-report.detail' report.id as back_url %}
+    {% include "partials/page-title.html" with pagetitle="รายงาน" pagetitle_url=back_url title="แบบประเมิน 6A" %}
+
+    <form id="sixAForm" method="post">
+        {% csrf_token %}
+        {% crispy form %}
+        {{ formset.management_form }}
+
+        {% for group in grouped_data %}
+        <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">{{ group.category_label }}</h5>
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                <th style="width:45%">คำถาม</th>
+                <th style="width:10%" class="text-center">ใช่/ไม่ใช่</th>
+                <th style="width:45%">หมายเหตุ</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for q, f in group.entries %}
+                <tr>
+                    <td>
+                        <strong>{{ q.code }}</strong> - {{ q.definition }}
+                        {% if q.description %}
+                            <div class="small text-muted">{{ q.description }}</div>
+                        {% endif %}
+                    </td>
+
+                    <td class="text-center">
+                        <div class="form-check d-flex justify-content-center">
+                            {{ f.id }}          
+                            {{ f.question }}
+                            
+                            {{ f.answer }} 
+                        </div>
+                    </td>
+
+                    <td>
+                        {{ f.note }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+            </table>
+        </div>
+        </div>
+        {% endfor %}
+
+
+        <div class="mt-4">
+        <button class="btn btn-primary w-25" type="submit">
+            บันทึกแบบประเมิน 6A
+        </button>
+        </div>
+    </form>
+
+    </div>
+</div>
+</div>
+{% endblock %}

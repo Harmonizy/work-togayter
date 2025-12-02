@@ -1,0 +1,155 @@
+<div id="file-list" class="file-list-container">
+
+    <ul class="list-group list-group-flush">
+
+        {% for f in page_obj %}
+        <li class="list-group-item d-flex align-items-center justify-content-between">
+
+            <!-- LEFT : ICON & NAME -->
+            <div class="d-flex align-items-center gap-3">
+
+                {% if f.file_type == "image" %}
+                    <i class="bi bi-image-fill text-primary fs-4"></i>
+                {% elif f.file_type == "video" %}
+                    <i class="bi bi-camera-reels-fill text-danger fs-4"></i>
+                {% elif f.file_type == "application" %}
+                    <i class="bi bi-file-earmark-pdf-fill text-danger fs-4"></i>
+                {% else %}
+                    <i class="bi bi-file-earmark-fill text-secondary fs-4"></i>
+                {% endif %}
+
+                <a href="{{ f.file.url }}" target="_blank" class="fw-bold text-decoration-none">
+                    {{ f.title|default:f.file.name }}
+                </a>
+            </div>
+
+            <!-- RIGHT : ACTIONS -->
+            <div class="d-flex gap-2">
+
+                <!-- DOWNLOAD -->
+                <a href="{{ f.file.url }}" download class="btn btn-sm btn-outline-primary rounded-circle">
+                    <i class="ri-download-line"></i>
+                </a>
+
+                <!-- DELETE -->
+                <form
+                    method="POST"
+                    action="{% url 'promotion:document_file_delete' f.id %}"
+                    hx-post="{% url 'promotion:document_file_delete' f.id %}"
+                    hx-target="#file-list"
+                    hx-swap="outerHTML"
+                    data-confirm="ต้องการลบไฟล์นี้จริงหรือไม่?"
+                    data-delete-file="1"
+                    style="display:inline"
+                >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </form>
+
+            </div>
+
+        </li>
+        {% empty %}
+        <li class="list-group-item text-center text-muted py-3">
+            ไม่มีไฟล์แนบ
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- PAGINATION -->
+    <div class="row g-0 text-center text-sm-start align-items-center mt-3">
+        
+        <div class="col-sm-6 text-muted small">
+            Showing <b>{{ page_obj.start_index }}</b> – <b>{{ page_obj.end_index }}</b>
+            of <u>{{ page_obj.paginator.count }}</u> files
+        </div>
+
+        <div class="col-sm-6">
+            <ul class="pagination pagination-sm justify-content-center justify-content-sm-end">
+
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <button 
+                        hx-get="{% url 'promotion:document_file_list' document.pk %}?page={{ page_obj.previous_page_number }}"
+                        hx-target="#file-list"
+                        hx-swap="outerHTML"
+                        class="page-link">&laquo;</button>
+                </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                    <button 
+                        hx-get="{% url 'promotion:document_file_list' document.pk %}?page={{ num }}"
+                        hx-target="#file-list"
+                        hx-swap="outerHTML"
+                        class="page-link">{{ num }}</button>
+                </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <button 
+                        hx-get="{% url 'promotion:document_file_list' document.pk %}?page={{ page_obj.next_page_number }}"
+                        hx-target="#file-list"
+                        hx-swap="outerHTML"
+                        class="page-link">&raquo;</button>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- HTMX + SweetAlert -->
+<script>
+
+// SweetAlert แทน confirm ของ HTMX
+document.body.addEventListener("htmx:confirm", function (event) {
+
+    const elt = event.detail.elt;
+    const msg = elt.getAttribute("data-confirm");
+
+    if (!msg) return; // ไม่มี data-confirm → ไม่ต้องทำงาน
+
+    event.preventDefault(); // หยุด confirm ปกติของ Browser
+
+    Swal.fire({
+        title: "ยืนยันการลบ?",
+        text: msg,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "rgba(76, 176, 242, 1)",
+        cancelButtonColor: "#4d4d4dff",
+        confirmButtonText: "ลบเลย",
+        cancelButtonText: "ยกเลิก"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            event.detail.issueRequest(); // ยิง request HTMX ต่อ
+        }
+    });
+});
+
+
+// หลังลบเสร็จ → ขึ้น SweetAlert Success
+document.body.addEventListener("htmx:afterRequest", function(event) {
+
+    const elt = event.detail.elt;
+
+    if (elt.dataset.deleteFile === "1") {
+        Swal.fire({
+            title: "ลบไฟล์สำเร็จ",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+});
+</script>

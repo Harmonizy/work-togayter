@@ -96,28 +96,48 @@
                                                 {% endif %}
                                             </td>
 
-                                            <td>
-                                                {% if doc.files.all %}
-                                                    {% for f in doc.files.all %}
-                                                        <div class="d-flex align-items-center mb-1">
-                                                            {% if f.file_type == 'image' %}
-                                                                <i class="ri-image-line file-icon text-info"></i>
-                                                            {% elif f.file_type == 'video' %}
-                                                                <i class="ri-video-line file-icon text-warning"></i>
-                                                            {% elif f.file_type == 'application' %}
-                                                                <i class="ri-file-line file-icon text-primary"></i>
-                                                            {% else %}
-                                                                <i class="ri-file-unknow-line file-icon text-muted"></i>
-                                                            {% endif %}
-                                                            <a href="{{ f.file.url }}" download class="me-2">
-                                                                {{ f.title|default:f.file.name|truncatechars:40 }}
-                                                            </a>
-                                                        </div>
-                                                    {% endfor %}
-                                                {% else %}
-                                                    <span class="text-muted">ไม่มีไฟล์</span>
-                                                {% endif %}
-                                            </td>
+<td>
+    {% with file_count=doc.files.count %}
+        {% if file_count > 0 %}
+            <span class="badge bg-info">
+                {{ file_count }} ไฟล์
+            </span>
+
+            <!-- ปุ่มเปิด Modal -->
+            <button class="btn btn-sm btn-link text-primary p-0"
+                    data-bs-toggle="modal"
+                    data-bs-target="#fileModal{{ doc.id }}">
+                ดูทั้งหมด
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="fileModal{{ doc.id }}">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">ไฟล์ทั้งหมดของเอกสาร #{{ doc.id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    {% for f in doc.files.all %}
+                      <div class="d-flex align-items-center mb-2">
+                          <i class="ri-article-line me-2"></i>
+                          <a href="{{ f.file.url }}" target="_blank">
+                              {{ f.title|default:f.file.name }}
+                          </a>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        {% else %}
+            <span class="text-muted">ไม่มีไฟล์</span>
+        {% endif %}
+    {% endwith %}
+</td>
+
 
                                             <td>{{ doc.user.get_full_name|default:"-" }}</td>
 

@@ -65,3 +65,22 @@ class RoleTypeChoices(models.TextChoices):
 class AccidentTypeChoices(models.IntegerChoices):
     ACCIDENT = 1, "ย่อย"
     INCIDENT = 2, "ร้ายแรง"
+
+
+# -------------------------------------------------------------------------------
+# 6A
+# --------------------------------------------------------------------------------
+
+
+class QuestionCategoryChoices(models.IntegerChoices):
+    AIRCREW = 1, "ผู้ทำการในอากาศ (Aircrew)"
+    AIRCRAFT = 2, "อากาศยาน (Aircraft)"
+    AIRPORT = 3, "สนามบิน (Airport)"
+    ATC = 4, "การควบคุมจราจรทางอากาศ (Air Traffic Control)"
+    ARMAMENT = 5, "ยุทโธปกรณ์ (Armament)" 
+    AMBIENT = 6, "สภาพแวดล้อม (Ambient)"
+
+
+class AnswerChoices(models.IntegerChoices):
+    YES = 1, "Y"
+    NO = 2, "N"

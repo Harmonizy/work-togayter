@@ -3,8 +3,13 @@
     <div class="row gy-3">
       
       <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
-        <div class="meta-label me-md-2">หน่วยงาน:</div>
+        <div class="meta-label me-md-2">หน่วยรับผิดชอบ:</div>
         <div>{{ base_report.affiliation|default:"-" }}</div>
+      </div>
+
+      <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
+        <div class="meta-label me-md-2">หน่วยที่เกิดเหตุ:</div>
+        <div>{{ base_report.location_affiliation|default:"-" }}</div>
       </div>
 
       <div class="col-12 col-md-6 d-flex flex-column flex-md-row">

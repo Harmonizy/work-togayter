@@ -1,110 +1,68 @@
-// ====== ดึงสีตามธีม ======
+// ====================================
+//   ดึงสีตามธีม
+// ====================================
 function getChartColorsArray(chartId) {
     const el = document.getElementById(chartId);
     if (!el) return null;
 
-    const theme = document.documentElement.getAttribute("data-theme") || "";
-    const attr = theme ? `data-colors-${theme}` : "data-colors";
-
-    let colors = el.getAttribute(attr) || el.getAttribute("data-colors");
-    if (!colors) {
-        console.warn("⚠️ data-colors attribute not found on", chartId);
-        return null;
-    }
-
-    colors = JSON.parse(colors);
-    return colors.map(function (value) {
-        const clean = value.replace(" ", "");
-        if (clean.indexOf(",") === -1) {
-            return getComputedStyle(document.documentElement).getPropertyValue(clean) || clean;
-        } else {
-            const parts = clean.split(",");
-            if (parts.length === 2) {
-                return `rgba(${getComputedStyle(document.documentElement).getPropertyValue(parts[0])},${parts[1]})`;
-            }
-            return clean;
-        }
-    });
+    let colors = JSON.parse(el.getAttribute("data-colors"));
+    return colors.map(color =>
+        getComputedStyle(document.documentElement).getPropertyValue(color) || color
+    );
 }
 
+// กราฟตัวแปร
 let countriesChart = null;
 
-// ====== โหลดกราฟ CAP จาก API ======
-async function loadCharts() {
+
+// ====================================
+//   สร้างกราฟจาก Django (ไม่ใช้ API แล้ว)
+// ====================================
+function loadCharts() {
+
+    const el = document.getElementById("countries_charts");
+    if (!el) return;
+
     const colors = getChartColorsArray("countries_charts");
-    if (!colors) return;
 
-    try {
-        const response = await fetch("/safety-dashboard/apis/get-cap_data_api");
-        if (!response.ok) throw new Error("❌ API โหลดข้อมูลไม่สำเร็จ");
-        const capData = await response.json();
+    // ดึง JSON จาก Django
+    const capData = JSON.parse(el.dataset.cap);
 
-        // ✅ เตรียมข้อมูลจาก API
-        const categories = capData.map(item => item["hazard_log__affiliation__short_name"] || "ไม่ทราบหน่วย");
+    // เตรียมข้อมูล
+    const categories = capData.map(i =>
+        i["hazard_log__affiliation__short_name"] || "ไม่ทราบหน่วย"
+    );
+    const planning = capData.map(i => i.planning);
+    const in_progress = capData.map(i => i.in_progress);
+    const complete = capData.map(i => i.complete);
 
-        const dynamicHeight = Math.max(436, categories.length * 28);
+    const dynamicHeight = Math.max(436, categories.length * 28);
 
-        const planningData = capData.map(item => item.planning);
-        const inProgressData = capData.map(item => item.in_progress);
-        const completeData = capData.map(item => item.complete);
+    const options = {
+        series: [
+            { name: "วางแผน", data: planning },
+            { name: "กำลังดำเนินการ", data: in_progress },
+            { name: "เสร็จสิ้น", data: complete }
+        ],
+        chart: {
+            type: "bar",
+            height: dynamicHeight,
+            stacked: true,
+            toolbar: { show: false }
+        },
+        plotOptions: {
+            bar: { horizontal: true, borderRadius: 4 }
+        },
+        colors: ["#4babffff", "#f1c40f", "#28a745"],
+        xaxis: { categories },
+        legend: { position: "top" }
+    };
 
-        // ✅ ตั้งค่า ApexCharts - Stacked Bar Chart
-        const chartOptions = {
-            series: [
-                { name: "วางแผน", data: planningData },
-                { name: "กำลังดำเนินการ", data: inProgressData },
-                { name: "เสร็จสิ้น", data: completeData }
-            ],
-            chart: {
-                type: "bar",
-                height: dynamicHeight,
-                stacked: true,
-                toolbar: { show: false }
-            },
-            plotOptions: {
-                bar: {
-                    borderRadius: 4,
-                    horizontal: true,
-                    dataLabels: { position: "center" }
-                }
-            },
-            colors: ["#4babffff", "#f1c40f", "#28a745"],
-            dataLabels: {
-                enabled: true,
-                style: {
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    colors: ["#fff"]
-                }
-            },
-            xaxis: {
-                categories: categories,
-                title: { text: "จำนวน CAP" }
-            },
-            legend: {
-                position: "top",
-                horizontalAlign: "center"
-            },
-            grid: { show: false },
-            tooltip: {
-                shared: true,
-                intersect: false,
-                y: {
-                    formatter: val => `${val} รายการ`
-                }
-            }
-        };
-
-        // ✅ สร้างหรืออัปเดตกาฟ
-        if (countriesChart) countriesChart.destroy();
-        countriesChart = new ApexCharts(document.querySelector("#countries_charts"), chartOptions);
-        countriesChart.render();
-
-    } catch (err) {
-        console.error("📉 โหลดกราฟ CAP ล้มเหลว:", err);
-    }
+    if (countriesChart) countriesChart.destroy();
+    countriesChart = new ApexCharts(el, options);
+    countriesChart.render();
 }
 
-// ====== โหลดตอนหน้าเสร็จหรือ resize ======
+// โหลดเมื่อพร้อม
+document.addEventListener("DOMContentLoaded", loadCharts);
 window.addEventListener("resize", () => setTimeout(loadCharts, 0));
-window.addEventListener("DOMContentLoaded", loadCharts);
