@@ -48,6 +48,7 @@ urlpatterns = [
     path('layouts/',include('layouts.urls')),
     path('components/',include('components.urls')),
     path('pages/',include('pages.urls')),
+    path('tinymce/', include('tinymce.urls')),
 
 ] + safe_urls + debug_toolbar_urls()
 

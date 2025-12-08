@@ -1,12 +1,14 @@
 from django.utils.html import strip_tags
 from django.db import models
 
+
 from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFUser.models.RTAFUser import RTAFUser, Affiliation
 from common.Services.super_app_api import send_notification
 
 import mimetypes
 from ckeditor.fields import RichTextField
+from tinymce.models import HTMLField
 
 class Quiz(models.Model):
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
@@ -62,7 +64,7 @@ class QuizResult(models.Model):
 class Promotion(models.Model):
     image = models.ImageField(verbose_name="รูปภาพ", upload_to='safety_promotion/', null=True, blank=True)
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
-    content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
+    content = HTMLField(verbose_name="เนื้อหา", null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=PromotionStatusChoices.choices, default=PromotionStatusChoices.DRAFT, null=True, blank=True)
     publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE , null=True, blank=True)
     priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PromotionPriorityChoices.choices, default=PromotionPriorityChoices.NONE , null=True, blank=True)

@@ -1,13 +1,15 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Field, Div, Submit
-from ckeditor.widgets import CKEditorWidget
 from django.forms import inlineformset_factory
+
+from tinymce.widgets import TinyMCE
+from ckeditor.widgets import CKEditorWidget
 
 from .models import Promotion, Quiz, Question, Choice, Document, DocumentFile
 
 class PromotionForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditorWidget(), label="")
+    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
 
     class Meta:
         model = Promotion

@@ -28,6 +28,7 @@ LOCAL_APPS = [
     "layouts",
     "components",
     "pages",
+    "tinymce",
     
     "safety.Data",
     "safety.Report",
@@ -96,6 +97,14 @@ TEMPLATES = [
         },
     },
 ]
+
+
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 400,
+    "menubar": True,
+    "plugins": "link image code lists table",
+    "toolbar": "undo redo | styles | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code",
+}
 
 
 ADMIN_URL_PATH = os.getenv('ADMIN_URL_PATH')
