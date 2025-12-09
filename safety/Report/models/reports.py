@@ -9,7 +9,7 @@ from django.shortcuts import reverse
 # from taggit.managers import TaggableManager
 from ckeditor.fields import RichTextField
 
-from ..choices import ( BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices)
+from ..choices import (BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices)
 from safety.Data.models import Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory, Keyword, Role
 from common.RTAFUser.models import RTAFUser, Affiliation, Squadron
 

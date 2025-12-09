@@ -2,7 +2,7 @@ from django.db import models
 
 
 class ReportTypeChoices(models.TextChoices):
-    SIMPLE = 'S', 'รายงานอันตราย'
+    SIMPLE = 'S', 'รายงานขั้นต้น'
     OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
     HAZARD_GROUND = 'HG', 'รายงานอุบัติการณ์ภาคพื้น'
     SAFETY_GROUND = 'SG', 'รายงานอุบัติเหตุภาคพื้น'
