@@ -11,7 +11,6 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator
 
-
 from .models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile
 from .forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet, DocumentForm, DocumentFileForm
 from .choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
@@ -25,13 +24,14 @@ def list_ground(request):
 
     # Superuser เห็นหมด (เฉพาะ GROUND)
     if user.is_superuser or user.has_perm("PromotionHub.view_all_promotion_hub"):
-        promotions = Promotion.objects.filter(type=PromotionTypeChoices.GROUND)
+        promotions = Promotion.objects.filter(type=PromotionTypeChoices.GROUND,priority=PromotionPriorityChoices.NONE)
 
     # เห็นเฉพาะของหน่วยตัวเอง (เฉพาะ GROUND)
     elif user.has_perm("PromotionHub.view_affiliation_promotion_hub"):
         promotions = Promotion.objects.filter(
             user__affiliation=user.affiliation,
-            type=PromotionTypeChoices.GROUND
+            type=PromotionTypeChoices.GROUND,
+            priority=PromotionPriorityChoices.NONE
         )
 
     else:
@@ -40,7 +40,8 @@ def list_ground(request):
     # เฉพาะที่เผยแพร่แล้ว
     published = Promotion.objects.filter(
         status=PromotionStatusChoices.PUBLISHED,
-        type=PromotionTypeChoices.GROUND
+        type=PromotionTypeChoices.GROUND,
+        priority=PromotionPriorityChoices.NONE
     )
 
     # เผยแพร่ระดับ ทอ. หรือเฉพาะหน่วย
@@ -69,13 +70,14 @@ def list_air(request):
 
     # Superuser เห็นหมด (เฉพาะ AIR)
     if user.is_superuser or user.has_perm("PromotionHub.view_all_promotion_hub"):
-        promotions = Promotion.objects.filter(type=PromotionTypeChoices.AIR)
+        promotions = Promotion.objects.filter(type=PromotionTypeChoices.AIR, priority=PromotionPriorityChoices.NONE)
 
     # เห็นเฉพาะของหน่วยตัวเอง (เฉพาะ AIR)
     elif user.has_perm("PromotionHub.view_affiliation_promotion_hub"):
         promotions = Promotion.objects.filter(
             user__affiliation=user.affiliation,
-            type=PromotionTypeChoices.AIR
+            type=PromotionTypeChoices.AIR,
+            priority=PromotionPriorityChoices.NONE
         )
 
     else:
@@ -84,7 +86,8 @@ def list_air(request):
     # เฉพาะที่เผยแพร่แล้ว
     published = Promotion.objects.filter(
         status=PromotionStatusChoices.PUBLISHED,
-        type=PromotionTypeChoices.AIR
+        type=PromotionTypeChoices.AIR,
+        priority=PromotionPriorityChoices.NONE
     )
 
     # เผยแพร่ระดับ ทอ. หรือเฉพาะหน่วย
@@ -102,7 +105,51 @@ def list_air(request):
 
     context = {
         "promotions": promotions,
-        "type": "ภาคอากาศ"
+        "type": "การบิน"
+    }
+    return render(request, "PromotionHub/promotion_list.html", context)
+
+
+@login_required
+def announcement_list(request):
+    user = request.user
+
+    # Superuser เห็นหมด (เฉพาะ GROUND)
+    if user.is_superuser or user.has_perm("PromotionHub.view_all_promotion_hub"):
+        promotions = Promotion.objects.filter(priority=PromotionPriorityChoices.HIGH)
+
+    # เห็นเฉพาะของหน่วยตัวเอง (เฉพาะ GROUND)
+    elif user.has_perm("PromotionHub.view_affiliation_promotion_hub"):
+        promotions = Promotion.objects.filter(
+            user__affiliation=user.affiliation,
+            priority=PromotionPriorityChoices.HIGH
+        )
+
+    else:
+        promotions = Promotion.objects.none()
+
+    # เฉพาะที่เผยแพร่แล้ว
+    published = Promotion.objects.filter(
+        status=PromotionStatusChoices.PUBLISHED,
+        priority=PromotionPriorityChoices.HIGH
+    )
+
+    # เผยแพร่ระดับ ทอ. หรือเฉพาะหน่วย
+    visible_promotions = (
+        published.filter(publish=PromotionPublishChoices.AIRFORCE)
+        |
+        published.filter(
+            publish=PromotionPublishChoices.UNIT,
+            user__affiliation=user.affiliation
+        )
+    )
+
+    # รวม + distinct + sort
+    promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
+
+    context = {
+        "promotions": promotions,
+        "type": "การแจ้งเตือน"
     }
     return render(request, "PromotionHub/promotion_list.html", context)
 
@@ -164,15 +211,17 @@ class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
 
 
 @login_required
-def create(request):
+def create_ground(request):
     if request.method == "POST":
         form = PromotionForm(request.POST, request.FILES)
         if form.is_valid():
             promotion = form.save(commit=False)
             promotion.user = request.user
+            promotion.priority = PromotionPriorityChoices.NONE
+            promotion.type = PromotionTypeChoices.GROUND
             promotion.save()
             messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
-            return redirect("promotion:list")
+            return redirect("promotion:list_ground")
         else:
             messages.error(request, "ไม่สามารถบันทึกได้ กรุณาตรวจสอบข้อมูลอีกครั้ง")
     else:
@@ -180,6 +229,55 @@ def create(request):
 
     context = {
         "form": form,
+        "type" : "ภาคพื้น"
+    }
+    return render(request, "PromotionHub/promotion_create.html", context)
+
+
+@login_required
+def create_air(request):
+    if request.method == "POST":
+        form = PromotionForm(request.POST, request.FILES)
+        if form.is_valid():
+            promotion = form.save(commit=False)
+            promotion.user = request.user
+            promotion.priority = PromotionPriorityChoices.NONE
+            promotion.type = PromotionTypeChoices.AIR
+            promotion.save()
+            messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
+            return redirect("promotion:list_air")
+        else:
+            messages.error(request, "ไม่สามารถบันทึกได้ กรุณาตรวจสอบข้อมูลอีกครั้ง")
+    else:
+        form = PromotionForm()
+
+    context = {
+        "form": form,
+        "type" : "การบิน"
+    }
+    return render(request, "PromotionHub/promotion_create.html", context)
+
+
+@login_required
+def announcement_create(request):
+    if request.method == "POST":
+        form = PromotionForm(request.POST, request.FILES)
+        if form.is_valid():
+            promotion = form.save(commit=False)
+            promotion.user = request.user
+            promotion.priority = PromotionPriorityChoices.HIGH
+            promotion.type = PromotionTypeChoices.NONE
+            promotion.save()
+            messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
+            return redirect("promotion:announcement_list")
+        else:
+            messages.error(request, "ไม่สามารถบันทึกได้ กรุณาตรวจสอบข้อมูลอีกครั้ง")
+    else:
+        form = PromotionForm()
+
+    context = {
+        "form": form,
+        "type" : "การแจ้งเตือน"
     }
     return render(request, "PromotionHub/promotion_create.html", context)
 

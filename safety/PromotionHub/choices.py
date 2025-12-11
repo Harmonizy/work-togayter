@@ -21,3 +21,4 @@ class PromotionPriorityChoices(models.TextChoices):
 class PromotionTypeChoices(models.TextChoices):
     GROUND = 'G', 'ภาคพื้น'
     AIR = 'A', 'ภาคอากาศ'
+    NONE = 'N', 'ไม่ระบุ'

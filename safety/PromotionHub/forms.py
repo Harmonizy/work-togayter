@@ -45,8 +45,8 @@ class PromotionForm(forms.ModelForm):
             ),
 
             Row(
-                Column('priority', css_class='form-group col-md-4 mb-0'),
-                Column('type', css_class='form-group col-md-4 mb-0'),
+                # Column('priority', css_class='form-group col-md-4 mb-0'),
+                # Column('type', css_class='form-group col-md-4 mb-0'),
                 Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )

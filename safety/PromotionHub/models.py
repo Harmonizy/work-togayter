@@ -66,9 +66,9 @@ class Promotion(models.Model):
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
     content = HTMLField(verbose_name="เนื้อหา", null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=PromotionStatusChoices.choices, default=PromotionStatusChoices.DRAFT, null=True, blank=True)
-    publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE , null=True, blank=True)
-    priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PromotionPriorityChoices.choices, default=PromotionPriorityChoices.NONE , null=True, blank=True)
-    type = models.CharField(verbose_name="ประเภท", max_length=1, choices=PromotionTypeChoices.choices, default=PromotionTypeChoices.GROUND , null=True, blank=True)
+    publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE, null=True, blank=True)
+    priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PromotionPriorityChoices.choices, default=PromotionPriorityChoices.NONE, null=True, blank=True)
+    type = models.CharField(verbose_name="ประเภท", max_length=1, choices=PromotionTypeChoices.choices, default=PromotionTypeChoices.NONE, null=True, blank=True)
     
     quiz = models.ForeignKey(Quiz, verbose_name="แบบทดสอบ", on_delete=models.SET_NULL, null=True, blank=True)
     

@@ -3199,11 +3199,11 @@ File: Main Css File
 .vertical-menu-btn:hover .hamburger-icon:not(.open) span:nth-child(3) {
   bottom: -1px;
 }
-.hamburger-icon.open {
+/* .hamburger-icon.open {
   -webkit-transform: rotate(-90deg);
           transform: rotate(-90deg);
-}
-.hamburger-icon.open span:nth-child(1) {
+} */
+/* .hamburger-icon.open span:nth-child(1) {
   left: 1px;
   top: 5px;
   width: 20px;
@@ -3211,8 +3211,8 @@ File: Main Css File
           transform: rotate(90deg);
   -webkit-transition-delay: 150ms;
           transition-delay: 150ms;
-}
-.hamburger-icon.open span:nth-child(2) {
+} */
+/* .hamburger-icon.open span:nth-child(2) {
   left: 3px;
   top: 13px;
   width: 10px;
@@ -3220,8 +3220,8 @@ File: Main Css File
           transform: rotate(45deg);
   -webkit-transition-delay: 50ms;
           transition-delay: 50ms;
-}
-.hamburger-icon.open span:nth-child(3) {
+} */
+/* .hamburger-icon.open span:nth-child(3) {
   left: 9px;
   top: 13px;
   width: 10px;
@@ -3229,7 +3229,7 @@ File: Main Css File
           transform: rotate(-45deg);
   -webkit-transition-delay: 100ms;
           transition-delay: 100ms;
-}
+} */
 
 .logo {
   line-height: 70px;

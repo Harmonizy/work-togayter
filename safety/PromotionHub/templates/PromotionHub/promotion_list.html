@@ -25,14 +25,28 @@
                         <div class="card-header border-0">
                             <div class="d-flex align-items-center flex-column flex-md-row">
                                 <h5 class="card-title mb-2 mb-md-0 flex-grow-1 text-center text-md-start">
-                                    รายการบทความประชาสัมพันธ์{{ type }}
+                                    {% if type == "การแจ้งเตือน" %}
+                                        รายการแจ้งเตือน/ประกาศสำคัญ
+                                    {% else %}
+                                        รายการประชาสัมพันธ์นิรภัย{{ type }}
+                                    {% endif %}
                                 </h5>
                                 <div class="flex-shrink-0">
                                     <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2">
                                         {% if perms.PromotionHub.create_promotion_hub %}
-                                        <a class="btn btn-primary" href="{% url 'promotion:create' %}">
-                                            <i class="ri-add-line align-bottom me-1"></i> เพิ่มบทความใหม่
-                                        </a>
+                                            {% if type == "ภาคพื้น" %}
+                                                <a class="btn btn-primary" href="{% url 'promotion:create_ground' %}">
+                                                    <i class="ri-add-line align-bottom me-1"></i> สร้างประชาสัมพันธ์นิรภัยภาคพื้น
+                                                </a>
+                                            {% elif type == "การบิน" %}
+                                                <a class="btn btn-primary" href="{% url 'promotion:create_air' %}">
+                                                    <i class="ri-add-line align-bottom me-1"></i> สร้างประชาสัมพันธ์นิรภัยการบิน
+                                                </a>
+                                            {% elif type == "การแจ้งเตือน" %}
+                                                <a class="btn btn-primary" href="{% url 'promotion:create_air' %}">
+                                                    <i class="ri-add-line align-bottom me-1"></i> สร้างการแจ้งเตือน
+                                                </a>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>
