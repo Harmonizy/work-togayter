@@ -18,6 +18,142 @@
         color: #000;
         border: 1px solid #999;
     }
+    #countries_charts {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+
+#map {
+    width: 100%;
+    height: 800px;
+    border-radius: 12px;
+}
+
+/* Charts container */
+.apex-charts,
+canvas {
+    max-width: 100%;
+}
+
+/* Scroll area (CAP chart) */
+#countries_charts {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Card spacing */
+.card {
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 1200px) {
+
+    #map {
+        height: 600px;
+    }
+
+    .card-height-100 {
+        height: auto !important;
+    }
+}
+
+@media (max-width: 992px) {
+
+    /* Map ไม่ควรสูงเกิน */
+    #map {
+        height: 500px;
+    }
+
+    /* Chart donut */
+    #store-visits-source {
+        min-height: 300px;
+    }
+
+    /* Ground category */
+    #groundCategoryChart {
+        max-height: 300px;
+    }
+
+    /* Calendar card */
+    .monthly-calendar {
+        margin-bottom: 1rem;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    /* ลด padding container */
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    /* Cards เต็มความกว้าง */
+    .col-xl-9,
+    .col-xl-7,
+    .col-xl-5,
+    .col-xxl-3 {
+        width: 100%;
+    }
+
+    /* Map */
+    #map {
+        height: 400px;
+    }
+
+    /* Charts */
+    .apex-charts {
+        min-height: 280px;
+    }
+
+    #countries_charts {
+        max-height: 300px;
+    }
+
+    /* Calendar input */
+    #calendar {
+        font-size: 14px;
+    }
+}
+
+
+@media (max-width: 576px) {
+
+    /* Card title */
+    .card-title {
+        font-size: 0.95rem;
+    }
+
+    /* Buttons */
+    .btn {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.6rem;
+    }
+
+    /* Map มือถือ */
+    #map {
+        height: 320px;
+    }
+
+    /* Charts มือถือ */
+    .apex-charts,
+    #store-visits-source {
+        min-height: 250px;
+    }
+
+    #groundCategoryChart {
+        max-height: 250px;
+    }
+
+    /* ลด tooltip label map */
+    .reports-label {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+}
+
 </style>
 {% endblock extra_css %}
 
@@ -78,23 +214,24 @@
                         <div class="row">
                             <div class="col-xl-9 col-md-6">
                                 <div class="row">
-                                    {% include "Dashboard/partial/card_count.html" with name='รายงานทั้งหมด' value=report_all color='primary'  %}
-                                    {% include "Dashboard/partial/card_count.html" with name='รายงานร่าง' value=report_draft color='secondary'  status=1 %}
-                                    {% include "Dashboard/partial/card_count.html" with name='รายงานอนุมัติ' value=report_approved color='success' status=2 %}
+                                    {% include "Dashboard/partial/card_count.html" with name='รายงานทั้งหมด' value=report_all logo='file' color='primary'  %}
+                                    {% include "Dashboard/partial/card_count.html" with name='รายงานร่าง' value=report_draft logo='file' color='secondary'  status=1 %}
+                                    {% include "Dashboard/partial/card_count.html" with name='รายงานอนุมัติ' value=report_approved logo='file' color='info' status=2 %}
                                 </div>
 
                                 <div class="row">
-                                    {% include "Dashboard/partial/card_count.html" with name='เร่งด่วน' value=report_high color='primary'  %}
-                                    {% include "Dashboard/partial/card_count.html" with name='ต้องติดตาม' value=report_medium color='secondary'  status=1 %}
-                                    {% include "Dashboard/partial/card_count.html" with name='ปกติ' value=report_low color='success' status=2 %}
+                                    {% include "Dashboard/partial/card_count.html" with name='เร่งด่วน' value=report_high logo='plane' color='danger' priority='H' %}
+                                    {% include "Dashboard/partial/card_count.html" with name='ต้องติดตาม' value=report_medium logo='plane' color='warning'  priority='M' %}
+                                    {% include "Dashboard/partial/card_count.html" with name='ปกติ' value=report_low logo='plane' color='success' priority='L' %}
                                 </div>
+                                <div class="col-xl-12">
 
                                 <div class="row">
-                                    <div class="col-xl-12">
                                         <div class="card">
                                             <div class="card-header border-0 align-items-center d-flex">
-                                                <h4 class="card-title mb-0 flex-grow-1">Revenue</h4>
-                                                <div>
+                                                <h4 class="card-title mb-0 flex-grow-1">รายงาน</h4>
+
+                                                {% comment %} <div>
                                                     <button type="button" class="btn btn-soft-secondary material-shadow-none btn-sm">
                                                         ALL
                                                     </button>
@@ -107,10 +244,10 @@
                                                     <button type="button" class="btn btn-soft-primary material-shadow-none btn-sm">
                                                         1Y
                                                     </button>
-                                                </div>
+                                                </div> {% endcomment %}
                                             </div><!-- end card header -->
 
-                                            <div class="card-header p-0 border-0 bg-light-subtle">
+                                            {% comment %} <div class="card-header p-0 border-0 bg-light-subtle">
                                                 <div class="row g-0 text-center">
                                                     <div class="col-6 col-sm-3">
                                                         <div class="p-3 border border-dashed border-start-0">
@@ -145,7 +282,7 @@
                                                     </div>
                                                     <!--end col-->
                                                 </div>
-                                            </div><!-- end card header -->
+                                            </div><!-- end card header --> {% endcomment %}
 
                                             <div class="card-body p-0 pb-2">
                                                 <div class="w-100">
@@ -157,6 +294,50 @@
                                 </div>  
                             </div>
                             <div class="col-xxl-3">
+                                <div class="card monthly-calendar">
+                                    <div class="card-header border-0">
+                                        <h6 class="fw-bold text-primary mb-2">📅 ตั้งค่ารายงาน</h6>
+                                        <form id="filter-form" method="get" action="">
+                                            <!-- 🗓️ เลือกเดือน -->
+                                            <div class="mb-3">
+                                                <label class="fw-semibold text-muted mb-1">เดือน</label>
+                                                <select name="month" class="form-select form-select-sm">
+                                                <option value="all" {% if current_month == 'all' %}selected{% endif %}>📆 แสดงทุกเดือน</option>
+                                                {% for m in month_list %}
+                                                    <option value="{{ m.number }}" {% if m.number == current_month %}selected{% endif %}>
+                                                    {{ m.name }}
+                                                    </option>
+                                                {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <!-- 📆 เลือกปี -->
+                                            <div class="mb-3">
+                                                <label class="fw-semibold text-muted mb-1">ปี</label>
+                                                <select name="year" class="form-select form-select-sm">
+                                                <option value="all" {% if current_year == 'all' %}selected{% endif %}>📅 แสดงทุกปี</option>
+                                                {% for y in year_list %}
+                                                    <option value="{{ y.number }}" {% if y.number == current_year %}selected{% endif %}>
+                                                    {{ y.name }}
+                                                    </option>
+                                                {% endfor %}
+                                                </select>
+                                            </div>
+
+                                            <hr class="my-2">
+
+                                            <!-- 🔘 ปุ่มยืนยันและรีเซ็ต -->
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-sm btn-primary flex-fill">
+                                                <i class="mdi mdi-check-circle-outline me-1"></i> ยืนยัน
+                                                </button>
+                                                <a href="?month=all&year=all" class="btn btn-sm btn-outline-secondary flex-fill">
+                                                <i class="mdi mdi-refresh me-1"></i> แสดงทั้งหมด
+                                                </a>
+                                            </div>
+                                        </form>
+                                    </div><!-- end cardheader -->
+                                </div>
                                 <div class="card">
                                     <div class="card-header border-0">
                                         <h4 class="card-title mb-0">ปฏิทิน</h4>
@@ -210,24 +391,14 @@
                                         <div class="card card-height-100">
                                             <div class="card-header align-items-center d-flex">
                                                 <h4 class="card-title mb-0 flex-grow-1">รายงานอุบัติเหตุ</h4>
-                                                <div class="flex-shrink-0">
-                                                    <div class="dropdown card-header-dropdown">
-                                                        <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
-                                                            aria-haspopup="true" aria-expanded="false">
-                                                            <span class="text-muted">Report<i
-                                                                    class="mdi mdi-chevron-down ms-1"></i></span>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <a class="dropdown-item" href="#">Download Report</a>
-                                                            <a class="dropdown-item" href="#">Export</a>
-                                                            <a class="dropdown-item" href="#">Import</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div><!-- end card header -->
+                                            </div>
 
                                             <div class="card-body">
-                                                <div id="store-visits-source" data-colors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' data-colors-minimal='["--vz-primary", "--vz-primary-rgb, 0.85", "--vz-primary-rgb, 0.70", "--vz-primary-rgb, 0.60", "--vz-primary-rgb, 0.45"]' data-colors-interactive='["--vz-primary", "--vz-primary-rgb, 0.85", "--vz-primary-rgb, 0.70", "--vz-primary-rgb, 0.60", "--vz-primary-rgb, 0.45"]' data-colors-galaxy='["--vz-primary", "--vz-primary-rgb, 0.85", "--vz-primary-rgb, 0.70", "--vz-primary-rgb, 0.60", "--vz-primary-rgb, 0.45"]' class="apex-charts" dir="ltr"></div>
+                                                <div 
+                                                    id="store-visits-source"
+                                                    data-report-type='{{ report_type_list|safe }}'
+                                                    data-colors='["--vz-primary","--vz-success","--vz-info","--vz-warning","--vz-danger","--vz-secondary"]'>
+                                                </div>
                                             </div>
                                         </div> <!-- .card-->
                                     </div> <!-- .col-->
@@ -251,12 +422,37 @@
                                             <div class="card-body p-0">
                                                 <div>
                                                     {% comment %} # safety-analysis-project\static\js\pages\dashboard-analytics.init.js {% endcomment %}
-                                                    <div id="countries_charts" data-colors='["--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-danger", "--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-info"]' data-colors-minimal='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]' data-colors-material='["--vz-primary", "--vz-primary", "--vz-info", "--vz-info", "--vz-danger", "--vz-primary", "--vz-primary", "--vz-warning", "--vz-primary", "--vz-primary"]' data-colors-galaxy='["--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4"]' data-colors-classic='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]' class="apex-charts" dir="ltr"></div>    
+                                                    <div id="countries_charts"
+                                                        data-cap='{{ cap_datasets|safe }}'
+                                                        data-colors='["--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-danger", "--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-info"]'
+                                                        data-colors-minimal='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]'
+                                                        data-colors-material='["--vz-primary", "--vz-primary", "--vz-info", "--vz-info", "--vz-danger", "--vz-primary", "--vz-primary", "--vz-warning", "--vz-primary", "--vz-primary"]'
+                                                        data-colors-galaxy='["--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4"]'
+                                                        data-colors-classic='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]'
+                                                        class="apex-charts"
+                                                        dir="ltr">
+                                                    </div>
+
                                                 </div>
                                             </div><!-- end card body -->
                                         </div><!-- end card -->
                                     </div> <!-- end col-->
                                 </div> <!-- end row-->
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            สัดส่วนรายงานภาคพื้น (Ground Safety Category)
+                                        </h5>
+                                    </div>
+
+                                    <div class="card-body" style="height:350px;">
+                                        <canvas id="groundCategoryChart"></canvas>
+                                    </div>
+
+                                </div>
+
+
                                 {% comment %} <div class="row">                                        
                                     <div class="card">
                                         <div class="card-header align-items-center d-flex">
@@ -520,6 +716,9 @@
         </div>
         <!-- container-fluid -->
     </div>
+
+
+
     <!-- End Page-content -->
     {% block footer %}
     {% include "partials/footer.html" %}
@@ -528,63 +727,72 @@
 {% endblock content %}
 
 {% block extra_js %}
-<!-- apexcharts -->
 <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js'%}"></script>
-
-
-<!--Swiper slider js-->
 <script src="{% static 'libs/swiper/swiper-bundle.min.js'%}"></script>
+<script src="{% static 'libs/sweetalert2/dist/sweetalert2.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-<!-- Dashboard init -->
+
 <script src="{% static 'js/pages/dashboard-ecommerce.init.js'%}"></script>
-<script  src="{% static 'js/pages/dashboard-analytics.init.js'%}"></script>
+<script src="{% static 'js/pages/dashboard-analytics.init.js'%}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the map centered on Thailand
-        var map = L.map('map').setView([12.5, 100.5231], 6); // Latitude, Longitude of Thailand
+document.addEventListener("DOMContentLoaded", function () {
 
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Optional: Add a marker in Bangkok (or any other city)
-        /* L.marker([13.7367, 100.5231]).addTo(map)
-            .bindPopup('Bangkok, Thailand')
-            .openPopup();
-        */
-
-        map.setMinZoom(6);
-        map.setMaxZoom(8);
-
-        var airforceBases = [
-            { name: 'บน.1 กองบิน 1', lat: 14.93474, lon: 102.079842, reports: 3 },
-            { name: 'บน.2 กองบิน 2', lat: 14.876038, lon: 100.662143, reports: 5 },
-            { name: 'บน.4 กองบิน 4', lat: 15.273554, lon: 100.295634, reports: 2 },
-            { name: 'บน.5 กองบิน 5', lat: 11.789529, lon: 99.804607, reports: 8 },
-            { name: 'บน.6 กองบิน 6', lat: 13.909421, lon: 100.609366, reports: 1 },
-            { name: 'บน.7 กองบิน 7', lat: 9.135177, lon: 99.137333, reports: 4 },
-            { name: 'บน.21 กองบิน 21', lat: 15.252743, lon: 104.870593, reports: 6 },
-            { name: 'บน.23 กองบิน 23', lat: 17.387867, lon: 102.786205, reports: 7 },
-            { name: 'บน.41 กองบิน 41', lat: 18.773377, lon: 98.967149, reports: 2 },
-            { name: 'บน.46 กองบิน 46', lat: 16.783432, lon: 100.279443, reports: 9 },
-            { name: 'บน.56 กองบิน 56', lat: 6.933478, lon: 100.395185, reports: 3 },
-            { name: 'บน.3 กองบิน 3', lat: 13.769239, lon: 102.316855, reports: 10 }
-        ];
-
-        // Loop through the airforceBases array and add markers to the map
-        airforceBases.forEach(function(base) {
-            L.marker([base.lat, base.lon]).addTo(map)
-                .bindTooltip(base.reports + " reports", { 
-                    permanent: true,   // always visible
-                    direction: "top",  // position above the marker
-                    offset: [0, -10],  // move text a little higher
-                    className: "reports-label" // custom style class
-                });
-        });
+    // ===============================
+    // 0) Priority dataset (global)
+    // ===============================
+    window.priority_datasets = {{ priority_datasets|safe }};
 
 
+    // ===============================
+    // 1) LEAFLET MAP + AFFILIATION MARKERS
+    // ===============================
+    var map = L.map('map').setView([12.5, 100.5231], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    map.setMinZoom(6);
+    map.setMaxZoom(8);
+
+    const affiliations = JSON.parse('{{ affiliations_json|safe }}');
+
+    var airbaseLocations = {
+        "บน.1": { lat: 14.93474, lon: 102.079842 },
+        "บน.2": { lat: 14.876038, lon: 100.662143 },
+        "บน.3": { lat: 13.769239, lon: 102.316855 },
+        "บน.4": { lat: 15.273554, lon: 100.295634 },
+        "บน.5": { lat: 11.789529, lon: 99.804607 },
+        "บน.6": { lat: 13.909421, lon: 100.609366 },
+        "บน.7": { lat: 9.135177, lon: 99.137333 },
+        "บน.21": { lat: 15.252743, lon: 104.870593 },
+        "บน.23": { lat: 17.387867, lon: 102.786205 },
+        "บน.41": { lat: 18.773377, lon: 98.967149 },
+        "บน.46": { lat: 16.783432, lon: 100.279443 },
+        "บน.56": { lat: 6.933478, lon: 100.395185 }
+    };
+
+    affiliations.forEach(function(aff) {
+        let code = aff.short_name;
+        if (airbaseLocations[code]) {
+            let pos = airbaseLocations[code];
+            L.marker([pos.lat, pos.lon]).addTo(map)
+            .bindTooltip(
+                `${aff.short_name}<br>${aff.report_count} รายงาน`,
+                {
+                    permanent: true,
+                    direction: "top",
+                    offset: [0, -10],
+                    className: "reports-label"
+                }
+            );
+        }
     });
+
+
+    // ===============================
+    // 2) CALENDAR (Flatpickr)
+    // ===============================
     const markedDates = [
         "2025-09-11",
         "2025-09-12",
@@ -592,18 +800,121 @@
         "2025-09-22"
     ];
 
-  flatpickr("#calendar", {
-    inline: true,
-    dateFormat: "d M, Y",
-    defaultDate: "today",
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const date = dayElem.dateObj;
-      const dateStr = date.toISOString().slice(0, 10); // YYYY-MM-DD
-      console.log("Checking date:", dateStr);   
-      if (markedDates.includes(dateStr)) {
-        dayElem.classList.add("marked-date");
-      }
+    flatpickr("#calendar", {
+        inline: true,
+        dateFormat: "d M, Y",
+        defaultDate: "today",
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            const dateStr = dayElem.dateObj.toISOString().slice(0, 10);
+            if (markedDates.includes(dateStr)) {
+                dayElem.classList.add("marked-date");
+            }
+        }
+    });
+
+
+    // ===============================
+    // 3) DOUGHNUT #1 — APEXCHARTS (report type)
+    // ===============================
+    const datasets = {{ report_datasets|safe }};
+    const donutLabels = datasets.map(item => item.label);
+    const donutSeries = datasets.map(item => item.data.reduce((a, b) => a + b, 0));
+
+    const donutOptions = {
+        series: donutSeries,
+        labels: donutLabels,
+        chart: { type: 'donut', height: 350 },
+        legend: { position: 'bottom' },
+        dataLabels: { dropShadow: { enabled: false } },
+        colors: ["#556ee6","#34c38f","#50a5f1","#f1b44c","#f46a6a","#74788d"]
+    };
+
+    new ApexCharts(document.querySelector("#store-visits-source"), donutOptions).render();
+
+
+    // ===============================
+    // 4) DOUGHNUT #2 — CHART.JS (ground safety)
+    // ===============================
+    
+    // 1) รับ JSON จาก Django
+    const dataObj = {{ ground_category_json|safe }};
+    const labels = Object.keys(dataObj);
+    const values = Object.values(dataObj);
+
+    console.log("GROUND CATEGORY:", labels, values);
+
+    const total = values.reduce((a, b) => a + b, 0);
+    if (total === 0) {
+        console.warn("Ground category ไม่มีข้อมูล (total = 0)");
+        return;
     }
-  });
+
+    const canvas = document.getElementById("groundCategoryChart");
+    if (!canvas) {
+        console.error("Canvas groundCategoryChart not found");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: labels.map((_, i) => [
+                    "#0ab39c",
+                    "#f7b84b",
+                    "#405189",
+                    "#f06548",
+                    "#299cdb",
+                    "#3577f1",
+                ][i % 6]),
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "65%",
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return `${ctx.label}: ${ctx.raw} รายการ`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // ===============================
+    // 5) SWEETALERT LOGOUT
+    // ===============================
+    const logoutLink = document.querySelector('a[href*="logout"]');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d'
+            }).then(result => {
+                if (result.isConfirmed) window.location.href = this.href;
+            });
+        });
+    }
+
+}); // END DOMContentLoaded
 </script>
 {% endblock extra_js %}

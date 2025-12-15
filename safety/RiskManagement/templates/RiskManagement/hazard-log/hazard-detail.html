@@ -120,7 +120,7 @@
                 {% if hazard_log.note %}
                 <div class="mt-3">
                   <span class="meta-label">หมายเหตุ:</span><br>
-                  {{ hazard_log.note }}
+                  {{ hazard_log.note|safe }}
                 </div>
                 {% endif %}
               </div>

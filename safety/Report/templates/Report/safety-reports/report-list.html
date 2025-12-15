@@ -282,7 +282,7 @@
                 <!-- Report Type -->
                 <div class="col-6 mb-3">
                     <label for="reportType" class="form-label">ประเภทการรายงาน</label>
-                    <select class="form-select" id="reportType" name="report_type" required>
+                    <select class="form-select" id="reportType" name="report_type" required disabled>
                         <option value="">-- เลือกประเภท --</option>
                         <option value="S" selected>รายงานขั้นต้น</option>
                     </select>
@@ -330,7 +330,7 @@
                     <option value="">-- เลือกประเภท --</option>
 
                     {% comment %} {% if report_type_choices.GENERAL %}
-                    <optgroup label="📄 รายงานทั่วไป">
+                    <optgroup label="รายงานทั่วไป">
                         {% for value, label in report_type_choices.GENERAL %}
                             <option value="{{ value }}">{{ label }}</option>
                         {% endfor %}
