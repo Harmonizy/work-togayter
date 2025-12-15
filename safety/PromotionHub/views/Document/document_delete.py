@@ -19,6 +19,7 @@ from common.RTAFUser.models import RTAFUser, Affiliation
 
 
 @login_required
+@permission_required("PromotionHub.delete_promotion_document", raise_exception=True)
 def delete(request, pk):
     document = get_object_or_404(Document, pk=pk)
     document.delete()

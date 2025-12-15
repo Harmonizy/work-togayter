@@ -36,10 +36,10 @@
 
                                     <div class="col-md-6">
                                         <input type="text"
-                                               name="search"
-                                               value="{{ search|default:'' }}"
-                                               class="form-control"
-                                               placeholder="ค้นหาชื่อเอกสาร / บทความ...">
+                                                name="search"
+                                                value="{{ search|default:'' }}"
+                                                class="form-control"
+                                                placeholder="ค้นหาชื่อเอกสาร / บทความ...">
                                     </div>
 
                                     <div class="col-md-2">
@@ -49,9 +49,11 @@
                                     </div>
 
                                     <div class="col-md-4 text-end">
+                                        {% if perms.PromotionHub.create_promotion_document %}
                                         <a href="{% url 'promotion:document_create' %}" class="btn btn-success">
                                             <i class="ri-add-line"></i> สร้างแฟ้มเอกสารใหม่
                                         </a>
+                                        {% endif %}
                                     </div>
 
                                 </div>

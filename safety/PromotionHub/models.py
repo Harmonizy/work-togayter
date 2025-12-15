@@ -92,6 +92,14 @@ class Promotion(models.Model):
             ("publish_promotion_hub_airforce", "*เผยแพร่การประชาสัมพันธ์ทั้งทอ.ได้"),
 
             ("create_promotion_quiz", "*สร้างแบบทดสอบได้"),
+            ("edit_promotion_quiz", "*แก้ไขแบบทดสอบได้"),
+            ("delete_promotion_quiz", "*ลบแบบทดสอบได้"),
+            ("detail_promotion_quiz", "*ดูรายละเอียดแบบทดสอบได้"),
+
+            ("create_promotion_document", "*สร้างเอกสารได้"),
+            ("edit_promotion_document", "*แก้ไขเอกสารได้"),
+            ("delete_promotion_document", "*ลบเอกสารได้"),
+            ("detail_promotion_document", "*ดูรายละเอียดเอกสารได้"),
         ]
 
     def __str__(self):

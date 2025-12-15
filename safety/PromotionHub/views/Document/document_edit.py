@@ -19,6 +19,7 @@ from common.RTAFUser.models import RTAFUser, Affiliation
 
 
 @login_required
+@permission_required("PromotionHub.edit_promotion_hub", raise_exception=True)
 def edit(request, pk):
     document = get_object_or_404(Document, pk=pk)
 

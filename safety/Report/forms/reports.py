@@ -53,6 +53,7 @@ class BaseReportForm(forms.ModelForm):
             )
         )
         self.fields['event_time'].label = "เวลาเกิดเหตุ"
+        self.fields["report_type"].disabled = True
 
         report_type = self.initial.get("report_type", "")
         affiliation = self.initial.get("affiliation", None)
@@ -90,7 +91,6 @@ class BaseReportForm(forms.ModelForm):
             'comment',
             'anonymous'
         )
-
 
 
 class GroundReportForm(forms.ModelForm):

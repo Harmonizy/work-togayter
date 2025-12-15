@@ -19,6 +19,7 @@ from common.RTAFUser.models import RTAFUser, Affiliation
 
 
 @login_required
+@permission_required("PromotionHub.create_promotion_document", raise_exception=True)
 def create(request):
     if request.method == "POST":
         form = DocumentForm(request.POST)
