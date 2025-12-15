@@ -1,8 +1,12 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
+
 from ..models import CAP
 from ..forms import CAPForm
 
+@login_required
+@permission_required("RiskManagement.create_cap", raise_exception=True)
 def cap_edit(request, cap_id):
     cap = CAP.objects.get(id=cap_id)
     if request.method == "POST":

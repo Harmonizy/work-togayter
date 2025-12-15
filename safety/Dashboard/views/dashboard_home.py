@@ -15,6 +15,8 @@ from safety.Report.models.reports import BaseReport
 from safety.Report.choices import ReportStatusChoices, PriorityChoices, ReportTypeChoices
 from safety.RiskManagement.models import CAP
 from common.RTAFUser.models import Affiliation
+from safety.Report.models import GroundReport
+from safety.Report.choices import GroundSafetyCategoryChoices
 
 
 THAI_MONTHS = [
@@ -24,9 +26,26 @@ THAI_MONTHS = [
 ]
 
 
-# =========================================================
-#   CAP DATASETS (รองรับ filter เดือน/ปี + คืน JSON)
-# =========================================================
+
+
+
+def get_ground_category_dataset():
+    qs = (
+        GroundReport.objects
+        .filter(category__isnull=False)
+        .values("category")
+        .annotate(total=Count("base_report_id"))
+    )
+
+    data = {choice.label: 0 for choice in GroundSafetyCategoryChoices}
+
+    for row in qs:
+        label = GroundSafetyCategoryChoices(row["category"]).label
+        data[label] = row["total"]
+
+    return data
+
+
 def get_cap_datasets(year, month):
     cap = CAP.objects.all()
 
@@ -69,10 +88,6 @@ def get_cap_datasets(year, month):
     return result
 
 
-
-# =========================================================
-#   MAIN DASHBOARD VIEW
-# =========================================================
 @login_required
 def index(request):
     user = request.user
@@ -85,7 +100,7 @@ def index(request):
         report = BaseReport.objects.filter(affiliation=user.affiliation)
 
     else:
-        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการประชาสัมพันธ์")
+        report = BaseReport.objects.filter(recorder=user)
 
     # ---- COUNTERS ----
     report_all = report.count()
@@ -115,6 +130,17 @@ def index(request):
 
     # ---- CAP datasets ----
     cap_datasets = get_cap_datasets(selected_year, selected_month)
+    ground_category_data = get_ground_category_dataset()
+    
+    affiliations = list(
+        Affiliation.objects.annotate(
+            report_count=Count("base_reports")   # ใช้ related_name ของ affiliation field
+        ).values(
+            "short_name",
+            "full_name",
+            "report_count",
+        )
+    )
 
     # ---- Dropdown ----
     month_list = [{"number": "all", "name": "ทั้งหมด"}] + [
@@ -141,6 +167,8 @@ def index(request):
         "cap_datasets": json.dumps(cap_datasets, ensure_ascii=False),
         "report_datasets": json.dumps(report_datasets, ensure_ascii=False),
         "priority_datasets": json.dumps(priority_datasets, ensure_ascii=False),
+        "affiliations_json": json.dumps(affiliations, ensure_ascii=False),
+        "ground_category_json": json.dumps(ground_category_data, ensure_ascii=False),
 
         # === Filters ===
         "month_list": month_list,
@@ -152,10 +180,6 @@ def index(request):
     return render(request, "Dashboard/home-index.html", context)
 
 
-
-# =========================================================
-#   เดิม — ไม่ต้องแก้
-# =========================================================
 def get_monthly_reports_by_type(reports):
     qs = (
         reports.annotate(month=ExtractMonth("event_date"))

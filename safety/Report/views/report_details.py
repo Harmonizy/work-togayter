@@ -28,7 +28,7 @@ def main_page(request, pk):
             return redirect("report:safety-report.list")
     else:
         if report.recorder != request.user:
-            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานนี้")
+            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานผู้อื่นได้")
             return redirect("report:safety-report.list")
 
     report = get_object_or_404(
@@ -55,7 +55,7 @@ def main_page(request, pk):
     ground_report = (
         GroundReport.objects
         .filter(base_report=report)
-        .select_related("base_report", "category")
+        .select_related("base_report")
         .first()
     )
 

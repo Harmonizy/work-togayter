@@ -291,21 +291,36 @@
                                                 <div>
                                                     {% comment %} # safety-analysis-project\static\js\pages\dashboard-analytics.init.js {% endcomment %}
                                                     <div id="countries_charts"
-     data-cap='{{ cap_datasets|safe }}'
-     data-colors='["--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-danger", "--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-info"]'
-     data-colors-minimal='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]'
-     data-colors-material='["--vz-primary", "--vz-primary", "--vz-info", "--vz-info", "--vz-danger", "--vz-primary", "--vz-primary", "--vz-warning", "--vz-primary", "--vz-primary"]'
-     data-colors-galaxy='["--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4"]'
-     data-colors-classic='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]'
-     class="apex-charts"
-     dir="ltr">
-</div>
+                                                        data-cap='{{ cap_datasets|safe }}'
+                                                        data-colors='["--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-danger", "--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-info"]'
+                                                        data-colors-minimal='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]'
+                                                        data-colors-material='["--vz-primary", "--vz-primary", "--vz-info", "--vz-info", "--vz-danger", "--vz-primary", "--vz-primary", "--vz-warning", "--vz-primary", "--vz-primary"]'
+                                                        data-colors-galaxy='["--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4", "--vz-primary-rgb, 0.4"]'
+                                                        data-colors-classic='["--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary-rgb, 0.45", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary", "--vz-primary"]'
+                                                        class="apex-charts"
+                                                        dir="ltr">
+                                                    </div>
 
                                                 </div>
                                             </div><!-- end card body -->
                                         </div><!-- end card -->
                                     </div> <!-- end col-->
                                 </div> <!-- end row-->
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            สัดส่วนรายงานภาคพื้น (Ground Safety Category)
+                                        </h5>
+                                    </div>
+
+                                    <div class="card-body" style="height:350px;">
+                                        <canvas id="groundCategoryChart"></canvas>
+                                    </div>
+
+                                </div>
+
+
                                 {% comment %} <div class="row">                                        
                                     <div class="card">
                                         <div class="card-header align-items-center d-flex">
@@ -583,92 +598,172 @@
 <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js'%}"></script>
 <script src="{% static 'libs/swiper/swiper-bundle.min.js'%}"></script>
 <script src="{% static 'libs/sweetalert2/dist/sweetalert2.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
 
 <script src="{% static 'js/pages/dashboard-ecommerce.init.js'%}"></script>
 <script src="{% static 'js/pages/dashboard-analytics.init.js'%}"></script>
-
 <script>
-window.priority_datasets = {{ priority_datasets|safe }};
-document.addEventListener('DOMContentLoaded', function() {
-    // โหลดแผนที่
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ===============================
+    // 0) Priority dataset (global)
+    // ===============================
+    window.priority_datasets = {{ priority_datasets|safe }};
+
+
+    // ===============================
+    // 1) LEAFLET MAP + AFFILIATION MARKERS
+    // ===============================
     var map = L.map('map').setView([12.5, 100.5231], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
     map.setMinZoom(6);
     map.setMaxZoom(8);
 
-    var airforceBases = [
-        { name: 'บน.1 กองบิน 1', lat: 14.93474, lon: 102.079842, reports: 3 },
-        { name: 'บน.2 กองบิน 2', lat: 14.876038, lon: 100.662143, reports: 5 },
-        { name: 'บน.4 กองบิน 4', lat: 15.273554, lon: 100.295634, reports: 2 },
-        { name: 'บน.5 กองบิน 5', lat: 11.789529, lon: 99.804607, reports: 8 },
-        { name: 'บน.6 กองบิน 6', lat: 13.909421, lon: 100.609366, reports: 1 },
-        { name: 'บน.7 กองบิน 7', lat: 9.135177, lon: 99.137333, reports: 4 },
-        { name: 'บน.21 กองบิน 21', lat: 15.252743, lon: 104.870593, reports: 6 },
-        { name: 'บน.23 กองบิน 23', lat: 17.387867, lon: 102.786205, reports: 7 },
-        { name: 'บน.41 กองบิน 41', lat: 18.773377, lon: 98.967149, reports: 2 },
-        { name: 'บน.46 กองบิน 46', lat: 16.783432, lon: 100.279443, reports: 9 },
-        { name: 'บน.56 กองบิน 56', lat: 6.933478, lon: 100.395185, reports: 3 },
-        { name: 'บน.3 กองบิน 3', lat: 13.769239, lon: 102.316855, reports: 10 }
+    const affiliations = JSON.parse('{{ affiliations_json|safe }}');
+
+    var airbaseLocations = {
+        "บน.1": { lat: 14.93474, lon: 102.079842 },
+        "บน.2": { lat: 14.876038, lon: 100.662143 },
+        "บน.3": { lat: 13.769239, lon: 102.316855 },
+        "บน.4": { lat: 15.273554, lon: 100.295634 },
+        "บน.5": { lat: 11.789529, lon: 99.804607 },
+        "บน.6": { lat: 13.909421, lon: 100.609366 },
+        "บน.7": { lat: 9.135177, lon: 99.137333 },
+        "บน.21": { lat: 15.252743, lon: 104.870593 },
+        "บน.23": { lat: 17.387867, lon: 102.786205 },
+        "บน.41": { lat: 18.773377, lon: 98.967149 },
+        "บน.46": { lat: 16.783432, lon: 100.279443 },
+        "บน.56": { lat: 6.933478, lon: 100.395185 }
+    };
+
+    affiliations.forEach(function(aff) {
+        let code = aff.short_name;
+        if (airbaseLocations[code]) {
+            let pos = airbaseLocations[code];
+            L.marker([pos.lat, pos.lon]).addTo(map)
+            .bindTooltip(
+                `${aff.short_name}<br>${aff.report_count} รายงาน`,
+                {
+                    permanent: true,
+                    direction: "top",
+                    offset: [0, -10],
+                    className: "reports-label"
+                }
+            );
+        }
+    });
+
+
+    // ===============================
+    // 2) CALENDAR (Flatpickr)
+    // ===============================
+    const markedDates = [
+        "2025-09-11",
+        "2025-09-12",
+        "2025-09-25",
+        "2025-09-22"
     ];
 
-    airforceBases.forEach(function(base) {
-        L.marker([base.lat, base.lon]).addTo(map)
-            .bindTooltip(base.reports + " reports", { 
-                permanent: true,
-                direction: "top",
-                offset: [0, -10],
-                className: "reports-label"
-            });
+    flatpickr("#calendar", {
+        inline: true,
+        dateFormat: "d M, Y",
+        defaultDate: "today",
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            const dateStr = dayElem.dateObj.toISOString().slice(0, 10);
+            if (markedDates.includes(dateStr)) {
+                dayElem.classList.add("marked-date");
+            }
+        }
     });
-});
 
-// ปฏิทิน
-const markedDates = [
-    "2025-09-11",
-    "2025-09-12",
-    "2025-09-25",
-    "2025-09-22"
-];
 
-flatpickr("#calendar", {
-    inline: true,
-    dateFormat: "d M, Y",
-    defaultDate: "today",
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-    const date = dayElem.dateObj;
-    const dateStr = date.toISOString().slice(0, 10);
-    if (markedDates.includes(dateStr)) {
-        dayElem.classList.add("marked-date");
-    }
-    }
-});
-
-// Donut Chart จาก datasets ที่ views ส่งมา
-document.addEventListener("DOMContentLoaded", function() {
+    // ===============================
+    // 3) DOUGHNUT #1 — APEXCHARTS (report type)
+    // ===============================
     const datasets = {{ report_datasets|safe }};
-    console.log("📊 Datasets:", datasets);
+    const donutLabels = datasets.map(item => item.label);
+    const donutSeries = datasets.map(item => item.data.reduce((a, b) => a + b, 0));
 
-    const labels = datasets.map(item => item.label);
-    const series = datasets.map(item => item.data.reduce((a, b) => a + b, 0));
-
-    const options = {
-        series: series,
-        labels: labels,
+    const donutOptions = {
+        series: donutSeries,
+        labels: donutLabels,
         chart: { type: 'donut', height: 350 },
         legend: { position: 'bottom' },
         dataLabels: { dropShadow: { enabled: false } },
         colors: ["#556ee6","#34c38f","#50a5f1","#f1b44c","#f46a6a","#74788d"]
     };
 
-    const chart = new ApexCharts(document.querySelector("#store-visits-source"), options);
-    chart.render();
-});
+    new ApexCharts(document.querySelector("#store-visits-source"), donutOptions).render();
 
-document.addEventListener('DOMContentLoaded', function() {
-    // SweetAlert2 Logout Confirm
+
+    // ===============================
+    // 4) DOUGHNUT #2 — CHART.JS (ground safety)
+    // ===============================
+    
+    // 1) รับ JSON จาก Django
+    const dataObj = {{ ground_category_json|safe }};
+    const labels = Object.keys(dataObj);
+    const values = Object.values(dataObj);
+
+    console.log("GROUND CATEGORY:", labels, values);
+
+    const total = values.reduce((a, b) => a + b, 0);
+    if (total === 0) {
+        console.warn("Ground category ไม่มีข้อมูล (total = 0)");
+        return;
+    }
+
+    const canvas = document.getElementById("groundCategoryChart");
+    if (!canvas) {
+        console.error("Canvas groundCategoryChart not found");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: labels.map((_, i) => [
+                    "#0ab39c",
+                    "#f7b84b",
+                    "#405189",
+                    "#f06548",
+                    "#299cdb",
+                    "#3577f1",
+                ][i % 6]),
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "65%",
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            return `${ctx.label}: ${ctx.raw} รายการ`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // ===============================
+    // 5) SWEETALERT LOGOUT
+    // ===============================
     const logoutLink = document.querySelector('a[href*="logout"]');
     if (logoutLink) {
         logoutLink.addEventListener('click', function(e) {
@@ -682,13 +777,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: 'ยกเลิก',
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#6c757d'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = this.href;
-                }
+            }).then(result => {
+                if (result.isConfirmed) window.location.href = this.href;
             });
         });
     }
-});
+
+}); // END DOMContentLoaded
 </script>
 {% endblock extra_js %}

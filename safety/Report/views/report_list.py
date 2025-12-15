@@ -23,6 +23,25 @@ from common.RTAFUser.models import Affiliation
 
 can_view_report = q_condition['report.can_view']
 
+def get_report_type_dropdown_choices():
+    aviation = []
+    ground = []
+    general = []
+
+    for value, label in ReportTypeChoices.choices:
+        if value.endswith("A"):
+            aviation.append((value, label))
+        elif value.endswith("G"):
+            ground.append((value, label))
+        else:
+            general.append((value, label))
+
+    return {
+        "AVIATION": aviation,
+        "GROUND": ground,
+        "GENERAL": general,
+    }
+
 
 @login_required
 def list(request):
@@ -85,6 +104,7 @@ def list(request):
         'status': status_filter,
         'priority': priority_filter,
         'affiliation': Affiliation.objects.all().order_by('short_name'),
+        "report_type_choices": get_report_type_dropdown_choices(),
     }
 
     return render(request, 'Report/safety-reports/report-list.html', context)

@@ -9,7 +9,7 @@ from django.shortcuts import reverse
 # from taggit.managers import TaggableManager
 from ckeditor.fields import RichTextField
 
-from ..choices import (BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices)
+from ..choices import (BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices, GroundSafetyCategoryChoices)
 from safety.Data.models import Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory, Keyword, Role
 from common.RTAFUser.models import RTAFUser, Affiliation, Squadron
 
@@ -31,28 +31,28 @@ class ReportManager(models.Manager):
 
 
 class BaseReport(models.Model):
-    fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ",default=current_fiscal_year)
-    affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยรับผิดชอบ", related_name='base_reports', on_delete=models.SET_NULL,null=True, blank=True, help_text="หน่วยงานหลักที่รับผิดชอบ")
-    location_affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยที่เกิดเหตุ",related_name='location_base_reports', on_delete=models.SET_NULL, null=True,blank=True, help_text="หน่วยงานที่อยู่ในสถานที่เกิดเหตุ")
-    event_date = models.DateField(verbose_name="วันที่เกิดเหตุ",default=date.today)
-    event_time = models.TimeField(verbose_name="เวลาเกิดเหตุ",default=timezone.now)
+    fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ", default=current_fiscal_year)
+    affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยรับผิดชอบ", related_name='base_reports', on_delete=models.SET_NULL, null=True, blank=True, help_text="หน่วยงานหลักที่รับผิดชอบ")
+    location_affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยที่เกิดเหตุ",related_name='location_base_reports', on_delete=models.SET_NULL, null=True, blank=True, help_text="หน่วยงานที่อยู่ในสถานที่เกิดเหตุ")
+    event_date = models.DateField(verbose_name="วันที่เกิดเหตุ", default=date.today)
+    event_time = models.TimeField(verbose_name="เวลาเกิดเหตุ", default=timezone.now)
 
-    report_type = models.CharField(verbose_name="ประเภทรายงาน",max_length=2,choices=ReportTypeChoices.choices,default=ReportTypeChoices.SIMPLE)
-    priority = models.CharField(verbose_name="ความสำคัญ",max_length=1,choices=PriorityChoices.choices)
-    status = models.IntegerField(verbose_name="สถานะ",choices=ReportStatusChoices.choices,default=ReportStatusChoices.DRAFT)
+    report_type = models.CharField(verbose_name="ประเภทรายงาน", max_length=4, choices=ReportTypeChoices.choices, default=ReportTypeChoices.SIMPLE)
+    priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PriorityChoices.choices)
+    status = models.IntegerField(verbose_name="สถานะ", choices=ReportStatusChoices.choices, default=ReportStatusChoices.DRAFT)
 
-    title = models.CharField(verbose_name="หัวข้อรายงาน",max_length=255)
+    title = models.CharField(verbose_name="หัวข้อรายงาน", max_length=255)
     content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
     
-    first_recommendation = models.TextField(verbose_name="คำแนะนำเบื้องต้น",null=True,blank=True)
-    initial_action_taken = models.TextField(verbose_name="การแก้ไขที่ดำเนินการ",null=True,blank=True)
+    first_recommendation = models.TextField(verbose_name="คำแนะนำเบื้องต้น", null=True, blank=True)
+    initial_action_taken = models.TextField(verbose_name="การแก้ไขที่ดำเนินการ", null=True, blank=True)
     
-    recorder = models.ForeignKey(RTAFUser,verbose_name="ผู้บันทึก",on_delete=models.CASCADE,null=True,blank=True)
-    anonymous = models.BooleanField(verbose_name="ไม่ระบุชื่อผู้บันทึก",default=False)
-    comment = models.CharField(verbose_name="หมายเหตุ",max_length=120,null=True,blank=True)
+    recorder = models.ForeignKey(RTAFUser,verbose_name="ผู้บันทึก", on_delete=models.CASCADE,null=True, blank=True)
+    anonymous = models.BooleanField(verbose_name="ไม่ระบุชื่อผู้บันทึก", default=False)
+    comment = models.CharField(verbose_name="หมายเหตุ",max_length=120, null=True, blank=True)
     
-    created_at = models.DateTimeField(verbose_name="วัน-เวลาที่สร้างรายงาน",auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด",auto_now=True)
+    created_at = models.DateTimeField(verbose_name="วัน-เวลาที่สร้างรายงาน", auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด", auto_now=True)
     
     objects = ReportManager()
     
@@ -96,7 +96,7 @@ class GroundReport(BaseAbsoluteURL, models.Model):
     base_report = models.OneToOneField(BaseReport, on_delete=models.CASCADE, primary_key=True)
     location = models.CharField(verbose_name="สถานที่โดยละเอียด", max_length=255, null=True, blank=True,
                                 help_text="ระบุสถานที่เกิดเหตุอย่างละเอียด เช่น โรงซ่อมอากาศนายที่ 3 แผนกซ่อมอากาศยานฯ")
-    category = models.ForeignKey(GroundSafetyCategory, verbose_name="สาขา", on_delete=models.CASCADE, null=True, blank=True)
+    category = models.IntegerField(verbose_name="สาขา", choices=GroundSafetyCategoryChoices.choices, default=GroundSafetyCategoryChoices.GENERAL, null=True, blank=True)
     accident_type = models.IntegerField(verbose_name="ประเภทอุบัติเหตุ", choices=AccidentTypeChoices.choices, null=True, blank=True)
 
     class Meta:
@@ -114,7 +114,7 @@ class AviationReport(BaseAbsoluteURL, models.Model):
     air_control = models.CharField(verbose_name="หน่วยควบคุมการจราจรทางอากาศ", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "1.2 ภาคอากาศ"
+        verbose_name = verbose_name_plural = "1.2 การบิน"
 
 
 class Participant(models.Model):

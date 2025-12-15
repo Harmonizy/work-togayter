@@ -69,6 +69,7 @@ class HazardLog(models.Model):
             ("edit_hazard_log", "*แก้ไขทะเบียนความเสี่ยงได้"),
             ("delete_hazard_log", "*ลบทะเบียนความเสี่ยงได้"),
             ("detail_hazard_log", "*ดูรายละเอียดทะเบียนความเสี่ยงได้"),
+            
             ("create_cap", "*สร้าง CAP ได้"),
         ]
 

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required, permission_required
 
 from ..models import HazardCategory
 from ..services.hazard_summary import get_hazard_summary_cards

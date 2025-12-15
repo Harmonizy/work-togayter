@@ -4,17 +4,31 @@ from django.db import models
 class ReportTypeChoices(models.TextChoices):
     SIMPLE = 'S', 'รายงานขั้นต้น'
     OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
-    HAZARD_GROUND = 'HG', 'รายงานอุบัติการณ์ภาคพื้น'
-    SAFETY_GROUND = 'SG', 'รายงานอุบัติเหตุภาคพื้น'
+
+    HAZARD_GROUND = 'HG', 'รายงานอันตรายภาคพื้น'
+    SAFETY_GROUND = 'SG', 'รายงานอุบัติการณ์ภาคพื้น'
+    MINOR_ACCIDENT_GROUND = 'MIG', 'รายงานอุบัติเหตุภาคพื้นย่อย'
+    MAJOR_ACCIDENT_GROUND = 'MJG', 'รายงานอุบัติเหตุภาคพื้นร้ายแรง'
+
     HAZARD_AVIATION = 'HA', 'รายงานอากาศยานอุบัติการณ์'
     SAFETY_AVIATION = 'SA', 'รายงานอากาศยานอุบัติเหตุ'
 
 
+class GroundSafetyCategoryChoices(models.IntegerChoices):
+    OPERATOR = 1, 'สาขานิรภัยอุตสาหการ'
+    AIRPORT = 2, 'สาขานิรภัยอากาศยานและลานจอด'
+    INDUSTRIAL = 3, 'สาขานิรภัยสาธารณูปการ'
+    FIRE_PREVENTION = 4, 'สาขานิรภัยการป้องกันอัคคีภัย'
+    ARMAMENT = 5, 'สาขานิรภัยการสรรพาวุธ'
+    TRAFFIC = 6, 'สาขานิรภัยการจราจร'
+    GENERAL = 7, 'สาขานิรภัยทั่วไป'
+
+
 class BaseReportTypeChoices(models.TextChoices):
     HAZARD_GROUND = 'HG', 'รายงานอันตราย (ภาคพื้น)'
-    HAZARD_AVIATION = 'HA', 'รายงานอันตราย (ภาคอากาศ)'
+    HAZARD_AVIATION = 'HA', 'รายงานอันตราย (การบิน)'
     SAFETY_GROUND = 'SG', 'รายงานนิรภัยอุบัติการณ์ (ภาคพื้น)'
-    SAFETY_AVIATION = 'SA', 'รายงานนิรภัยอุบัติการณ์ (ภาคอากาศ)'
+    SAFETY_AVIATION = 'SA', 'รายงานนิรภัยอุบัติการณ์ (การบิน)'
 
 
 class PriorityChoices(models.TextChoices):
@@ -27,6 +41,7 @@ class ReportStatusChoices(models.IntegerChoices):
     DRAFT = 1, "ร่าง"
     APPROVED = 2, "อนุมัติ"
     REJECTED = 3, "ไม่อนุมัติ"
+    DELETED = 4, "ลบ"
 
 
 class DamageTypeChoices(models.IntegerChoices):
