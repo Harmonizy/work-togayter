@@ -188,14 +188,22 @@ def get_monthly_reports_by_type(reports):
                .order_by("month")
     )
 
-    all_types = [choice.label for choice in ReportTypeChoices]
+    all_types = [choice.label for choice in ReportTypeChoices] + ["ไม่ระบุประเภท"]
     type_data = {t: [0] * 12 for t in all_types}
 
     for row in qs:
-        if row["month"]:
-            month_index = row["month"] - 1
-            label = ReportTypeChoices(row["report_type"]).label
-            type_data[label][month_index] = row["total"]
+        if not row["month"]:
+            continue
+
+        month_index = row["month"] - 1
+        raw_value = row["report_type"] or ""
+
+        try:
+            label = ReportTypeChoices(raw_value).label
+        except ValueError:
+            label = "ไม่ระบุประเภท"
+
+        type_data[label][month_index] = row["total"]
 
     return [{"label": label, "data": data} for label, data in type_data.items()]
 
