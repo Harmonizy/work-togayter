@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 
 from ..forms.reports import BaseReportForm, GroundReportForm, AviationReportForm
-from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet
+from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet, BulkAttachmentForm
 from ..constants import default_content
 from ..choices import ReportTypeChoices
 from ..services.reports import save_new_report
@@ -28,6 +28,8 @@ def new_report(request):
     rec_formset = RecommendationFormSet(request.POST, prefix="recommendations")
     file_formset = FileFormSet(request.POST, request.FILES, prefix="files")
     
+    bulk_form = BulkAttachmentForm(request.POST, request.FILES)
+    
     report_type = request.POST.get("base_form-report_type", "")
     priority = request.POST.get("priority", "L")
     
@@ -35,9 +37,15 @@ def new_report(request):
     if all(form.is_valid() for form in [base_form, image_formset, rec_formset, file_formset]):
         base_form.instance.report_type = report_type
         base_report = save_new_report(request, base_form, image_formset, rec_formset, file_formset, priority)
+        
+           # ✅ เสริม bulk แบบ optional
+        if bulk_form.is_valid():
+            bulk_form.save(base_report, request.user)
+        
         return handle_post_success(request, base_report)
+    
 
-    return handle_post_failure([base_form, image_formset, rec_formset, file_formset],)
+    return handle_post_failure([base_form, image_formset, rec_formset, file_formset],{"bulk_form": bulk_form})
 
 # --- Subfunctions ---
 
@@ -59,6 +67,7 @@ def build_context_for_get(initial, report_type, affiliation):
         "image_formset": ImageFormSet(prefix="images"),
         "recommendation_formset": RecommendationFormSet(prefix="recommendations"),
         "file_formset": FileFormSet(prefix="files"),
+        "bulk_form": BulkAttachmentForm(), 
         "ReportTypeChoices": ReportTypeChoices,
         "report_type": report_type,
     }

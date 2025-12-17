@@ -6,6 +6,23 @@ from .fields import content_example, content_field, textarea_field, multi_select
 from ..models import BaseReport, Image, Recommendation, File
 
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+    
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            return [single_file_clean(d, initial) for d in data]
+        return [single_file_clean(data, initial)]
+
+
+
 # -------------------------------------------------------
 # 1) BaseInlineFormSet (หัวใจสำคัญ)
 # -------------------------------------------------------
@@ -110,6 +127,42 @@ class FileForm(forms.ModelForm):
                 Column('comment', css_class='col-md-4'),
             )
         )
+
+
+class BulkAttachmentForm(forms.Form):
+    bulk_images = MultipleFileField(
+        required=False,
+        label="เพิ่มรูปภาพหลายรูป"
+    )
+
+    bulk_files = MultipleFileField(
+        required=False,
+        label="เพิ่มไฟล์หลายไฟล์"
+    )
+
+    def save(self, base_report, user):
+        from ..models import Image, File
+        from django.core.exceptions import ValidationError
+
+        for img in self.cleaned_data.get("bulk_images", []):
+            if not img.content_type.startswith("image/"):
+                continue   # หรือ raise ValidationError
+            Image.objects.create(
+                base_report=base_report,
+                image=img,
+                recorder=user
+            )
+
+        for f in self.cleaned_data.get("bulk_files", []):
+            if f.content_type.startswith("image/"):
+                continue
+            File.objects.create(
+                base_report=base_report,
+                file=f,
+                recorder=user
+            )
+
+
 
 
 # -------------------------------------------------------

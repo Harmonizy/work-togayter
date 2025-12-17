@@ -44,3 +44,6 @@ partial_url_patterns = [
 ]
 
 urlpatterns = main_urlpatterns + partial_url_patterns
+
+
+
