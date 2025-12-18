@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Prefetch, Count, Q
 from django.contrib import messages
+from django.http import HttpResponse
 
 from ..models.reports import BaseReport, AviationReport, GroundReport, Participant, ReferenceReport
 from ..models.attachments import Image, File, Recommendation
@@ -23,13 +24,24 @@ def main_page(request, pk):
     if request.user.has_perm("report.view_all_report_detail"):
         pass
     elif request.user.has_perm("report.view_affiliation_report_detail"):
-        if report.affiliation != request.user.affiliation and report.location_affiliation != request.user.affiliation:
+        if (
+            report.affiliation != request.user.affiliation
+            and report.location_affiliation != request.user.affiliation
+        ):
             messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานหน่วยอื่นได้")
             return redirect("report:safety-report.list")
+    elif report.recorder == request.user:
+        pass
     else:
-        if report.recorder != request.user:
-            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานผู้อื่นได้")
-            return redirect("report:safety-report.list")
+        messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานผู้อื่นได้")
+        return HttpResponse(
+            f"""
+            ALL: {request.user.has_perm("report.view_all_report_detail")}<br>
+            AFF: {request.user.has_perm("report.view_affiliation_report_detail")}<br>
+            REC: {report.recorder == request.user}<br>
+            APP: {report._meta.app_label}
+            """
+        )
 
     report = get_object_or_404(
         BaseReport.objects
