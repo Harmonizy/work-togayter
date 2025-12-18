@@ -266,7 +266,6 @@
 </div>
 
 
-
 <!-- Modal -->
 <div class="modal fade" id="reportInitialModal" tabindex="-1" aria-labelledby="reportInitialModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -294,7 +293,10 @@
 
                     <select class="form-select" id="affiliation" name="affiliation" required>
                         {% for aff in affiliation %}
-                        <option value="{{ aff.id }}" {% if aff.id == request.user.affiliation.id %}selected{% endif %}>{{ aff.short_name }}</option>
+                        <option value="{{ aff.id }}"
+                            {% if selected_affiliation and aff.id == selected_affiliation.id %}selected{% endif %}>
+                            {{ aff.short_name }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -361,7 +363,10 @@
 
                     <select class="form-select" id="affiliation" name="affiliation" required>
                         {% for aff in affiliation %}
-                        <option value="{{ aff.id }}" {% if aff.id == request.user.affiliation.id %}selected{% endif %}>{{ aff.short_name }}</option>
+                        <option value="{{ aff.id }}"
+                            {% if selected_affiliation and aff.id == selected_affiliation.id %}selected{% endif %}>
+                            {{ aff.short_name }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>

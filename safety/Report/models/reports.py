@@ -46,11 +46,11 @@ class BaseReport(models.Model):
     
     first_recommendation = models.TextField(verbose_name="คำแนะนำเบื้องต้น", null=True, blank=True)
     initial_action_taken = models.TextField(verbose_name="การแก้ไขที่ดำเนินการ", null=True, blank=True)
-    
+
     recorder = models.ForeignKey(RTAFUser,verbose_name="ผู้บันทึก", on_delete=models.CASCADE,null=True, blank=True)
     anonymous = models.BooleanField(verbose_name="ไม่ระบุชื่อผู้บันทึก", default=False)
     comment = models.CharField(verbose_name="หมายเหตุ",max_length=120, null=True, blank=True)
-    
+
     created_at = models.DateTimeField(verbose_name="วัน-เวลาที่สร้างรายงาน", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด", auto_now=True)
     

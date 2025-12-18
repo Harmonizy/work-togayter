@@ -2,8 +2,7 @@ from django.db import models
 
 
 class ReportTypeChoices(models.TextChoices):
-    SIMPLE = 'S', 'รายงานขั้นต้น'
-    OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
+    SIMPLE = 'S', 'รายงานอันตราย'
 
     HAZARD_GROUND = 'HG', 'รายงานอันตรายภาคพื้น'
     SAFETY_GROUND = 'SG', 'รายงานอุบัติการณ์ภาคพื้น'
@@ -12,6 +11,8 @@ class ReportTypeChoices(models.TextChoices):
 
     HAZARD_AVIATION = 'HA', 'รายงานอากาศยานอุบัติการณ์'
     SAFETY_AVIATION = 'SA', 'รายงานอากาศยานอุบัติเหตุ'
+
+    OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
 
 
 class GroundSafetyCategoryChoices(models.IntegerChoices):

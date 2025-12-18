@@ -49,24 +49,30 @@ def list(request):
     date_range = request.GET.get('date_range', '').strip()
     status_filter = request.GET.get('status', '').strip()
     priority_filter = request.GET.get('priority', '').strip()
+    
+    selected_affiliation = (
+    request.user.work_affiliation
+    if request.user.work_affiliation
+    else request.user.affiliation
+)
 
     if request.user.has_perm('Report.view_all_report_list'):
         reports = BaseReport.objects.all()
+
     elif request.user.has_perm('Report.view_affiliation_report_list'):
-        reports = BaseReport.objects.filter(
-            Q(affiliation=request.user.affiliation) |
-            Q(location_affiliation=request.user.affiliation)
+        view_affiliation = (
+            request.user.work_affiliation
+            if request.user.work_affiliation
+            else request.user.affiliation
         )
+
+        reports = BaseReport.objects.filter(
+            Q(affiliation=view_affiliation) |
+            Q(location_affiliation=view_affiliation)
+        )
+
     else:
-        reports = BaseReport.objects.filter(recorder=request.user)
-
-    reports = (
-        reports.select_related("recorder", "affiliation", "recorder__rank")
-                .prefetch_related("file_attachment", "image_attachment")
-                .order_by("-event_date")
-    )
-
-    report_cards = card_data(reports)
+        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการรายงาน")
 
     if search_query:
         reports = reports.filter(
@@ -76,8 +82,8 @@ def list(request):
         ).distinct()
 
     if date_range and " to " in date_range:
-        start_str, end_str = date_range.split(" to ", 1)
         try:
+            start_str, end_str = date_range.split(" to ", 1)
             start_date = datetime.strptime(start_str.strip(), "%d %b, %Y").date()
             end_date = datetime.strptime(end_str.strip(), "%d %b, %Y").date()
             reports = reports.filter(event_date__range=(start_date, end_date))
@@ -91,19 +97,19 @@ def list(request):
         reports = reports.filter(priority=priority_filter)
 
     paginator = Paginator(reports, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(request.GET.get('page'))
 
     context = {
-        'report_cards': report_cards,
+        'report_cards': card_data(reports),
         'base_reports': page_obj,
         'ReportTypeChoices': ReportTypeChoices,
         'ReportStatusChoices': ReportStatusChoices,
-        'search': search_query, 
+        'search': search_query,
         'date_range': date_range,
         'status': status_filter,
         'priority': priority_filter,
         'affiliation': Affiliation.objects.all().order_by('short_name'),
+        'selected_affiliation': selected_affiliation,
         "report_type_choices": get_report_type_dropdown_choices(),
     }
 
