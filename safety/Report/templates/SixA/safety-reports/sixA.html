@@ -10,8 +10,7 @@
     <div class="container-fluid">
 
     {% url 'report:safety-report.detail' report.id as back_url %}
-    {% include "partials/page-title.html" with pagetitle="รายงาน" pagetitle_url=back_url title="แบบประเมิน 6A" %}
-
+    {% include "partials/page-title.html" with pagetitle="SAFETY REPORT" title="SAFETY REPORT" %}
     <form id="sixAForm" method="post">
         {% csrf_token %}
         {% crispy form %}

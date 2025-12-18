@@ -26,9 +26,6 @@ THAI_MONTHS = [
 ]
 
 
-
-
-
 def get_ground_category_dataset():
     qs = (
         GroundReport.objects

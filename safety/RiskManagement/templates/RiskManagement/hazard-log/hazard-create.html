@@ -19,7 +19,7 @@
   <div class="page-content">
     <div class="container-fluid">
       {% url 'risk_management:hazard-log' as safety_report_list_url %}
-      {% include "partials/page-title.html" with pagetitle="บันทึกอันตราย" pagetitle_url=safety_report_list_url title="สร้างบันทึกอันตรายใหม่" %}
+      {% include "partials/page-title.html" with pagetitle="SAFETY RISK MANAGEMENT" title="SAFETY RISK MANAGEMENT" %}
 
       <form id="hazardLogForm" method="post" enctype="multipart/form-data" class="my-4">
         {% csrf_token %}
