@@ -98,7 +98,7 @@ def list(request):
         reports = reports.filter(priority=priority_filter)
 
     # Ordering (สำคัญที่สุด)
-    reports = reports.order_by('-event_date', '-id')
+    reports = reports.order_by('-event_date')
 
     # Pagination
     paginator = Paginator(reports, 10)
@@ -119,11 +119,7 @@ def list(request):
         'report_type_choices': get_report_type_dropdown_choices(),
     }
 
-    return render(
-        request,
-        'Report/safety-reports/report-list.html',
-        context
-    )
+    return render(request, 'Report/safety-reports/report-list.html', context)
 
 
 class MobileHomeView(LoginRequiredMixin, TemplateView):

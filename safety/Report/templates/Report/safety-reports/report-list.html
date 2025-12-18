@@ -268,49 +268,50 @@
 
 <!-- Modal -->
 <div class="modal fade" id="reportInitialModal" tabindex="-1" aria-labelledby="reportInitialModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-    <div class="modal-content">
-    <form method="get" action="{% url 'report:safety-create.new_report' %}">
-        <div class="modal-header">
-        <h5 class="modal-title" id="reportInitialModalLabel">เลือกประเภทและหน่วยงาน</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-            <div class="row">
-                <!-- Report Type -->
-                <div class="col-6 mb-3">
-                    <label for="reportType" class="form-label">ประเภทการรายงาน</label>
-                    <select class="form-select" id="reportType" name="report_type" required disabled>
-                        <option value="">-- เลือกประเภท --</option>
-                        <option value="S" selected>รายงานขั้นต้น</option>
-                    </select>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="get" action="{% url 'report:safety-create.new_report' %}">
+                <div class="modal-header">
+                <h5 class="modal-title" id="reportInitialModalLabel">เลือกประเภทและหน่วยงาน</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <!-- Affiliation -->
-                <div class="col-6 mb-3">
-                    <label for="affiliation" class="form-label">หน่วยงานรับผิดชอบ</label>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Report Type -->
+                        <div class="col-6 mb-3">
+                            <label for="reportType" class="form-label">ประเภทการรายงาน</label>
+                            <select class="form-select" id="reportType" name="report_type" required disabled>
+                                {% for value, label in report_type_choices.GENERAL %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-                    <select class="form-select" id="affiliation" name="affiliation" required>
-                        {% for aff in affiliation %}
-                        <option value="{{ aff.id }}"
-                            {% if selected_affiliation and aff.id == selected_affiliation.id %}selected{% endif %}>
-                            {{ aff.short_name }}
-                        </option>
-                        {% endfor %}
-                    </select>
+                        <!-- Affiliation -->
+                        <div class="col-6 mb-3">
+                            <label for="affiliation" class="form-label">หน่วยงานรับผิดชอบ</label>
+
+                            <select class="form-select" id="affiliation" name="affiliation" required>
+                                {% for aff in affiliation %}
+                                <option value="{{ aff.id }}"
+                                    {% if selected_affiliation and aff.id == selected_affiliation.id %}selected{% endif %}>
+                                    {{ aff.short_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
 
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-        <button type="submit" class="btn btn-primary">สร้างรายงานใหม่</button>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                <button type="submit" class="btn btn-primary">สร้างรายงานใหม่</button>
+                </div>
+            </form>
         </div>
-    </form>
     </div>
-</div>
 </div>
 
 <!-- Advance Form modals -->

@@ -4,7 +4,7 @@ class HazardLogStatusChoices(models.TextChoices):
     OPEN = 'O', 'เปิด'
     CLOSE = 'C', 'ปิด'
 
-class LikelihoodChoices(models.IntegerChoices):    
+class LikelihoodChoices(models.IntegerChoices):
     RARE = 1, "1 - เกิดขึ้นได้น้อยมาก"
     UNLIKELY = 2, "2 - ไม่น่าจะเกิด"
     POSSIBLE = 3, "3 - อาจเกิดขึ้นได้"
