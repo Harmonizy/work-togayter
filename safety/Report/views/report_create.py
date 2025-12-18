@@ -38,7 +38,7 @@ def new_report(request):
         base_form.instance.report_type = report_type
         base_report = save_new_report(request, base_form, image_formset, rec_formset, file_formset, priority)
         
-           # ✅ เสริม bulk แบบ optional
+        #เสริม bulk แบบ optional
         if bulk_form.is_valid():
             bulk_form.save(base_report, request.user)
         

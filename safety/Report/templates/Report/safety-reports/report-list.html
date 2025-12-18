@@ -268,12 +268,12 @@
 
 <!-- Modal -->
 <div class="modal fade" id="reportInitialModal" tabindex="-1" aria-labelledby="reportInitialModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <form method="get" action="{% url 'report:safety-create.new_report' %}">
+    <form method="get" action="{% url 'report:safety-create.new_report' %}">
         <div class="modal-header">
-          <h5 class="modal-title" id="reportInitialModalLabel">เลือกประเภทและหน่วยงาน</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="reportInitialModalLabel">เลือกประเภทและหน่วยงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -305,22 +305,22 @@
 
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-          <button type="submit" class="btn btn-primary">สร้างรายงานใหม่</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+        <button type="submit" class="btn btn-primary">สร้างรายงานใหม่</button>
         </div>
-      </form>
+    </form>
     </div>
-  </div>
+</div>
 </div>
 
 <!-- Advance Form modals -->
 <div class="modal fade" id="reportAdvanceModal" tabindex="-1" aria-labelledby="reportInitialModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <form method="get" action="{% url 'report:safety-create-officer.new_report' %}">
+    <form method="get" action="{% url 'report:safety-create-officer.new_report' %}">
         <div class="modal-header">
-          <h5 class="modal-title" id="reportInitialModalLabel">เลือกประเภทและหน่วยงาน</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="reportInitialModalLabel">เลือกประเภทและหน่วยงาน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
@@ -375,12 +375,12 @@
 
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-          <button type="submit" class="btn btn-primary">สร้างรายงานใหม่</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+        <button type="submit" class="btn btn-primary">สร้างรายงานใหม่</button>
         </div>
-      </form>
+    </form>
     </div>
-  </div>
+</div>
 </div>
 
 {% endblock content %}

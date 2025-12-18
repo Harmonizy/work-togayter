@@ -9,8 +9,11 @@ class ReportTypeChoices(models.TextChoices):
     MINOR_ACCIDENT_GROUND = 'MIG', 'รายงานอุบัติเหตุภาคพื้นย่อย'
     MAJOR_ACCIDENT_GROUND = 'MJG', 'รายงานอุบัติเหตุภาคพื้นร้ายแรง'
 
-    HAZARD_AVIATION = 'HA', 'รายงานอากาศยานอุบัติการณ์'
-    SAFETY_AVIATION = 'SA', 'รายงานอากาศยานอุบัติเหตุ'
+    SAFETY_AVIATION = 'SA', 'รายงานิรภัยการบินขั้นต้น'
+    HAZARD_AVIATION = 'HA', 'รายงานอันตราย'
+    ANALYSIS_AVIATION = 'AA', 'รายงานผลการวิเคราะห์อันตราย'
+    BIRD_AVIATION = 'BA', "รายงานอากาศยานชนนก"
+    FIX_ANALYSIS_AVIATION = 'FAA', "รายงานข้อขัดข้องของการรายงานผลการวิเคราะห์อากาศยานอุบัติการณ์"
 
     OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
 
@@ -83,11 +86,7 @@ class AccidentTypeChoices(models.IntegerChoices):
     INCIDENT = 2, "ร้ายแรง"
 
 
-# -------------------------------------------------------------------------------
 # 6A
-# --------------------------------------------------------------------------------
-
-
 class QuestionCategoryChoices(models.IntegerChoices):
     AIRCREW = 1, "ผู้ทำการในอากาศ (Aircrew)"
     AIRCRAFT = 2, "อากาศยาน (Aircraft)"
