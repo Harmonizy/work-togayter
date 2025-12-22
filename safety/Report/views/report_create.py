@@ -41,7 +41,8 @@ def new_report(request):
         #เสริม bulk แบบ optional
         if bulk_form.is_valid():
             bulk_form.save(base_report, request.user)
-        
+
+                
         return handle_post_success(request, base_report)
     
 
@@ -52,10 +53,7 @@ def new_report(request):
 def extract_get_params(request):
     affiliation_id = request.GET.get("affiliation")
     
-    affiliation = (Affiliation.objects.get(id=affiliation_id)
-        if affiliation_id
-        else request.user.work_affiliation or request.user.affiliation
-    )
+    affiliation = Affiliation.objects.get(id=affiliation_id) if affiliation_id else None
     
     report_type = request.GET.get("report_type", "")
     initial = {
