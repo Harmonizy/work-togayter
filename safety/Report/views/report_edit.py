@@ -16,19 +16,21 @@ logger = logging.getLogger("report")
 
 
 @login_required
+@permission_required("Report.edit_report", raise_exception=True)
 def edit_report(request, report_id):
     """แก้ไขรายงานได้ทั้งแบบพื้นฐานและแบบเจ้าหน้าที่"""
     report = get_object_or_404(BaseReport, pk=report_id)
 
     # ตรวจสิทธิ์
     if report.status == ReportStatusChoices.DRAFT:
-        if report.recorder != request.user and not request.user.has_perm("Report.edit_report"):
+        # if report.recorder != request.user and not request.user.has_perm("Report.edit_report"):
+        if not report.recorder == request.user :
             messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานฉบับร่างของผู้อื่น")
             return redirect("report:safety-report.list")
-    else:
-        if not request.user.has_perm("Report.edit_report"):
-            messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานนี้ เนื่องจากรายงานนี้ได้รับการอนุมัติแล้ว")
-            return redirect("report:safety-report.list")
+    # else:
+    #     if not request.user.has_perm("Report.edit_report"):
+    #         messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานนี้ เนื่องจากรายงานนี้ได้รับการอนุมัติแล้ว")
+    #         return redirect("report:safety-report.list")
 
     # เตรียมฟอร์มหลัก
     if request.method == "POST":
