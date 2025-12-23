@@ -21,17 +21,15 @@ def is_type_in(report, choices):
 def main_page(request, pk):
     report = get_object_or_404(BaseReport, pk=pk)
 
-    if request.user.has_perm("report.view_all_report_detail"):
+    # ถ้าเป็นสิทธฺ์ดูรายงานทั้งหมด (admin, superuser ) หรือ เป็นผู้บันทึกรายงาน
+    if request.user.has_perm("report.view_all_report_detail") or report.recorder == request.user:
         pass
+    # ถ้ามีสิทธิ์ดูรายงานตามสังกัด
     elif request.user.has_perm("report.view_affiliation_report_detail"):
-        if (
-            report.affiliation != request.user.affiliation
-            and report.location_affiliation != request.user.affiliation
-        ):
+        if not (report.affiliation == request.user.work_affiliation
+                or report.location_affiliation == request.user.work_affiliation):
             messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานหน่วยอื่นได้")
             return redirect("report:safety-report.list")
-    elif report.recorder == request.user:
-        pass
     else:
         messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานผู้อื่นได้")
         return HttpResponse(
