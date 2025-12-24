@@ -61,16 +61,22 @@ def list(request):
     # Permission-based queryset
     if request.user.has_perm('Report.view_all_report_list'):
         reports = BaseReport.objects.all()
-
     elif request.user.has_perm('Report.view_affiliation_report_list'):
-        view_affiliation = selected_affiliation
         reports = BaseReport.objects.filter(
-            Q(affiliation=view_affiliation) |
-            Q(location_affiliation=view_affiliation)
+            Q(affiliation=request.user.affiliation) |
+            Q(location_affiliation=request.user.affiliation)
         )
 
     else:
-        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายการรายงาน")
+        reports = BaseReport.objects.filter(recorder=request.user)
+
+    reports = (
+        reports.select_related("recorder", "affiliation", "recorder__rank")
+                .prefetch_related("file_attachment", "image_attachment")
+                .order_by("-event_date")
+    )
+
+    report_cards = card_data(reports)
 
     # Search
     if search_query:
@@ -82,8 +88,8 @@ def list(request):
 
     # Date range filter
     if date_range and " to " in date_range:
+        start_str, end_str = date_range.split(" to ", 1)
         try:
-            start_str, end_str = date_range.split(" to ", 1)
             start_date = datetime.strptime(start_str.strip(), "%d %b, %Y").date()
             end_date = datetime.strptime(end_str.strip(), "%d %b, %Y").date()
             reports = reports.filter(event_date__range=(start_date, end_date))
@@ -106,7 +112,7 @@ def list(request):
 
     # Context
     context = {
-        'report_cards': card_data(reports),
+        'report_cards': report_cards,
         'base_reports': page_obj,
         'ReportTypeChoices': ReportTypeChoices,
         'ReportStatusChoices': ReportStatusChoices,

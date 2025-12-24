@@ -33,7 +33,7 @@
             hx-target="#publishDynamic"
             hx-swap="innerHTML"
         >
-        <label class="form-check-label">หน่วย</label>
+        <label class="form-check-label">{{request.user.work_affiliation | default_if_none:"หน่วย"}}</label>
     </div>
 
     <div class="form-check">
