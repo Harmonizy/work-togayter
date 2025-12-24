@@ -132,17 +132,17 @@
               {% endif %}
 
               <!-- Meta info -->
-              {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %}
+              {% comment %} {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %} {% endcomment %}
               <div class="text-center mt-3">
                 <div class="promotion-meta">
                   โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} •
                   {{ promotion.created_at|date:"d M Y" }} • 
                   เข้าชม {{ promotion.num_view }} คน • 
-                  ทำแบบทดสอบ {{ quiz_completed_count }} คน • 
-                  รับทราบ {{ promotion.num_accepted }} คน 
+                  ทำแบบทดสอบ {{ quiz_completed_count }} คน
+                  {% comment %} รับทราบ {{ promotion.num_accepted }} คน  {% endcomment %}
                 </div>
               </div>
-              {% endif %}
+              {% comment %} {% endif %} {% endcomment %}
 
             </div> <!-- /card-body -->
           </div> <!-- /card -->
