@@ -6,7 +6,8 @@ from .views.Document import document_list, document_detail, document_create, doc
 
 app_name = 'promotion'
 
-main_urlpatterns = [    
+main_urlpatterns = [   
+    path('list', promotion_list.list_ground, name='list'), 
     path('list_ground', promotion_list.list_ground, name='list_ground'),
     path('list_air', promotion_list.list_air, name='list_air'),
 
