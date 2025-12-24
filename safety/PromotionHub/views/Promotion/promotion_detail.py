@@ -37,7 +37,7 @@ from common.RTAFUser.models import RTAFUser, Affiliation
 #     }
 #     return render(request, "PromotionHub/promotion_detail.html", context)
 
-
+@login_required
 class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
     model = Promotion
     template_name = 'PromotionHub/promotion_detail.html'
