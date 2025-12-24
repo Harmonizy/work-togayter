@@ -9,7 +9,7 @@ from ckeditor.widgets import CKEditorWidget
 from .models import Promotion, Quiz, Question, Choice, Document, DocumentFile
 
 class PromotionForm(forms.ModelForm):
-    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}))
+    content = forms.CharField(widget=TinyMCE(attrs={'cols': 80, 'rows': 30}) ,required=False)
 
     class Meta:
         model = Promotion
