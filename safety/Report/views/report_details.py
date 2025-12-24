@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.db.models import Prefetch, Count, Q
 from django.contrib import messages
 from django.http import HttpResponse
@@ -18,30 +19,44 @@ def is_type_in(report, choices):
     return report.report_type in choices
 
 
-def main_page(request, pk):
-    report = get_object_or_404(BaseReport, pk=pk)
+def has_report_permission_or_owner(view_func):
+    def wrapper(request, report_pk, *args, **kwargs):
+        report = get_object_or_404(BaseReport, pk=report_pk)
+        if request.user.has_perm("Report.view_all_report_detail") or report.recorder == request.user:
+            return view_func(request, report, *args, **kwargs)
 
-    if request.user.has_perm("report.view_all_report_detail"):
-        pass
-    elif request.user.has_perm("report.view_affiliation_report_detail"):
-        if (
-            report.affiliation != request.user.affiliation
-            and report.location_affiliation != request.user.affiliation
-        ):
-            messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานหน่วยอื่นได้")
-            return redirect("report:safety-report.list")
-    elif report.recorder == request.user:
-        pass
-    else:
-        messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานผู้อื่นได้")
-        return HttpResponse(
-            f"""
-            ALL: {request.user.has_perm("report.view_all_report_detail")}<br>
-            AFF: {request.user.has_perm("report.view_affiliation_report_detail")}<br>
-            REC: {report.recorder == request.user}<br>
-            APP: {report._meta.app_label}
-            """
-        )
+        if request.user.has_perm("Report.view_affiliation_report_detail"):
+            if not (report.affiliation == request.user.affiliation or report.location_affiliation == request.user.affiliation):
+                return PermissionDenied("คุณไม่มีสิทธิ์ดูรายงาน")
+            
+        return PermissionDenied("คุณไม่มีสิทธิ์ดูรายงาน")
+    return wrapper
+
+@has_report_permission_or_owner
+def main_page(request, pk):
+    # report = get_object_or_404(BaseReport, pk=pk)
+
+    # if request.user.has_perm("Report.view_all_report_detail"):
+    #     pass
+    # elif request.user.has_perm("Report.view_affiliation_report_detail"):
+    #     if (
+    #         report.affiliation != request.user.affiliation
+    #         and report.location_affiliation != request.user.affiliation
+    #     ):
+    #         messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานหน่วยอื่นได้")
+    #         return redirect("report:safety-report.list")
+    # elif report.recorder == request.user:
+    #     pass
+    # else:
+    #     messages.error(request, "คุณไม่มีสิทธิ์ดูรายงานผู้อื่นได้")
+    #     return HttpResponse(
+    #         f"""
+    #         ALL: {request.user.has_perm("Report.view_all_report_detail")}<br>
+    #         AFF: {request.user.has_perm("Report.view_affiliation_report_detail")}<br>
+    #         REC: {report.recorder == request.user}<br>
+    #         APP: {report._meta.app_label}
+    #         """
+    #     )
 
     report = get_object_or_404(
         BaseReport.objects
