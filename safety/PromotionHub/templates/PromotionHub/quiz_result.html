@@ -41,12 +41,17 @@
           <p class="text-muted mb-4">ผลคะแนนของคุณ</p>
 
           {% if result.score >= 50 %}
-            <div class="score-circle score-pass shadow-sm">{{ result.score|floatformat:0 }}%</div>
+            <div class="score-circle score-pass shadow-sm">
+              {{ result.score|floatformat:0 }}%
+            </div>
             <h5 class="text-success">ยอดเยี่ยม! ผ่านเกณฑ์</h5>
           {% else %}
-            <div class="score-circle score-fail shadow-sm">{{ result.score|floatformat:0 }}%</div>
+            <div class="score-circle score-fail shadow-sm">
+              {{ result.score|floatformat:0 }}%
+            </div>
             <h5 class="text-danger">ยังไม่ผ่าน ลองใหม่อีกครั้งนะ!</h5>
           {% endif %}
+
 
           <p class="text-muted mt-3">
             ทำแบบทดสอบเมื่อ: {{ result.completed_at|date:"d M Y H:i" }}

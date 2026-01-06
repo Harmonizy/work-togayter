@@ -131,7 +131,7 @@
                                     <thead class="table-light text-muted text-center" style="font-size:1.1em;">
                                         <tr>
                                             <th>#</th>                                                         
-                                            <th>หน่วยรับผิดชอบ</th>
+                                            <th class="d-none d-sm-table-cell">หน่วยรับผิดชอบ</th>
                                             <th>หน่วยที่เกิดเหตุ</th>
                                             <th>ประเภท</th>
                                             <th>วันที่เกิดเหตุ</th>
@@ -158,7 +158,7 @@
                                                     #{{ report.id|stringformat:"04d" }}
                                                 </a>
                                             </td>
-                                            <td>{{ report.affiliation|default:"-" }}</td>
+                                            <td class="d-none d-sm-table-cell">{{ report.affiliation|default:"-" }}</td>
                                             <td>{{ report.location_affiliation|default:"-" }}</td>
                                             <td>{{ report.get_report_type_display }}</td>
                                             <td>{{ report.event_date|thai_date }}, {{ report.event_time|time:"H:i" }}</td>
