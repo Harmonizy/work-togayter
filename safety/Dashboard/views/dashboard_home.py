@@ -99,14 +99,6 @@ def index(request):
     else:
         report = BaseReport.objects.filter(recorder=user)
 
-    # ---- COUNTERS ----
-    report_all = report.count()
-    report_draft = report.filter(status=ReportStatusChoices.DRAFT).count()
-    report_approved = report.filter(status=ReportStatusChoices.APPROVED).count()
-    report_high = report.filter(priority=PriorityChoices.HIGH).count()
-    report_medium = report.filter(priority=PriorityChoices.MEDIUM).count()
-    report_low = report.filter(priority=PriorityChoices.LOW).count()
-
     # ---- FILTER ----
     current_year = datetime.now().year
 
@@ -120,6 +112,16 @@ def index(request):
 
     if selected_month != "all":
         reports = reports.filter(event_date__month=int(selected_month))
+
+    # ---- COUNTERS (use filtered queryset) ----
+    report_all = reports.count()
+    report_draft = reports.filter(status=ReportStatusChoices.DRAFT).count()
+    report_approved = reports.filter(status=ReportStatusChoices.APPROVED).count()
+
+    report_high = reports.filter(priority=PriorityChoices.HIGH).count()
+    report_medium = reports.filter(priority=PriorityChoices.MEDIUM).count()
+    report_low = reports.filter(priority=PriorityChoices.LOW).count()
+
 
     # ---- REPORT datasets ----
     report_datasets = get_monthly_reports_by_type(reports)
