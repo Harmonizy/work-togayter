@@ -893,28 +893,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // ===============================
-    // 5) SWEETALERT LOGOUT
-    // ===============================
-    const logoutLink = document.querySelector('a[href*="logout"]');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            Swal.fire({
-                title: 'ออกจากระบบ?',
-                text: "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'ออกจากระบบ',
-                cancelButtonText: 'ยกเลิก',
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d'
-            }).then(result => {
-                if (result.isConfirmed) window.location.href = this.href;
-            });
-        });
-    }
-
-}); // END DOMContentLoaded
+});
 </script>
 {% endblock extra_js %}

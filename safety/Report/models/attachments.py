@@ -9,6 +9,17 @@ from django.contrib.contenttypes.models import ContentType
 from .reports import BaseReport
 from common.RTAFUser.models import RTAFUser
 
+from django.core.exceptions import ValidationError
+
+def validate_image_size(image):
+    if image.size > 3 * 1024 * 1024:
+        raise ValidationError("รูปภาพต้องไม่เกิน 3MB")
+
+def validate_file_size(file):
+    if file.size > 10 * 1024 * 1024:
+        raise ValidationError("ไฟล์ต้องไม่เกิน 10MB")
+
+
 class BaseContentType(models.Model):
     base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='%(class)s_attachment', null=False, blank=False)
 
@@ -40,7 +51,7 @@ def get_upload_to(instance, filename):
 
 
 class Image(BaseContentType):
-    image = models.ImageField(verbose_name="รูปภาพ", upload_to=get_upload_to, max_length=255)
+    image = models.ImageField(verbose_name="รูปภาพ", upload_to=get_upload_to, validators=[validate_image_size])
 
     def __str__(self):
         return f"Image"
@@ -54,7 +65,7 @@ class Recommendation(BaseContentType):
 
 
 class File(BaseContentType):
-    file = models.FileField(verbose_name="ไฟล์", upload_to=get_upload_to, max_length=255)
+    file = models.FileField(verbose_name="ไฟล์", upload_to=get_upload_to, validators=[validate_file_size])
 
     def __str__(self):
         return f"File"

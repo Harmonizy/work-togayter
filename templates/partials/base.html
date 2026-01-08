@@ -83,6 +83,26 @@
     <!-- App js -->
     <script src="{% static 'js/app.js'%}"></script>
     {% endblock javascript %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmLogout(event) {
+            event.preventDefault(); // ป้องกันไม่ให้ form ส่งทันที
+
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                text: "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit();
+                }
+            });
+        }
+    </script>
 
 
 </body>

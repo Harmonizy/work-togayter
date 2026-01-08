@@ -19,7 +19,7 @@ logger = logging.getLogger("report")
 @permission_required("Report.edit_report", raise_exception=True)
 def edit_report(request, report_id):
     """แก้ไขรายงานได้ทั้งแบบพื้นฐานและแบบเจ้าหน้าที่"""
-    report = get_object_or_404(BaseReport, pk=report_id)
+    report = get_object_or_404(BaseReport, pk=report_id) 
 
     # ตรวจสิทธิ์
     if report.status == ReportStatusChoices.DRAFT:

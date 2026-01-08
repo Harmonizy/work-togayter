@@ -36,9 +36,14 @@
                     {% crispy aviation_form %}
                 {% endif %}
 
+                <div class="card p-3 mb-3">
+                    <h6 class="fw-bold mb-2">📎 เพิ่มรูปภาพ / ไฟล์หลายรายการ</h6>
+                    {{ bulk_form|crispy }}
+                </div>
+
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}
-                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=participant_formset formset_name="participants" container_id="participants-container" title="ผู้เกี่ยวข้อง" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=reference_formset formset_name="references" container_id="references-container" title="รายงานอ้างอิง" %}
                 <div class="form-check my-3">
