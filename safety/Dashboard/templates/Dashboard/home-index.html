@@ -482,23 +482,78 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
+// ===============================
+    // 3) SPAGHETTI CHART — APEXCHARTS
     // ===============================
-    // 3) DOUGHNUT #1 — APEXCHARTS (report type)
-    // ===============================
-    const datasets = {{ report_datasets|safe }};
-    const donutLabels = datasets.map(item => item.label);
-    const donutSeries = datasets.map(item => item.data.reduce((a, b) => a + b, 0));
 
-    const donutOptions = {
-        series: donutSeries,
-        labels: donutLabels,
-        chart: { type: 'donut', height: 350 },
-        legend: { position: 'bottom' },
-        dataLabels: { dropShadow: { enabled: false } },
-        colors: ["#556ee6","#34c38f","#50a5f1","#f1b44c","#f46a6a","#74788d"]
+    const datasets = {{ report_datasets|safe }};
+    /*
+        โครงสร้างที่คาดหวัง:
+        [
+          { label: "อุบัติเหตุ", data: [10, 5, 7, 3] },
+          { label: "เหตุขัดข้อง", data: [4, 8, 6, 9] }
+        ]
+    */
+
+    // แปลงเป็น series ของ ApexCharts
+    const series = datasets.map(item => ({
+        name: item.label,
+        data: item.data
+    }));
+
+    // แกน X (สมมติเป็นลำดับเดือน / เวลา)
+    const categories = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ].slice(0, series[0]?.data.length || 0);
+
+    const spaghettiOptions = {
+        chart: {
+            type: "line",
+            height: 350,
+            toolbar: { show: false },
+            zoom: { enabled: false }
+        },
+        series: series,
+        stroke: {
+            curve: "smooth",
+            width: 3
+        },
+        markers: {
+            size: 4
+        },
+        xaxis: {
+            categories: categories,
+            title: {
+                text: "ช่วงเวลา"
+            }
+        },
+        yaxis: {
+            title: {
+                text: "จำนวนรายงาน"
+            }
+        },
+        legend: {
+            position: "bottom"
+        },
+        colors: [
+            "#556ee6",
+            "#34c38f",
+            "#50a5f1",
+            "#f1b44c",
+            "#f46a6a",
+            "#74788d"
+        ],
+        tooltip: {
+            shared: true,
+            intersect: false
+        }
     };
 
-    new ApexCharts(document.querySelector("#store-visits-source"), donutOptions).render();
+    new ApexCharts(
+        document.querySelector("#store-visits-source"),
+        spaghettiOptions
+    ).render();
 
 
     // ===============================
@@ -539,7 +594,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     "#f06548",
                     "#299cdb",
                     "#3577f1",
-                ][i % 6]),
+                    "#3577f1",
+                    "#3577f1",
+                    "#3577f1",
+                    "#3577f1",
+                    "#3577f1",
+                ][i % 11]),
                 borderWidth: 0
             }]
         },
