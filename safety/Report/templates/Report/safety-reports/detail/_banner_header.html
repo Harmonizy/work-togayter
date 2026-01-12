@@ -7,14 +7,12 @@
       <div class="text-center text-sm-start">
         <h2 class="mb-1" style="line-height:1.25;">{{ base_report.title }}</h2>
 
-        {% if base_report.priority %}
-          <span class="badge bg-primary fs-6 d-inline-block mb-1">
-            ความสำคัญ: {{ base_report.get_priority_display }}
-          </span>
-        {% endif %}
-
         <span class="badge bg-secondary fs-6 d-inline-block mb-1">
-          ปี: {{ base_report.fiscal_year }}
+          ปีงบประมาณ: {{ base_report.fiscal_year }}
+        </span>
+
+        <span class="badge bg-primary fs-6 d-inline-block mb-1">
+          ความสำคัญ: {{ base_report.get_priority_display }}
         </span>
 
         <span class="badge bg-info text-dark fs-6 d-inline-block mb-1">
