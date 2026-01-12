@@ -51,7 +51,7 @@ class PromotionDetailView(LoginRequiredMixin, SuperAppLoginMixins, DetailView):
                 self.request,
                 "ประชาสัมพันธ์นี้ถูกลบหรือไม่สามารถเข้าถึงได้"
             )
-            raise Http404
+            raise PermissionDenied
         return obj
 
     def get_context_data(self, **kwargs):

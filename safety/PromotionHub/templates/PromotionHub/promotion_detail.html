@@ -135,10 +135,11 @@
               {% comment %} {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %} {% endcomment %}
               <div class="text-center mt-3">
                 <div class="promotion-meta">
-                  โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }} •
-                  {{ promotion.created_at|date:"d M Y" }} • 
-                  เข้าชม {{ promotion.num_view }} คน • 
-                  ทำแบบทดสอบ {{ quiz_completed_count }} คน
+                  โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }}
+                  • {{ promotion.created_at|date:"d M Y" }}
+                  {% if promotion.num_view %} • เข้าชม {{ promotion.num_view }} คน{% endif %}
+                  {% if quiz_completed_count %} • ทำแบบทดสอบ {{ quiz_completed_count }} คน{% endif %}
+                  {% if promotion.num_accepted %} • รับทราบ {{ promotion.num_accepted }} คน{% endif %}
                   {% comment %} รับทราบ {{ promotion.num_accepted }} คน  {% endcomment %}
                 </div>
               </div>

@@ -44,9 +44,9 @@ def edit_report(request, report_id):
         # ฟอร์มพิเศษตามประเภท
         report_type = report.report_type
         additional_form = None
-        if report_type in [ReportTypeChoices.HAZARD_GROUND, ReportTypeChoices.SAFETY_GROUND]:
+        if report_type in [ReportTypeChoices.HAZARD_GROUND, ReportTypeChoices.SAFETY_GROUND, ReportTypeChoices.MINOR_ACCIDENT_GROUND, ReportTypeChoices.MAJOR_ACCIDENT_GROUND]:
             additional_form = GroundReportForm(request.POST, instance=report, prefix="ground")
-        elif report_type in [ReportTypeChoices.HAZARD_AVIATION, ReportTypeChoices.SAFETY_AVIATION]:
+        elif report_type in [ReportTypeChoices.HAZARD_AVIATION, ReportTypeChoices.SAFETY_AVIATION, ReportTypeChoices.ANALYSIS_AVIATION, ReportTypeChoices.BIRD_AVIATION, ReportTypeChoices.FIX_ANALYSIS_AVIATION]:
             additional_form = AviationReportForm(request.POST, instance=report, prefix="aviation")
 
         # ตรวจสอบความถูกต้องทั้งหมด

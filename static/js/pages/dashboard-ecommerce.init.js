@@ -75,7 +75,7 @@ if (t) {
 
   var e = {
     series: dynamicSeries.length ? dynamicSeries : [
-      { name: "เร่งด่วน", type: "bar", data: [3,5,6,7,4,5,6,7,8,9,5,6] },
+      { name: "เร่งด่ว", type: "bar", data: [3,5,6,7,4,5,6,7,8,9,5,6] },
       { name: "ต้องติดตาม", type: "bar", data: [2,4,3,5,6,4,2,3,4,5,6,7] },
       { name: "ปกติ", type: "bar", data: [1,2,2,3,1,2,3,2,1,2,3,2] }
     ],

@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-from .views import  report_list, report_create, report_create_officer, report_delete, report_details, report_edit, word_export, sixA
+from .views import  report_list, report_create, report_create_officer, report_delete, report_details, report_edit, word_export, sixA, view_403
 # from .views import safety_create
 
 app_name = 'report'
@@ -36,6 +36,7 @@ main_urlpatterns = [
     path('mobile-create/', report_list.mobile_create, name='mobile_create'),
 
     path('6A/<int:report_id>', sixA.sixA_create_view, name='sixA.sixA_create_view'),
+    path('403/', view_403.view_403, name='view_403.view_403'),
 ]
 
 

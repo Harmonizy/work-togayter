@@ -411,7 +411,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 0) Priority dataset (global)
     // ===============================
     window.priority_datasets = {{ priority_datasets|safe }};
-
+    
 
     // ===============================
     // 1) LEAFLET MAP + AFFILIATION MARKERS
@@ -556,71 +556,64 @@ document.addEventListener("DOMContentLoaded", function () {
     ).render();
 
 
-    // ===============================
-    // 4) DOUGHNUT #2 — CHART.JS (ground safety)
-    // ===============================
-    
-    // 1) รับ JSON จาก Django
-    const dataObj = {{ ground_category_json|safe }};
-    const labels = Object.keys(dataObj);
-    const values = Object.values(dataObj);
+// ===============================
+// SPAGHETTI GRAPH — GROUND SAFETY (MONTHLY)
+// ===============================
 
-    console.log("GROUND CATEGORY:", labels, values);
+const groundData = {{ ground_category_json|safe }};
 
-    const total = values.reduce((a, b) => a + b, 0);
-    if (total === 0) {
-        console.warn("Ground category ไม่มีข้อมูล (total = 0)");
-        return;
-    }
+const timeLabels = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
 
-    const canvas = document.getElementById("groundCategoryChart");
-    if (!canvas) {
-        console.error("Canvas groundCategoryChart not found");
-        return;
-    }
+const colors = [
+    "#0ab39c",
+    "#f7b84b",
+    "#405189",
+    "#f06548",
+    "#299cdb",
+    "#3577f1"
+];
 
-    const ctx = canvas.getContext("2d");
+const groundDatasets = Object.keys(groundData).map((category, index) => ({
+    label: category,
+    data: groundData[category],   // ✅ 12 เดือนแล้ว
+    borderColor: colors[index % colors.length],
+    backgroundColor: colors[index % colors.length],
+    tension: 0.3,
+    fill: false,
+    pointRadius: 4,
+    borderWidth: 2
+}));
 
-    new Chart(ctx, {
-        type: "doughnut",
+new Chart(
+    document.getElementById("groundCategoryChart"),
+    {
+        type: "line",
         data: {
-            labels: labels,
-            datasets: [{
-                data: values,
-                backgroundColor: labels.map((_, i) => [
-                    "#0ab39c",
-                    "#f7b84b",
-                    "#405189",
-                    "#f06548",
-                    "#299cdb",
-                    "#3577f1",
-                    "#3577f1",
-                    "#3577f1",
-                    "#3577f1",
-                    "#3577f1",
-                    "#3577f1",
-                ][i % 11]),
-                borderWidth: 0
-            }]
+            labels: timeLabels,
+            datasets: groundDatasets
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: "65%",
             plugins: {
-                legend: {
-                    position: "bottom"
-                },
+                legend: { position: "bottom" },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
-                            return `${ctx.label}: ${ctx.raw} รายการ`;
-                        }
+                        label: (c) =>
+                            `${c.dataset.label}: ${c.raw} รายการ`
                     }
                 }
+            },
+            scales: {
+                y: { beginAtZero: true }
             }
         }
-    });
+    }
+);
+
 
 }); // END DOMContentLoaded
 </script>
