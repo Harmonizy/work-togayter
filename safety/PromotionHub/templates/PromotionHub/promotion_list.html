@@ -92,7 +92,7 @@
                         <div class="card-body">
                             <div class="table-responsive table-card mb-4 p-2" style="min-height: 300px;">
                                 <table class="table align-middle table-nowrap table-bordered table-striped table-hover mb-0" id="promotionTable">
-                                    <thead class="table-light text-muted" style="font-size:1.1em;">
+                                    <thead class="table-light text-center" style="font-size:1.1em;">
                                         <tr>
                                             <th style="width: 5%;">#</th>
                                             <th style="width: 25%;">ชื่อบทความ</th>
@@ -104,16 +104,16 @@
                                             <th style="width: 10%;">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="text-center">
                                         {% for promotion in promotions %}
                                         <tr>
                                             <td>#{{ promotion.id|stringformat:"04d" }}</td>
-                                            <td>
+                                            <td class="text-start">
                                                 <a href="{% url 'promotion:detail' promotion.id %}" class="fw-medium link-primary">
                                                     {{ promotion.title|truncatechars:80 }}
                                                 </a>
                                             </td>
-                                            <td>{{ promotion.user.get_full_name|default:"-" }}</td>
+                                            <td class="text-start">{{ promotion.user.get_full_name|default:"-" }}</td>
                                             <td>{{ promotion.get_status_display }}</td>
                                             <td>{{ promotion.get_publish_display }}</td>
                                             <td>{{ promotion.num_view }}</td>

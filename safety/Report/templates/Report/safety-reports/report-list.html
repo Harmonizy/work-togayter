@@ -117,7 +117,6 @@
                                     <colgroup>
                                         <col style="width: 4%;">
                                         <col style="width: 4%;">
-                                        <col style="width: 4%;">
                                         <col style="width: 11%;">
                                         <col style="width: 9%;">
                                         <col style="width: 48%;">
@@ -131,8 +130,7 @@
                                     <thead class="table-light text-muted text-center" style="font-size:1.1em;">
                                         <tr>
                                             <th>#</th>                                                         
-                                            <th class="d-none d-sm-table-cell">หน่วยรับผิดชอบ</th>
-                                            <th>หน่วยที่เกิดเหตุ</th>
+                                            <th>รับผิดชอบ/ที่เกิดเหตุ</th>
                                             <th>ประเภท</th>
                                             <th>วันที่เกิดเหตุ</th>
                                             <th>หัวข้อ</th>
@@ -144,7 +142,7 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="list form-check-all">
+                                    <tbody class="list form-check-all text-center">
                                         {% for report in base_reports %}
                                         <tr>
                                             <td>
@@ -158,11 +156,10 @@
                                                     #{{ report.id|stringformat:"04d" }}
                                                 </a>
                                             </td>
-                                            <td class="d-none d-sm-table-cell">{{ report.affiliation|default:"-" }}</td>
-                                            <td>{{ report.location_affiliation|default:"-" }}</td>
+                                            <td>{{ report.affiliation|default:"-" }}/{{ report.location_affiliation|default:"-" }}</td>
                                             <td>{{ report.get_report_type_display }}</td>
                                             <td>{{ report.event_date|thai_date }}, {{ report.event_time|time:"H:i" }}</td>
-                                            <td>
+                                            <td class="text-start">
                                                 <a href="{% url 'report:safety-report.detail' report.id %}"  class="fw-medium link-primary" style="font-family: monospace; font-size: 1.1em;">
                                                     {{ report.title|truncatechars:40 }}
                                                 </a>

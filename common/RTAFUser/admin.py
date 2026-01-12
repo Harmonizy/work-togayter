@@ -62,8 +62,8 @@ class AffiliationAdmin(admin.ModelAdmin):
 class RTAFUserAdmin(UserAdmin):
     list_display = ('username', 'get_full_name', 'position', 'affiliation', 'last_login',)
     list_display_links = ('username', 'get_full_name')
-    search_fields = ('af_id', 'person_id', 'first_name', 'last_name', 'position','username')
-    list_filter = ('affiliation', )
+    search_fields = ('af_id', 'person_id', 'first_name', 'last_name', 'position', 'username')
+    list_filter = ('groups', 'affiliation',)
     raw_id_fields = ('rank', 'affiliation', 'work_affiliation')
     list_select_related = ('rank', 'affiliation', 'work_affiliation')
     fieldsets = (
