@@ -10,7 +10,6 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from django.contrib import messages
 
-
 from .utils import card_data
 from ..models import BaseReport
 from ..choices import ReportStatusChoices, ReportTypeChoices

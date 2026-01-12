@@ -41,6 +41,13 @@
           </div>
         {% endif %}
 
+        
+
+        <!-- ฟอร์มแนบไฟล์ -->
+        {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" title="รูปภาพ" container_id="image-formset-container" empty_form_id="empty-image-form" form_class="file-form" icon="ri-image-add-line" %}
+        {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" title="ไฟล์" container_id="file-formset-container" empty_form_id="empty-file-form" form_class="file-form" icon="ri-file-add-line" %}
+        {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" title="คอมเมนต์" container_id="recommendation-formset-container" empty_form_id="empty-rec-form" form_class="rec-form" icon="bx bx-comment-add" %}
+        
         <!-- ฟอร์มผู้เข้าร่วม (เจ้าหน้าที่เท่านั้น) -->
         {% if participant_formset %}
           {% include "Report/safety-reports/partials/formset-block.html" with formset=participant_formset formset_name="participants" title="ผู้เกี่ยวข้อง" container_id="participant-formset-container" empty_form_id="empty-participant-form" form_class="participant-form" icon="ri-user-add-line" %}
@@ -50,11 +57,6 @@
         {% if reference_formset %}
           {% include "Report/safety-reports/partials/formset-block.html" with formset=reference_formset formset_name="references" title="เอกสารอ้างอิง" container_id="reference-formset-container" empty_form_id="empty-reference-form" form_class="reference-form" icon="ri-links-line" %}
         {% endif %}
-
-        <!-- ฟอร์มแนบไฟล์ -->
-        {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" title="รูปภาพ" container_id="image-formset-container" empty_form_id="empty-image-form" form_class="file-form" icon="ri-image-add-line" %}
-        {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" title="ไฟล์" container_id="file-formset-container" empty_form_id="empty-file-form" form_class="file-form" icon="ri-file-add-line" %}
-        {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" title="คอมเมนต์" container_id="recommendation-formset-container" empty_form_id="empty-rec-form" form_class="rec-form" icon="bx bx-comment-add" %}
 
         <!-- ปุ่มบันทึก -->
         <div class="my-5">

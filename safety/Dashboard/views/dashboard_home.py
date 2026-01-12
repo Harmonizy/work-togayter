@@ -26,19 +26,28 @@ THAI_MONTHS = [
 ]
 
 
-def get_ground_category_dataset():
+def get_ground_category_dataset(reports):
     qs = (
         GroundReport.objects
-        .filter(category__isnull=False)
-        .values("category")
+        .filter(base_report__in=reports, category__isnull=False)
+        .annotate(month=ExtractMonth("base_report__event_date"))
+        .values("month", "category")
         .annotate(total=Count("base_report_id"))
     )
 
-    data = {choice.label: 0 for choice in GroundSafetyCategoryChoices}
+    # เตรียมโครง 12 เดือน
+    data = {
+        choice.label: [0] * 12
+        for choice in GroundSafetyCategoryChoices
+    }
 
     for row in qs:
+        if not row["month"]:
+            continue
+
+        month_index = row["month"] - 1
         label = GroundSafetyCategoryChoices(row["category"]).label
-        data[label] = row["total"]
+        data[label][month_index] = row["total"]
 
     return data
 
@@ -99,14 +108,6 @@ def index(request):
     else:
         report = BaseReport.objects.filter(recorder=user)
 
-    # ---- COUNTERS ----
-    report_all = report.count()
-    report_draft = report.filter(status=ReportStatusChoices.DRAFT).count()
-    report_approved = report.filter(status=ReportStatusChoices.APPROVED).count()
-    report_high = report.filter(priority=PriorityChoices.HIGH).count()
-    report_medium = report.filter(priority=PriorityChoices.MEDIUM).count()
-    report_low = report.filter(priority=PriorityChoices.LOW).count()
-
     # ---- FILTER ----
     current_year = datetime.now().year
 
@@ -121,13 +122,24 @@ def index(request):
     if selected_month != "all":
         reports = reports.filter(event_date__month=int(selected_month))
 
+    # ---- COUNTERS (use filtered queryset) ----
+    report_all = reports.count()
+    report_draft = reports.filter(status=ReportStatusChoices.DRAFT).count()
+    report_approved = reports.filter(status=ReportStatusChoices.APPROVED).count()
+
+    report_high = reports.filter(priority=PriorityChoices.HIGH).count()
+    report_medium = reports.filter(priority=PriorityChoices.MEDIUM).count()
+    report_low = reports.filter(priority=PriorityChoices.LOW).count()
+
+
     # ---- REPORT datasets ----
     report_datasets = get_monthly_reports_by_type(reports)
     priority_datasets = get_monthly_reports_by_priority(reports)
 
     # ---- CAP datasets ----
     cap_datasets = get_cap_datasets(selected_year, selected_month)
-    ground_category_data = get_ground_category_dataset()
+    ground_category_data = get_ground_category_dataset(reports)
+
     
     affiliations = list(
         Affiliation.objects.annotate(
@@ -180,9 +192,9 @@ def index(request):
 def get_monthly_reports_by_type(reports):
     qs = (
         reports.annotate(month=ExtractMonth("event_date"))
-               .values("month", "report_type")
-               .annotate(total=Count("id"))
-               .order_by("month")
+                .values("month", "report_type")
+                .annotate(total=Count("id"))
+                .order_by("month")
     )
 
     all_types = [choice.label for choice in ReportTypeChoices] + ["ไม่ระบุประเภท"]
@@ -208,9 +220,9 @@ def get_monthly_reports_by_type(reports):
 def get_monthly_reports_by_priority(reports):
     qs = (
         reports.annotate(month=ExtractMonth("event_date"))
-               .values("month", "priority")
-               .annotate(total=Count("id"))
-               .order_by("month")
+                .values("month", "priority")
+                .annotate(total=Count("id"))
+                .order_by("month")
     )
 
     all_priorities = [choice.label for choice in PriorityChoices]
@@ -220,6 +232,8 @@ def get_monthly_reports_by_priority(reports):
         if row["month"]:
             month_index = row["month"] - 1
             label = PriorityChoices(row["priority"]).label
-            priority_data[label][month_index] = row["total"]
+            priority_data[label][month_index] += row["total"]
 
     return [{"label": label, "data": data} for label, data in priority_data.items()]
+
+

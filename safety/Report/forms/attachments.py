@@ -132,12 +132,12 @@ class FileForm(forms.ModelForm):
 class BulkAttachmentForm(forms.Form):
     bulk_images = MultipleFileField(
         required=False,
-        label="เพิ่มรูปภาพหลายรูป"
+        label="เพิ่มรูปภาพ (แต่ละภาพต้องไม่เกิน 3MB)"
     )
 
     bulk_files = MultipleFileField(
         required=False,
-        label="เพิ่มไฟล์หลายไฟล์"
+        label="เพิ่มไฟล์ (แต่ละไฟล์ต้องไม่เกิน 10MB)"
     )
 
     def save(self, base_report, user):

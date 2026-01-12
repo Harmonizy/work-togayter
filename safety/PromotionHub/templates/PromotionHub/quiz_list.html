@@ -60,7 +60,7 @@
             <div class="card-body">
               <div class="table-responsive table-card mb-4 p-2">
                 <table class="table table-bordered table-striped table-hover align-middle">
-                  <thead class="table-light">
+                  <thead class="table-light text-center">
                     <tr>
                       <th>#</th>
                       <th>หัวข้อ</th>
@@ -70,18 +70,18 @@
                     </tr>
                   </thead>
 
-                  <tbody>
+                  <tbody class="text-center">
                     {% for quiz in quizzes %}
                     <tr>
                       <td>#{{ quiz.id|stringformat:"04d" }}</td>
 
-                      <td>
+                      <td class="text-start">
                         <a href="{% url 'promotion:quiz_view' quiz.id %}" class="link-primary fw-bold">
                           {{ quiz.title|truncatechars:50 }}
                         </a>
                       </td>
 
-                      <td>{{ quiz.description|truncatechars:60|default:"-" }}</td>
+                      <td class="text-start">{{ quiz.description|truncatechars:60|default:"-" }}</td>
 
                       <td>{{ quiz.questions.count }}</td>
 

@@ -100,10 +100,28 @@ TEMPLATES = [
 
 
 TINYMCE_DEFAULT_CONFIG = {
-    "height": 400,
-    "menubar": True,
-    "plugins": "link image code lists table",
-    "toolbar": "undo redo | styles | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code",
+    "height": 300,
+    "menubar": False,
+    "branding": False,
+    "statusbar": False,
+
+    "plugins": "lists link",
+    "toolbar": "bold italic | bullist numlist | link",
+
+    "mobile": {
+        "menubar": False,
+        "plugins": "lists link",
+        "toolbar": "bold italic | bullist numlist | link"
+    },
+
+    "entity_encoding": "raw",
+
+    "browser_spellcheck": True,
+    "contextmenu": False,
+
+    "inline": False,
+
+    "resize": False,
 }
 
 

@@ -20,17 +20,21 @@ def is_type_in(report, choices):
 
 
 def has_report_permission_or_owner(view_func):
-    def wrapper(request, report_pk, *args, **kwargs):
-        report = get_object_or_404(BaseReport, pk=report_pk)
+    def wrapper(request, pk):
+        report = get_object_or_404(BaseReport, pk=pk)
         if request.user.has_perm("Report.view_all_report_detail") or report.recorder == request.user:
-            return view_func(request, report, *args, **kwargs)
+            return view_func(request, pk)
 
         if request.user.has_perm("Report.view_affiliation_report_detail"):
-            if not (report.affiliation == request.user.affiliation or report.location_affiliation == request.user.affiliation):
-                return PermissionDenied("คุณไม่มีสิทธิ์ดูรายงาน")
+            if (report.affiliation == request.user.affiliation or report.location_affiliation == request.user.affiliation):
+                return view_func(request, pk)
+            else:
+                raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายงาน")
             
-        return PermissionDenied("คุณไม่มีสิทธิ์ดูรายงาน")
+        raise PermissionDenied("คุณไม่มีสิทธิ์ดูรายงาน")
     return wrapper
+
+# has_report_permission_or_owner(main_page)
 
 @has_report_permission_or_owner
 def main_page(request, pk):
