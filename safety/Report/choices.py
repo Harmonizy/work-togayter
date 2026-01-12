@@ -9,8 +9,8 @@ class ReportTypeChoices(models.TextChoices):
     MINOR_ACCIDENT_GROUND = 'MIG', 'รายงานอุบัติเหตุภาคพื้นย่อย'
     MAJOR_ACCIDENT_GROUND = 'MJG', 'รายงานอุบัติเหตุภาคพื้นร้ายแรง'
 
-    SAFETY_AVIATION = 'SA', 'รายงานิรภัยการบินขั้นต้น'
-    HAZARD_AVIATION = 'HA', 'รายงานอันตราย'
+    HAZARD_AVIATION = 'HA', 'รายงานอันตรายการบิน'
+    SAFETY_AVIATION = 'SA', 'รายงานนิรภัยการบินขั้นต้น'
     ANALYSIS_AVIATION = 'AA', 'รายงานผลการวิเคราะห์อันตราย'
     BIRD_AVIATION = 'BA', "รายงานอากาศยานชนนก"
     FIX_ANALYSIS_AVIATION = 'FAA', "รายงานข้อขัดข้องของการรายงานผลการวิเคราะห์อากาศยานอุบัติการณ์"

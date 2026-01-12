@@ -125,41 +125,53 @@ def safety_doc(request, pk):
     BASE_TEMPLATE_DIR = os.path.join(settings.BASE_DIR, 'safety', 'Report', 'templates', 'Documents')
 
     report_type_to_template = {
-        ReportTypeChoices.SIMPLE: 'SIMPLE.docx',
+        ReportTypeChoices.SIMPLE: 'รายงานอันตราย.docx',
+
         ReportTypeChoices.HAZARD_GROUND: 'HAZARD_GROUND.docx',
-        ReportTypeChoices.HAZARD_AVIATION: 'HAZARD_AVIATION.docx',
         ReportTypeChoices.SAFETY_GROUND: 'SAFETY_GROUND.docx',
-        ReportTypeChoices.SAFETY_AVIATION: 'SAFETY_AVIATION.docx',
+        ReportTypeChoices.MINOR_ACCIDENT_GROUND: 'รายงานอันตราย.docx',
+        ReportTypeChoices.MAJOR_ACCIDENT_GROUND: 'รายงานอันตราย.docx',
+
+        ReportTypeChoices.HAZARD_AVIATION: 'รายงานอันตรายการบิน.docx',
+        ReportTypeChoices.SAFETY_AVIATION: 'รายงานนิรภัยการบินขั้นต้น.docx',
+        ReportTypeChoices.ANALYSIS_AVIATION: 'รายงานผลการวิเคราะห์อันตราย.docx',
+        ReportTypeChoices.BIRD_AVIATION: 'รายงานอากาศยานชนนก.docx',
+        ReportTypeChoices.FIX_ANALYSIS_AVIATION: 'รายงานข้อขัดข้องของการรายงานผลการวิเคราะห์อากาศยานอุบัติการณ์.docx',
+
         ReportTypeChoices.OBSERVATION: 'OBSERVATION.docx',
     }
 
-    template_filename = report_type_to_template.get(base_report.report_type, 'SIMPLE.docx')
-    template_filename = 'SIMPLE.docx'
+    template_filename = report_type_to_template.get(base_report.report_type, 'รายงานอันตราย.docx')
+    template_filename = 'รายงานอันตราย.docx'
     template_path = os.path.join(BASE_TEMPLATE_DIR, template_filename)
 
     doc = Document(template_path)
 
     base_context = {
-        '##unit-short-name##': str(base_report.affiliation),
-        '##title##': base_report.title or '',
-        '##recorder##': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
-        '##position##': str(base_report.recorder.position) if not base_report.anonymous else '-',
-        '##date##': thai_date(date.today()),
-        '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
-        'Rank': str(base_report.recorder.rank) if not base_report.anonymous else '-',
-        'Name': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
-        'Position': str(base_report.recorder.position) if not base_report.anonymous else '-',
+        # '##unit-short-name##': str(base_report.affiliation),
+        # '##title##': base_report.title or '',
+        # '##recorder##': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
+        # '##position##': str(base_report.recorder.position) if not base_report.anonymous else '-',
+        # '##date##': thai_date(date.today()),
+        # '##report-type##': base_report.get_report_type_display() if base_report.report_type else '',
+        # 'Rank': str(base_report.recorder.rank) if not base_report.anonymous else '-',
+        # 'Name': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
+        # 'Position': str(base_report.recorder.position) if not base_report.anonymous else '-',
         '##fiscal-year##': str(base_report.fiscal_year),
-        '##affiliation##': str(base_report.affiliation),
-        '##event-date##': thai_date(base_report.event_date),
-        '##event-time##': base_report.event_time.strftime("%H:%M") if base_report.event_time else '',
+        # '##affiliation##': str(base_report.affiliation),
+        # '##event-date##': thai_date(base_report.event_date),
+        # '##event-time##': base_report.event_time.strftime("%H:%M") if base_report.event_time else '',
+        # '##content##': '',
+        # '##first_recommendation##': base_report.first_recommendation,
+        # '##initial_action_taken##': base_report.initial_action_taken,
+        # '##status##': base_report.get_status_display(),
+        # '##comment##': str(base_report.comment),
+        # '##created_at##': base_report.created_at,
+        # '##updated_at##': base_report.updated_at,
+        '##fiscal_year##': str(base_report.fiscal_year),
         '##content##': '',
-        '##first_recommendation##': base_report.first_recommendation,
-        '##initial_action_taken##': base_report.initial_action_taken,
-        '##status##': base_report.get_status_display(),
-        '##comment##': str(base_report.comment),
-        '##created_at##': base_report.created_at,
-        '##updated_at##': base_report.updated_at,
+        '##recorder##': str(base_report.recorder) if not base_report.anonymous else 'ไม่ระบุผู้ส่ง',
+        '##RTAFUser.position##': str(base_report.recorder.position) if not base_report.anonymous else '-',
     }
 
     ground_context = {}
