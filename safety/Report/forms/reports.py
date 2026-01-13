@@ -72,11 +72,11 @@ class BaseReportForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('report_type', css_class='col-4 col-md-4'),
-                Column('affiliation', css_class='col-2 col-md-2'),
-                Column('location_affiliation', css_class='col-2 col-md-2'),
-                Column('event_date', css_class='col-2 col-md-2'),
-                Column('event_time', css_class='col-2 col-md-2'),
+                Column('report_type', css_class='col-md-4'),
+                Column('affiliation', css_class='col-md-2'),
+                Column('location_affiliation', css_class='col-md-2'),
+                Column('event_date', css_class='col-md-2'),
+                Column('event_time', css_class='col-md-2'),
             ),
             Div(
                 Row(Column('title', css_class='col-md-12')),
