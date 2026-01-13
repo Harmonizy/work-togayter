@@ -46,7 +46,9 @@ class ReportStatusChoices(models.IntegerChoices):
     APPROVED = 2, "อนุมัติ"
     REJECTED = 3, "ไม่อนุมัติ"
     DELETED = 4, "ลบ"
-
+    # อนุมัติ สนภ. รับเรื่อง
+    # หน่วยอนุมัติ รับเรื่อง
+    
 
 class DamageTypeChoices(models.IntegerChoices):
     NONE = 0, "ไม่มี"
