@@ -127,8 +127,8 @@ def safety_doc(request, pk):
     report_type_to_template = {
         ReportTypeChoices.SIMPLE: 'รายงานอันตราย.docx',
 
-        ReportTypeChoices.HAZARD_GROUND: 'HAZARD_GROUND.docx',
-        ReportTypeChoices.SAFETY_GROUND: 'SAFETY_GROUND.docx',
+        ReportTypeChoices.HAZARD_GROUND: 'รายงานอันตรายภาคพื้น.docx',
+        ReportTypeChoices.SAFETY_GROUND: 'รายงานอุบัติการณ์ภาคพื้น.docx',
         ReportTypeChoices.MINOR_ACCIDENT_GROUND: 'รายงานอันตราย.docx',
         ReportTypeChoices.MAJOR_ACCIDENT_GROUND: 'รายงานอันตราย.docx',
 
@@ -138,7 +138,7 @@ def safety_doc(request, pk):
         ReportTypeChoices.BIRD_AVIATION: 'รายงานอากาศยานชนนก.docx',
         ReportTypeChoices.FIX_ANALYSIS_AVIATION: 'รายงานข้อขัดข้องของการรายงานผลการวิเคราะห์อากาศยานอุบัติการณ์.docx',
 
-        ReportTypeChoices.OBSERVATION: 'OBSERVATION.docx',
+        ReportTypeChoices.OBSERVATION: 'สังเกตการณ์พฤติกรรม.docx',
     }
 
     template_filename = report_type_to_template.get(base_report.report_type, 'รายงานอันตราย.docx')
@@ -227,7 +227,7 @@ def rtaf_message_form(request, base_report_id):
     template_path = os.path.join(
         settings.BASE_DIR,
         'safety', 'Report', 'templates', 'Documents',
-        'rtaf-message-form-template.docx'
+        'กระดานเขียนข่าว.docx'
     )
 
     doc = Document(template_path)
