@@ -135,6 +135,8 @@ def index(request):
     # ---- REPORT datasets ----
     report_datasets = get_monthly_reports_by_type(reports)
     priority_datasets = get_monthly_reports_by_priority(reports)
+    priority_apex_series = get_priority_apex_dataset(reports)
+
 
     # ---- CAP datasets ----
     cap_datasets = get_cap_datasets(selected_year, selected_month)
@@ -178,6 +180,7 @@ def index(request):
         "priority_datasets": json.dumps(priority_datasets, ensure_ascii=False),
         "affiliations_json": json.dumps(affiliations, ensure_ascii=False),
         "ground_category_json": json.dumps(ground_category_data, ensure_ascii=False),
+        "priority_apex_series": json.dumps(priority_apex_series, ensure_ascii=False),
 
         # === Filters ===
         "month_list": month_list,
@@ -236,4 +239,37 @@ def get_monthly_reports_by_priority(reports):
 
     return [{"label": label, "data": data} for label, data in priority_data.items()]
 
+
+def get_priority_apex_dataset(reports):
+    qs = (
+        reports
+        .annotate(month=ExtractMonth("event_date"))
+        .values("month", "priority")
+        .annotate(total=Count("id"))
+    )
+
+    # เตรียม 12 เดือน
+    data = {
+        PriorityChoices.HIGH.label: [0] * 12,
+        PriorityChoices.MEDIUM.label: [0] * 12,
+        PriorityChoices.LOW.label: [0] * 12,
+    }
+
+    for row in qs:
+        if not row["month"]:
+            continue
+
+        month_index = row["month"] - 1
+        label = PriorityChoices(row["priority"]).label
+        data[label][month_index] += row["total"]
+
+    # ✅ format ตาม ApexCharts
+    return [
+        {
+            "name": label,
+            "type": "bar",
+            "data": values
+        }
+        for label, values in data.items()
+    ]
 

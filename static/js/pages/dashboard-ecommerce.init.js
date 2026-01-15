@@ -59,42 +59,42 @@ function loadCharts() {
     });
   }
 
-// 📊 Customer Impression 
-t = getChartColorsArray("customer_impression_charts");
-if (t) {
-  // ✅ ถ้ามีข้อมูลจาก Django (ผ่าน window.priority_datasets)
-  let dynamicSeries = [];
-  if (window.priority_datasets) {
-    const datasets = window.priority_datasets;
-    dynamicSeries = datasets.map(d => ({
-      name: d.label,
-      type: "bar",
-      data: d.data
-    }));
-  }
+// // 📊 Customer Impression 
+// t = getChartColorsArray("customer_impression_charts");
+// if (t) {
+//   // ✅ ถ้ามีข้อมูลจาก Django (ผ่าน window.priority_datasets)
+//   let dynamicSeries = [];
+//   if (window.priority_datasets) {
+//     const datasets = window.priority_datasets;
+//     dynamicSeries = datasets.map(d => ({
+//       name: d.label,
+//       type: "bar",
+//       data: d.data
+//     }));
+//   }
 
-  var e = {
-    series: dynamicSeries.length ? dynamicSeries : [
-      { name: "เร่งด่ว", type: "bar", data: [3,5,6,7,4,5,6,7,8,9,5,6] },
-      { name: "ต้องติดตาม", type: "bar", data: [2,4,3,5,6,4,2,3,4,5,6,7] },
-      { name: "ปกติ", type: "bar", data: [1,2,2,3,1,2,3,2,1,2,3,2] }
-    ],
-    chart: { height: 370, type: "line", toolbar: { show: false } },
-    stroke: { curve: "straight", width: 2 },
-    fill: { opacity: 0.8 },
-    xaxis: {
-      categories: ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."]
-    },
-    colors: ["#f46a6a", "#fff700ff", "#34c38f"],
-    legend: { position: "bottom" },
-  };
+//   var e = {
+//     series: dynamicSeries.length ? dynamicSeries : [
+//       { name: "เร่งด่ว", type: "bar", data: [3,5,6,7,4,5,6,7,8,9,5,6] },
+//       { name: "ต้องติดตาม", type: "bar", data: [2,4,3,5,6,4,2,3,4,5,6,7] },
+//       { name: "ปกติ", type: "bar", data: [1,2,2,3,1,2,3,2,1,2,3,2] }
+//     ],
+//     chart: { height: 370, type: "line", toolbar: { show: false } },
+//     stroke: { curve: "straight", width: 2 },
+//     fill: { opacity: 0.8 },
+//     xaxis: {
+//       categories: ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."]
+//     },
+//     colors: ["#f46a6a", "#fff700ff", "#34c38f"],
+//     legend: { position: "bottom" },
+//   };
 
-  if (customerImpressionChart != "") customerImpressionChart.destroy();
-  customerImpressionChart = new ApexCharts(
-    document.querySelector("#customer_impression_charts"), e
-  );
-  customerImpressionChart.render();
-}
+//   if (customerImpressionChart != "") customerImpressionChart.destroy();
+//   customerImpressionChart = new ApexCharts(
+//     document.querySelector("#customer_impression_charts"), e
+//   );
+//   customerImpressionChart.render();
+// }
 
 
   // 🍩 Donut Chart - store-visits-source

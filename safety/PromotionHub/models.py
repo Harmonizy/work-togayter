@@ -145,6 +145,18 @@ class PromotionView(models.Model):
         super().save(*args, **kwargs)
 
 
+# class Image(models.Models):
+#     image = models.ImageField(verbose_name="รูปภาพ", upload_to='promotion/images/')
+#     promotion = models.ForeignKey(Promotion, verbose_name="โปรโมชั่น", on_delete=models.CASCADE, related_name="images", null=True, blank=True)
+#     file = models.FileField(verbose_name="ไฟล์",upload_to="promotion/files/", null=True, blank=True)
+
+#     class Meta:
+#         verbose_name = verbose_name_plural = "6. รูปภาพเสริม"
+
+#     def __str__(self):
+#         return f"Image for {self.promotion.title}"
+
+
 class Document(models.Model):
     title = models.CharField("ชื่อ", max_length=255, blank=True)
     description = models.TextField("คำอธิบาย", blank=True)
@@ -155,7 +167,7 @@ class Document(models.Model):
     updated_at = models.DateTimeField("วันที่แก้ไข", auto_now=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "6. เอกสารแจ้งเตือน"
+        verbose_name = verbose_name_plural = "7. เอกสารแจ้งเตือน"
 
     def __str__(self):
         return f"{self.promotion}"
@@ -175,7 +187,7 @@ class DocumentFile(models.Model):
 
     class Meta:
         ordering = ["order", "-created_at"]
-        verbose_name = verbose_name_plural = "6.5 ไฟล์ - เอกสารแจ้งเตือน"
+        verbose_name = verbose_name_plural = "7.5 ไฟล์ - เอกสารแจ้งเตือน"
 
     def __str__(self):
         return self.title or self.file.name
@@ -187,3 +199,4 @@ class DocumentFile(models.Model):
         if not type_:
             return "other"
         return type_.split("/")[0] 
+
