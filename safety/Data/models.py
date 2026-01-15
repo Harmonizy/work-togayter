@@ -29,7 +29,7 @@ class AircraftType(models.Model):
 
 class Aircraft(models.Model):
     name = models.CharField(verbose_name="แบบ บ.", max_length=60)
-    name_en = models.CharField(verbose_name="แบบ บ.(ENG)", max_length=120, blank=True, null=True)
+    name_en = models.CharField(verbose_name="Model", max_length=120, blank=True, null=True)
     squadron = models.ForeignKey("RTAFUser.Squadron", verbose_name="ฝูงบิน", related_name="aircrafts",on_delete=models.CASCADE, blank=True, null=True)
     type = models.ManyToManyField("Data.AircraftType", verbose_name="ประเภท", related_name="aircrafts", blank=True)
 
