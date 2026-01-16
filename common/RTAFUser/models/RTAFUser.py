@@ -38,7 +38,7 @@ class AffiliationAircraft(models.Model):
 class Affiliation(models.Model):
     hris_code = models.CharField(verbose_name="รหัส HRIS", max_length=10, null=True, blank = True)
     short_name = models.CharField(verbose_name="ชื่อย่อ", max_length=20, null=True, blank = True)
-    full_name = models.CharField(verbose_name="ชื่อเต็ม", max_length=120, null=True, blank = True)
+    full_name = models.CharField(verbose_name="ชื่อเต็ม", max_length=255, null=True, blank = True)
     
     is_rtaf_directed = models.BooleanField(verbose_name="นขต.ทอ.", default=True, null=True, blank = True)
     is_airbase = models.BooleanField(verbose_name="ฐานบิน", default=False, null=True, blank = True)
@@ -61,7 +61,7 @@ class RTAFUser(RTAFUserMixins, AbstractUser):
     af_id = models.CharField(verbose_name="เลข ขรก.", max_length=12, null=True, blank=True, validators=[validate_af_id])
     person_id = models.CharField(verbose_name="เลข ปชช.", max_length=13, null=True, blank=True, validators=[validate_person_id])
     rank = models.ForeignKey(Rank, verbose_name="ยศ/คำนำหน้า",  on_delete=models.SET_NULL, limit_choices_to={"is_airforce" : True}, null=True, blank=True)
-    position = models.CharField(verbose_name="ตำแหน่ง (ย่อ)", max_length=120, null = True, blank = True)    
+    position = models.CharField(verbose_name="ตำแหน่ง (ย่อ)", max_length=255, null = True, blank = True)    
     affiliation = models.ForeignKey(Affiliation, verbose_name="สังกัด", on_delete=models.SET_NULL, null = True, blank=True, related_name='staff')
     work_affiliation = models.ForeignKey(Affiliation, verbose_name="ปฏิบัติงานที่", on_delete=models.SET_NULL, null = True, blank=True, related_name='work_staff') 
     
