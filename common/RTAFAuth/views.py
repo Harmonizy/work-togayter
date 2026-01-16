@@ -5,6 +5,8 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, HttpResponse
 from django.http import HttpResponseRedirect
 from django.core.signing import BadSignature, SignatureExpired
+from django.shortcuts import render
+from django.urls import reverse
 # from rest_framework.authtoken.views import ObtainAuthToken
 # from rest_framework.response import Response
 # from rest_framework.authtoken.models import Token
@@ -13,6 +15,10 @@ from django.core.signing import BadSignature, SignatureExpired
 
 from .forms import MyAuthForm
 from .backends import SuperAppBackend as Backend
+
+
+def superapp_fail(request):
+    return render(request, "RTAFAuth/superapp_fail.html", status=401)
 
 
 class SuperAppLoginMixins:
@@ -31,8 +37,9 @@ class SuperAppLoginMixins:
                     login(request, user, backend='common.RTAFAuth.backends.SuperAppBackend')
                     # setup_user(request, user)
                     return self.redirect_success_url(request)
-            except Exception as e:            
-                return HttpResponse(f"การยืนยันผ่าน Super App fail. Error {e}", status=401)
+            except Exception as e:
+                print("SuperApp auth error:", e)
+                return redirect(reverse("superapp_fail"))
         
         return super().get(request, *args, **kwargs)
 
