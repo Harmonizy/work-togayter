@@ -8,7 +8,7 @@ from django.shortcuts import render
 
 from debug_toolbar.toolbar import debug_toolbar_urls
 
-from common.RTAFAuth.views import AFLoginView
+from common.RTAFAuth.views import AFLoginView, superapp_fail
 
 blank = TemplateView.as_view(template_name="blank.html")
 
@@ -41,6 +41,7 @@ urlpatterns = [
 
     path('login/', AFLoginView.as_view(), name='account_login'),
     path('logout/', LogoutView.as_view(), name='account_logout'),
+    path("superapp-fail/", superapp_fail, name="superapp_fail"),
 
     path('blank/', blank, name="blank"),
     path('dashboard/',include('dashboards.urls')),
