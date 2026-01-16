@@ -30,9 +30,9 @@ class AircraftAdmin(admin.ModelAdmin):
     search_fields = ("name", "name_en")
     list_filter = ("squadron", "type")
 
-    def squadron_display(self, obj):
-        return obj.squadron.name if obj.squadron else "-"
-    squadron_display.short_description = "ฝูงบิน"
+    # def squadron_display(self, obj):
+    #     return obj.squadron.name if obj.squadron else "-"
+    # squadron_display.short_description = "ฝูงบิน"
 
 
 @admin.register(AircraftSystem)
