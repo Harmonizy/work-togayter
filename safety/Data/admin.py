@@ -26,7 +26,7 @@ class AircraftTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Aircraft)
 class AircraftAdmin(admin.ModelAdmin):
-    list_display = ("name", "name_en", "squadron_display")
+    list_display = ("name", "name_en", "squadron", "type")
     search_fields = ("name", "name_en")
     list_filter = ("squadron", "type")
 
