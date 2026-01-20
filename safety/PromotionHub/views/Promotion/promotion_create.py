@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator
 
-from ...models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile
+from ...models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile, PromotionImage, PromotionFile
 from ...forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet, DocumentForm, DocumentFileForm
 from ...choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
@@ -30,20 +30,16 @@ def create_ground(request):
             promotion.save()
 
             for img in request.FILES.getlist("images"):
-                promotion.images.create(image=img)
-
-            files = request.FILES.getlist("files")
-            if files:
-                document = Document.objects.create(
+                PromotionImage.objects.create(
                     promotion=promotion,
-                    user=request.user
+                    image=img
                 )
-                for f in files:
-                    DocumentFile.objects.create(
-                        document=document,
-                        file=f,
-                        user=request.user
-                    )
+
+            for f in request.FILES.getlist("files"):
+                PromotionFile.objects.create(
+                    promotion=promotion,
+                    file=f
+                )
 
             messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
             return redirect("promotion:list_ground")
@@ -70,20 +66,16 @@ def create_air(request):
             promotion.save()
 
             for img in request.FILES.getlist("images"):
-                promotion.images.create(image=img)
-
-            files = request.FILES.getlist("files")
-            if files:
-                document = Document.objects.create(
+                PromotionImage.objects.create(
                     promotion=promotion,
-                    user=request.user
+                    image=img
                 )
-                for f in files:
-                    DocumentFile.objects.create(
-                        document=document,
-                        file=f,
-                        user=request.user
-                    )
+
+            for f in request.FILES.getlist("files"):
+                PromotionFile.objects.create(
+                    promotion=promotion,
+                    file=f
+                )
 
             messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
             return redirect("promotion:list_air")
@@ -110,20 +102,17 @@ def announcement_create(request):
             promotion.save()
 
             for img in request.FILES.getlist("images"):
-                promotion.images.create(image=img)
-
-            files = request.FILES.getlist("files")
-            if files:
-                document = Document.objects.create(
+                PromotionImage.objects.create(
                     promotion=promotion,
-                    user=request.user
+                    image=img
                 )
-                for f in files:
-                    DocumentFile.objects.create(
-                        document=document,
-                        file=f,
-                        user=request.user
-                    )
+
+            for f in request.FILES.getlist("files"):
+                PromotionFile.objects.create(
+                    promotion=promotion,
+                    file=f
+                )
+
 
             messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
             return redirect("promotion:announcement_list")

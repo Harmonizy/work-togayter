@@ -73,12 +73,17 @@
                   <tbody class="text-center">
                     {% for quiz in quizzes %}
                     <tr>
-                      <td>#{{ quiz.id|stringformat:"04d" }}</td>
-
+                      <td>
+                        {% if request.user.is_superuser %}
+                          <a href="{% url 'promotion:quiz_view' quiz.id %}" class="link-primary fw-bold">
+                            #{{ quiz.id|stringformat:"04d" }}
+                          </a>
+                        {% else %}
+                          #{{ quiz.id|stringformat:"04d" }}
+                        {% endif %}
+                      </td>
                       <td class="text-start">
-                        <a href="{% url 'promotion:quiz_view' quiz.id %}" class="link-primary fw-bold">
-                          {{ quiz.title|truncatechars:50 }}
-                        </a>
+                        {{ quiz.title|truncatechars:50 }}
                       </td>
 
                       <td class="text-start">{{ quiz.description|truncatechars:60|default:"-" }}</td>
