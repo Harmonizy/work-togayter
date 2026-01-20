@@ -18,55 +18,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="{% static 'images/SA-logo-bg.ico'%}">
 
     {% block css %}
-    {% block extra_css %}
-    {% endblock extra_css %}
+    {% block extra_css %}{% endblock extra_css %}
 
     <!-- Layout config Js -->
     <script src="{% static 'js/layout.js'%}"></script>
     <script src="https://unpkg.com/htmx.org"></script>
+
     <!-- Bootstrap Css -->
-    <link href="{% static 'css/bootstrap.min.css'%}" id="bootstrap-style" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="{% static 'css/icons.min.css'%}" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="{% static 'css/app.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
-    <!-- custom Css-->
-    <link href="{% static 'css/custom.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
-    
+    <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/icons.min.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/app.min.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/custom.min.css'%}" rel="stylesheet" />
+
+    <!-- ✅ ADDED: padding กัน content ชน appbar บนมือถือ -->
+    <style>
+        @media (max-width: 991.98px) {
+            body {
+                padding-bottom: 64px;
+            }
+        }
+    </style>
     {% endblock css %}
 </head>
 
 <body>
     <!-- Begin page -->
     <div id="layout-wrapper">
+
         {% block header %}
             {% include "partials/topbar.html" %}
         {% endblock header %}
 
-        {% block sidebar %}
-            {% include "partials/sidebar.html" %}
-        {% endblock sidebar %}
+        <!-- Sidebar (Desktop only) -->
+        <div class="d-none d-lg-block">
+            {% block sidebar %}
+                {% include "partials/sidebar.html" %}
+            {% endblock sidebar %}
+        </div>
 
+        <!-- Main Content -->
         {% block content %}
             {% block pagetitle %}{% endblock pagetitle %}
         {% endblock content %}
-{% comment %}         
-        {% block footer %}
-            {% include "partials/footer.html" %}
-        {% endblock footer %} {% endcomment %}
+
     </div>
-    
-    {% block extra_content %}        
-    {% endblock extra_content %}
-        
-    <!-- END layout-wrapper -->
+
+    {% block extra_content %}{% endblock extra_content %}
+
     {% block right_sidebar %}
-    {% include "partials/customizer.html" %}
+        {% include "partials/customizer.html" %}
     {% endblock right_sidebar %}
+
+    <!-- ✅ ADDED: Mobile Bottom App Bar -->
+    <div class="d-lg-none fixed-bottom bg-white border-top shadow-sm">
+        {% include "partials/mobile_appbar.html" %}
+    </div>
 
     {% block javascript %}
     <!-- JAVASCRIPT -->
@@ -77,17 +88,15 @@
     <script src="{% static 'js/pages/plugins/lord-icon-2.1.0.js'%}"></script>
     <script src="{% static 'js/plugins.js'%}"></script>
 
-    {% block extra_js %}
-    {% endblock extra_js %}
+    {% block extra_js %}{% endblock extra_js %}
 
-    <!-- App js -->
     <script src="{% static 'js/app.js'%}"></script>
     {% endblock javascript %}
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmLogout(event) {
-            event.preventDefault(); // ป้องกันไม่ให้ form ส่งทันที
-
+            event.preventDefault();
             Swal.fire({
                 title: 'ออกจากระบบ?',
                 text: "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ",
@@ -104,7 +113,5 @@
         }
     </script>
 
-
 </body>
-
 </html>
