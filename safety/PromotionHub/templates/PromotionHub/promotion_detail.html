@@ -4,59 +4,34 @@
 
 {% block extra_css %}
 <style>
-    .promotion-main-img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 1rem auto;
-        display: block;
-        cursor: zoom-in;
-        transition: all 0.3s ease-in-out;
-    }
+  .promotion-main-img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    cursor: zoom-in;
+    transition: transform .3s ease;
+  }
 
-    @media (min-width: 992px) {
-        .promotion-main-img {
-            max-height: 100vh;
-        }
-    }
+  .promotion-main-img:hover {
+    transform: scale(1.02);
+  }
 
-    .promotion-main-img:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
+  .promotion-content img {
+    max-width: 100%;
+    height: auto;
+  }
 
-    .promotion-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 0.5rem 0;
-    }
+  .promotion-meta {
+    font-size: .9rem;
+    color: #888;
+  }
 
-    .promotion-meta {
-        font-size: 0.9rem;
-        color: #888;
-    }
-
-    .ck-content {
-        line-height: 1.7;
-        font-size: 1.05rem;
-    }
-
-    .list-group-item:hover {
-        background-color: #f8f9fa;
-    }
-
-    .modal-img {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-    }
-
-    .modal-content {
-        background: #000 !important;
-    }
+  .modal-img {
+    width: 100%;
+    height: auto;
+  }
 </style>
-{% endblock extra_css %}
+{% endblock %}
 
 {% block content %}
 <div class="main-content">
@@ -65,38 +40,45 @@
 
       <div class="row justify-content-center">
         <div class="col-lg-10">
-          <div class="card shadow-lg border-0">
+
+          <div class="card shadow border-0">
             <div class="card-body p-4">
 
-              <!-- Title -->
+              <!-- ===== TITLE ===== -->
               <div class="text-center mb-4">
                 <h2 class="fw-bold">{{ promotion.title }}</h2>
               </div>
 
-              <!-- Image -->
-              {% if promotion.image %}
+              <!-- ===== CONTENT ===== -->
+              <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body promotion-content">
+                  {{ promotion.content|safe }}
+                </div>
+              </div>
+
+              <!-- ===== IMAGES ===== -->
+              {% if promotion.images.all %}
               <div class="mb-4">
                 <h5 class="fw-bold mb-3">
                   <i class="ri-image-line me-1"></i> ภาพประกอบ
                 </h5>
 
-                <div class="text-center">
-                  <img src="{{ promotion.image.url }}"
-                       class="promotion-main-img shadow-sm"
-                       alt="{{ promotion.title }}">
+                <div class="row g-3">
+                  {% for img in promotion.images.all %}
+                  <div class="col-md-4">
+                    <img src="{{ img.image.url }}"
+                         class="promotion-main-img shadow-sm"
+                         alt="{{ promotion.title }}">
+                  </div>
+                  {% endfor %}
                 </div>
               </div>
               {% endif %}
 
-              <!-- Content -->
-              <div class="card shadow-sm mb-4 border-0">
-                <div class="card-body promotion-content ck-content">
-                  {{ promotion.content|safe }}
-                </div>
-              </div>
 
-              <!-- Attachments -->
-              {% if promotion.attachments.all %}
+
+              <!-- ===== FILES ===== -->
+              {% if promotion.files.all %}
               <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                   <h5 class="fw-bold mb-3">
@@ -104,7 +86,7 @@
                   </h5>
 
                   <ul class="list-group list-group-flush">
-                    {% for file in promotion.attachments.all %}
+                    {% for file in promotion.files.all %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                       <div class="d-flex align-items-center">
                         <i class="ri-file-line fs-4 me-3 text-primary"></i>
@@ -130,7 +112,7 @@
               </div>
               {% endif %}
 
-              <!-- Quiz -->
+              <!-- ===== QUIZ ===== -->
               {% if quiz %}
               <div class="text-center my-4">
                 {% if not user_completed_quiz %}
@@ -147,7 +129,7 @@
               </div>
               {% endif %}
 
-              <!-- Priority Alert -->
+              <!-- ===== PRIORITY ===== -->
               {% if promotion.priority == "H" %}
               <div class="card border-danger shadow-sm mb-4">
                 <div class="card-body text-center">
@@ -157,22 +139,22 @@
                   <p>กรุณากดยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
 
                   {% if not promotion_view.accepted %}
-                  <form method="POST" action="{% url 'promotion:accept' promotion_view.id %}">
+                  <form method="post" action="{% url 'promotion:accept' promotion_view.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-lg">
                       <i class="ri-check-line me-1"></i> รับทราบ
                     </button>
                   </form>
                   {% else %}
-                  <div class="text-success fw-bold mt-2">
-                    ✔ ท่านได้ยืนยันการรับทราบแล้ว
+                  <div class="text-success fw-bold">
+                    ✔ รับทราบแล้ว
                   </div>
                   {% endif %}
                 </div>
               </div>
               {% endif %}
 
-              <!-- Meta -->
+              <!-- ===== META ===== -->
               <div class="text-center mt-3">
                 <div class="promotion-meta">
                   โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }}
@@ -185,6 +167,7 @@
 
             </div>
           </div>
+
         </div>
       </div>
 
@@ -192,30 +175,31 @@
   </div>
 </div>
 
-<!-- Image Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+<!-- ===== IMAGE MODAL ===== -->
+<div class="modal fade" id="imageModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content bg-dark">
       <div class="modal-body p-0 text-center">
-        <img id="modalImage" src="" class="modal-img">
+        <img id="modalImage" class="modal-img">
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
 
+
 {% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const img = document.querySelector(".promotion-main-img");
-    const modalImg = document.getElementById("modalImage");
+  const modalImg = document.getElementById("modalImage");
 
-    if (img) {
-        img.addEventListener("click", function () {
-            modalImg.src = this.src;
-            new bootstrap.Modal(document.getElementById("imageModal")).show();
-        });
-    }
+  document.querySelectorAll(".promotion-main-img").forEach(img => {
+    img.addEventListener("click", function () {
+      modalImg.src = this.src;
+      new bootstrap.Modal(document.getElementById("imageModal")).show();
+    });
+  });
 });
 </script>
 {% endblock %}
+

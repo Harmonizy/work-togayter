@@ -154,6 +154,19 @@ class PromotionImage(models.Model):
 
     def __str__(self):
         return self.image.name
+    
+
+class PromotionFile(models.Model):
+    promotion = models.ForeignKey(Promotion,on_delete=models.CASCADE,related_name="files")
+    file = models.FileField(upload_to="promotion/files/")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "ไฟล์แนบ"
+
+    def __str__(self):
+        return self.file.name
+
 
 
 class Document(models.Model):

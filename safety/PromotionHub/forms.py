@@ -4,7 +4,6 @@ from crispy_forms.layout import Layout, Row, Column, Field, Div, Submit
 from django.forms import inlineformset_factory
 from django.forms import ClearableFileInput
 
-from tinymce.widgets import TinyMCE
 from ckeditor.widgets import CKEditorWidget
 
 from .models import Promotion, Quiz, Question, Choice, Document, DocumentFile
@@ -13,24 +12,13 @@ from .models import Promotion, Quiz, Question, Choice, Document, DocumentFile
 class MultipleFileInput(ClearableFileInput):
     allow_multiple_selected = True
 
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("attrs", {})
+        kwargs["attrs"]["multiple"] = True
+        super().__init__(*args, **kwargs)
+        
+
 class PromotionForm(forms.ModelForm):
-
-    images = forms.ImageField(
-        label="รูปภาพประกอบ",
-        required=False,
-        widget=MultipleFileInput(attrs={
-            "class": "form-control"
-        })
-    )
-
-    files = forms.FileField(
-        label="ไฟล์แนบ",
-        required=False,
-        widget=MultipleFileInput(attrs={
-            "class": "form-control"
-        })
-    )
-
     class Meta:
         model = Promotion
         fields = ['title', 'content', 'quiz']
@@ -52,11 +40,7 @@ class PromotionForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('images', css_class='form-group col-md-6 mb-0'),
                 Column('title', css_class='form-group col-md-6 mb-0'),
-            ),
-            Row(
-                Column('files', css_class='form-group col-md-6 mb-0'),
             ),
             Div(
                 Field('content', css_class='mb-3'),
@@ -66,6 +50,7 @@ class PromotionForm(forms.ModelForm):
                 Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )
+
 
 class QuizForm(forms.ModelForm):
     class Meta:

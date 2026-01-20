@@ -21,6 +21,11 @@ main_urlpatterns = [
     path('accept/<int:pk>/', promotion_accept.accept, name="accept"),
     path('publish/partial/<int:pk>/', promotion_publish.publish_modal, name='publish_modal'),
     path('publish/dynamic-options/<int:pk>/', promotion_publish.publish_dynamic_options, name='publish_dynamic_options'),
+    
+    path("file/delete/<int:pk>/", promotion_edit.file_delete, name="file_delete"),
+    path("image/delete/<int:pk>/", promotion_edit.image_delete, name="image_delete"),
+
+
 
     path('quiz/<int:quiz_id>/', quiz_view.view, name='quiz_view'),
     path('quiz/result/<int:result_id>/', quiz_result.result, name='quiz_result'),
