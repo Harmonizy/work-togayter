@@ -1,0 +1,16 @@
+<nav class="d-flex justify-content-around text-center py-2">
+    <a href="{% url 'report:safety-report.list' %}" class="text-dark">
+        <i class="bi bi-file-text fs-4"></i><br>
+        <small>Reports</small>
+    </a>
+
+    <a href="{% url 'promotion:list_ground' %}" class="text-dark">
+        <i class="bi bi-megaphone fs-4"></i><br>
+        <small>Promotion</small>
+    </a>
+
+    <a href="{% url 'promotion:quiz_list' %}" class="text-dark">
+        <i class="bi bi-patch-question fs-4"></i><br>
+        <small>Quiz</small>
+    </a>
+</nav>

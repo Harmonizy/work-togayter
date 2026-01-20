@@ -81,16 +81,12 @@
               <!-- ===== IMAGES ===== -->
               {% if promotion.images.all %}
               <div class="mb-4">
-                <h5 class="fw-bold mb-3">
-                  <i class="ri-image-line me-1"></i> ภาพประกอบ
-                </h5>
-
                 <div class="row g-2 g-md-3">
                   {% for img in promotion.images.all %}
                   <div class="col-12 col-sm-6 col-md-4">
                     <img src="{{ img.image.url }}"
-                         class="promotion-main-img shadow-sm"
-                         alt="{{ promotion.title }}">
+                          class="promotion-main-img shadow-sm"
+                          alt="{{ promotion.title }}">
                   </div>
                   {% endfor %}
                 </div>
