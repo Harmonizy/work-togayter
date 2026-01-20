@@ -1,7 +1,7 @@
 from django.db import models
 
 class Config(models.Model):
-    key = models.CharField(verbose_name="Key", max_length=120, unique=True, null = False, blank = False)
+    key = models.CharField(verbose_name="Key", max_length=255, unique=True, null = False, blank = False)
     value = models.CharField(verbose_name="Value", max_length=255, null = False, blank = False)
     description = models.CharField(verbose_name="Description", max_length=255, null = True, blank = True)
 

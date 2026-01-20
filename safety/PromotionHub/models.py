@@ -62,9 +62,8 @@ class QuizResult(models.Model):
 
 
 class Promotion(models.Model):
-    image = models.ImageField(verbose_name="รูปภาพ", upload_to='safety_promotion/', null=True, blank=True)
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
-    content = HTMLField(verbose_name="เนื้อหา", null=True, blank=True)
+    content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=PromotionStatusChoices.choices, default=PromotionStatusChoices.DRAFT, null=True, blank=True)
     publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE, null=True, blank=True)
     priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PromotionPriorityChoices.choices, default=PromotionPriorityChoices.NONE, null=True, blank=True)
@@ -145,16 +144,16 @@ class PromotionView(models.Model):
         super().save(*args, **kwargs)
 
 
-# class Image(models.Models):
-#     image = models.ImageField(verbose_name="รูปภาพ", upload_to='promotion/images/')
-#     promotion = models.ForeignKey(Promotion, verbose_name="โปรโมชั่น", on_delete=models.CASCADE, related_name="images", null=True, blank=True)
-#     file = models.FileField(verbose_name="ไฟล์",upload_to="promotion/files/", null=True, blank=True)
+class PromotionImage(models.Model):
+    promotion = models.ForeignKey(Promotion,on_delete=models.CASCADE,related_name="images")
+    image = models.ImageField(upload_to="promotion/images/")
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#     class Meta:
-#         verbose_name = verbose_name_plural = "6. รูปภาพเสริม"
+    class Meta:
+        verbose_name = verbose_name_plural = "รูปภาพประกอบ"
 
-#     def __str__(self):
-#         return f"Image for {self.promotion.title}"
+    def __str__(self):
+        return self.image.name
 
 
 class Document(models.Model):
