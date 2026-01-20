@@ -42,8 +42,10 @@
                 </div>
 
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" container_id="recommendations-container" title="คอมเมนต์" %}
+                <div class="d-none">
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}
+                </div>
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=participant_formset formset_name="participants" container_id="participants-container" title="ผู้เกี่ยวข้อง" %}
                 {% include "Report/safety-reports/partials/formset-block.html" with formset=reference_formset formset_name="references" container_id="references-container" title="รายงานอ้างอิง" %}
                 <div class="form-check my-3">
