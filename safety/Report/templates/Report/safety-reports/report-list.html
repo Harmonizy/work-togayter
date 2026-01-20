@@ -156,7 +156,13 @@
                                                     #{{ report.id|stringformat:"04d" }}
                                                 </a>
                                             </td>
-                                            <td>{{ report.affiliation|default:"-" }}/{{ report.location_affiliation|default:"-" }}</td>
+                                            <td>
+                                                {% if report.affiliation == report.location_affiliation %}
+                                                    {{ report.affiliation|default:"-" }}
+                                                {% else %}
+                                                    {{ report.affiliation|default:"-" }}/{{ report.location_affiliation|default:"-" }}
+                                                {% endif %}
+                                            </td>
                                             <td>{{ report.get_report_type_display }}</td>
                                             <td>{{ report.event_date|thai_date }}, {{ report.event_time|time:"H:i" }}</td>
                                             <td class="text-start">
