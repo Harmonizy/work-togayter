@@ -42,11 +42,65 @@
                 padding-bottom: 64px;
             }
         }
+
+        /* Mobile Bottom Bar */
+        .mobile-appbar a {
+            flex: 1;
+            padding: 6px 0;
+            transition: all .2s ease;
+        }
+
+        .mobile-appbar a:hover,
+        .mobile-appbar a:focus {
+            color: var(--vz-primary);
+        }
+
+        .mobile-appbar a.active {
+            color: var(--vz-primary);
+            font-weight: 500;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            color: #212529;
+        }
+
+        .menu-item:hover {
+            color: var(--vz-primary);
+        }
+
+        .mobile-appbar a {
+            color: #9aa0a6;
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+
+        .mobile-appbar a.active,
+        body[data-page="safety-report.list"] a[data-page="safety-report.list"],
+        body[data-page="hazard-log"] a[data-page="hazard-log"],
+        body[data-page="dashboard-home.index"] a[data-page="dashboard-home.index"] {
+            color: #0d6efd;
+        }
+
+        body[data-page^="list_"] a[data-page="promo"],
+        body[data-page="document_list"] a[data-page="promo"],
+        body[data-page="quiz_list"] a[data-page="promo"] {
+            color: #0d6efd;
+        }
+
+        .mobile-appbar a:hover {
+            transform: translateY(-2px);
+        }
+
+
     </style>
     {% endblock css %}
 </head>
 
-<body>
+<body data-page="{{ request.resolver_match.url_name }}">
     <!-- Begin page -->
     <div id="layout-wrapper">
 
@@ -74,11 +128,13 @@
         {% include "partials/customizer.html" %}
     {% endblock right_sidebar %}
 
-    <!-- ✅ ADDED: Mobile Bottom App Bar -->
+<!-- ✅ Offcanvas (ไม่ต้อง fixed) -->
+    {% include "partials/mobile_offcanvas.html" %}
+
+    <!-- ✅ Bottom App Bar (fixed-bottom ตัวเดียวพอ) -->
     <div class="d-lg-none fixed-bottom bg-white border-top shadow-sm">
         {% include "partials/mobile_appbar.html" %}
     </div>
-
     {% block javascript %}
     <!-- JAVASCRIPT -->
     <script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js'%}"></script>
