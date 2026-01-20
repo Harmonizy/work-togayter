@@ -54,19 +54,13 @@ class BaseReportForm(forms.ModelForm):
         )
         self.fields['event_time'].label = "เวลาเกิดเหตุ"
 
-        report_type = self.initial.get("report_type", None)
+        report_type = self.initial.get("report_type", "")
         affiliation = self.initial.get("affiliation", None)
 
         if report_type:
             self.fields["report_type"].choices = [
-                (choice.value, choice.label)
-                for choice in ReportTypeChoices
-                if choice.value == report_type
+                (choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type
             ]
-
-            self.fields["report_type"].initial = report_type
-
-            self.fields["report_type"].disabled = True
 
         if affiliation:
             if isinstance(affiliation, int):
@@ -96,6 +90,7 @@ class BaseReportForm(forms.ModelForm):
             'comment',
             'anonymous'
         )
+    
 
 
 class GroundReportForm(forms.ModelForm):

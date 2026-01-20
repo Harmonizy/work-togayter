@@ -19,16 +19,38 @@
   .promotion-content img {
     max-width: 100%;
     height: auto;
+    border-radius: 6px;
   }
 
   .promotion-meta {
     font-size: .9rem;
     color: #888;
+    line-height: 1.4;
   }
 
   .modal-img {
     width: 100%;
     height: auto;
+  }
+
+  /* 📱 Mobile Optimization */
+  @media (max-width: 576px) {
+    h2 {
+      font-size: 1.4rem;
+    }
+
+    .card-body {
+      padding: 1rem !important;
+    }
+
+    .promotion-meta {
+      font-size: .8rem;
+    }
+
+    .btn-lg {
+      width: 100%;
+      font-size: 1rem;
+    }
   }
 </style>
 {% endblock %}
@@ -36,10 +58,10 @@
 {% block content %}
 <div class="main-content">
   <div class="page-content">
-    <div class="container-fluid">
+    <div class="container">
 
       <div class="row justify-content-center">
-        <div class="col-lg-10">
+        <div class="col-lg-10 col-xl-9">
 
           <div class="card shadow border-0">
             <div class="card-body p-4">
@@ -63,9 +85,9 @@
                   <i class="ri-image-line me-1"></i> ภาพประกอบ
                 </h5>
 
-                <div class="row g-3">
+                <div class="row g-2 g-md-3">
                   {% for img in promotion.images.all %}
-                  <div class="col-md-4">
+                  <div class="col-12 col-sm-6 col-md-4">
                     <img src="{{ img.image.url }}"
                          class="promotion-main-img shadow-sm"
                          alt="{{ promotion.title }}">
@@ -74,8 +96,6 @@
                 </div>
               </div>
               {% endif %}
-
-
 
               <!-- ===== FILES ===== -->
               {% if promotion.files.all %}
@@ -92,19 +112,15 @@
                         <i class="ri-file-line fs-4 me-3 text-primary"></i>
                         <div>
                           <div class="fw-semibold">
-                            {{ file.file.name|cut:"promotion/files/" }}
+                            <a href="{{ file.file.url }}">
+                              {{ file.file.name|cut:"promotion/files/" }}
+                            </a>
                           </div>
                           <small class="text-muted">
                             {{ file.file.size|filesizeformat }}
                           </small>
                         </div>
                       </div>
-
-                      <a href="{{ file.file.url }}"
-                         class="btn btn-outline-primary btn-sm"
-                         target="_blank">
-                        <i class="ri-download-line me-1"></i> ดาวน์โหลด
-                      </a>
                     </li>
                     {% endfor %}
                   </ul>
@@ -117,12 +133,12 @@
               <div class="text-center my-4">
                 {% if not user_completed_quiz %}
                 <a href="{% url 'promotion:quiz_view' quiz.id %}"
-                   class="btn btn-primary btn-lg">
+                   class="btn btn-primary btn-lg w-100 w-sm-auto">
                   <i class="ri-questionnaire-line me-1"></i>
                   ทำแบบทดสอบ
                 </a>
                 {% else %}
-                <div class="alert alert-success">
+                <div class="alert alert-success mb-0">
                   ✔ คุณทำแบบทดสอบนี้แล้ว
                 </div>
                 {% endif %}
@@ -136,12 +152,13 @@
                   <h5 class="text-danger fw-bold">
                     <i class="ri-alert-line me-1"></i> จำเป็นต้องทราบ
                   </h5>
-                  <p>กรุณากดยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
+                  <p class="mb-3">กรุณากดยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
 
                   {% if not promotion_view.accepted %}
                   <form method="post" action="{% url 'promotion:accept' promotion_view.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-lg">
+                    <button type="submit"
+                            class="btn btn-danger btn-lg w-100 w-sm-auto">
                       <i class="ri-check-line me-1"></i> รับทราบ
                     </button>
                   </form>
@@ -157,11 +174,27 @@
               <!-- ===== META ===== -->
               <div class="text-center mt-3">
                 <div class="promotion-meta">
-                  โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }}
-                  • {{ promotion.created_at|date:"d M Y" }}
-                  {% if promotion.num_view %} • เข้าชม {{ promotion.num_view }} คน{% endif %}
-                  {% if quiz_completed_count %} • ทำแบบทดสอบ {{ quiz_completed_count }} คน{% endif %}
-                  {% if promotion.num_accepted %} • รับทราบ {{ promotion.num_accepted }} คน{% endif %}
+                  <span class="d-block d-sm-inline">
+                    โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }}
+                  </span>
+                  <span class="d-block d-sm-inline">
+                    • {{ promotion.created_at|date:"d M Y" }}
+                  </span>
+                  {% if promotion.num_view %}
+                  <span class="d-block d-sm-inline">
+                    • เข้าชม {{ promotion.num_view }} คน
+                  </span>
+                  {% endif %}
+                  {% if quiz_completed_count %}
+                  <span class="d-block d-sm-inline">
+                    • ทำแบบทดสอบ {{ quiz_completed_count }} คน
+                  </span>
+                  {% endif %}
+                  {% if promotion.num_accepted %}
+                  <span class="d-block d-sm-inline">
+                    • รับทราบ {{ promotion.num_accepted }} คน
+                  </span>
+                  {% endif %}
                 </div>
               </div>
 
@@ -177,7 +210,7 @@
 
 <!-- ===== IMAGE MODAL ===== -->
 <div class="modal fade" id="imageModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-xl">
     <div class="modal-content bg-dark">
       <div class="modal-body p-0 text-center">
         <img id="modalImage" class="modal-img">
@@ -187,19 +220,19 @@
 </div>
 {% endblock %}
 
-
 {% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const modalImg = document.getElementById("modalImage");
+  const modalEl = document.getElementById("imageModal");
+  const modal = new bootstrap.Modal(modalEl);
 
   document.querySelectorAll(".promotion-main-img").forEach(img => {
     img.addEventListener("click", function () {
       modalImg.src = this.src;
-      new bootstrap.Modal(document.getElementById("imageModal")).show();
+      modal.show();
     });
   });
 });
 </script>
 {% endblock %}
-
