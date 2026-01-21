@@ -56,8 +56,12 @@ def list_ground(request):
 
     # รวม + distinct + sort
     promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
+    
+    paginator = Paginator(promotions, 10)  # 10 รายการต่อหน้า
+    page_obj = paginator.get_page(request.GET.get("page"))
 
     context = {
+        "promotions_page": page_obj,
         "promotions": promotions,
         "type": "ภาคพื้น"
     }
@@ -103,7 +107,11 @@ def list_air(request):
     # รวม + distinct + sort
     promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
 
+    paginator = Paginator(promotions, 10)  # 10 รายการต่อหน้า
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     context = {
+        "promotions_page": page_obj,
         "promotions": promotions,
         "type": "การบิน"
     }
@@ -147,7 +155,11 @@ def announcement_list(request):
     # รวม + distinct + sort
     promotions = (promotions | visible_promotions).distinct().order_by("-created_at")
 
+    paginator = Paginator(promotions, 10)  # 10 รายการต่อหน้า
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     context = {
+        "promotions_page": page_obj,
         "promotions": promotions,
         "type": "การแจ้งเตือน"
     }
