@@ -35,19 +35,19 @@ class PromotionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['content'].required = False
+        self.fields['content'].label = ""
+
 
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
                 Column('title', css_class='form-group col-md-6 mb-0'),
+                Column('quiz', css_class='form-group col-md-6 mb-0'),
             ),
             Div(
-                Field('content', css_class='mb-3'),
+                Field('content', css_class='mb-3', label=""),
                 css_id="title-content-part",
-            ),
-            Row(
-                Column('quiz', css_class='form-group col-md-4 mb-0'),
             ),
         )
 
@@ -121,7 +121,6 @@ class DocumentForm(forms.ModelForm):
             ),
             "description",
 
-            # ⭐ ปุ่มบันทึกที่คุณลบออกไป ต้องใส่กลับมา ⭐
             Submit("submit", "บันทึก", css_class="btn btn-primary mt-3")
         )
 
