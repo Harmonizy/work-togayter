@@ -61,8 +61,8 @@ def list_ground(request):
     page_obj = paginator.get_page(request.GET.get("page"))
 
     context = {
-        "promotions_page": page_obj,
-        "promotions": promotions,
+        "promotions": page_obj,
+        "page_obj": page_obj, 
         "type": "ภาคพื้น"
     }
     return render(request, "PromotionHub/promotion_list.html", context)
@@ -111,8 +111,8 @@ def list_air(request):
     page_obj = paginator.get_page(request.GET.get("page"))
 
     context = {
-        "promotions_page": page_obj,
-        "promotions": promotions,
+        "promotions": page_obj,
+        "page_obj": page_obj, 
         "type": "การบิน"
     }
     return render(request, "PromotionHub/promotion_list.html", context)
@@ -159,8 +159,8 @@ def announcement_list(request):
     page_obj = paginator.get_page(request.GET.get("page"))
 
     context = {
-        "promotions_page": page_obj,
-        "promotions": promotions,
+        "promotions": page_obj,
+        "page_obj": page_obj, 
         "type": "การแจ้งเตือน"
     }
     return render(request, "PromotionHub/promotion_list.html", context)
