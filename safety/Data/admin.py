@@ -26,8 +26,8 @@ class AircraftTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Aircraft)
 class AircraftAdmin(admin.ModelAdmin):
-    list_display = ("name", "name_en",)
-    search_fields = ("name", "name_en")
+    list_display = ("name", "name_en", "squadron", "type")
+    search_fields = ("name", "name_en", "squadron__name")
     list_filter = ("squadron", "type")
 
     # def squadron_display(self, obj):
@@ -61,10 +61,10 @@ class GroundSafetyCategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-@admin.register(Keyword)
-class KeywordAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
+# @admin.register(Keyword)
+# class KeywordAdmin(admin.ModelAdmin):
+#     list_display = ("name",)
+#     search_fields = ("name",)
 
 
 @admin.register(Role)
