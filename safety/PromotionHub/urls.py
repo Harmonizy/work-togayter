@@ -8,9 +8,12 @@ app_name = 'promotion'
 
 main_urlpatterns = [   
     path('list', promotion_list.list_ground, name='list'), 
+    
+    path("announcement/", promotion_list.announcement_list, name="announcement_list"),
     path('list_ground', promotion_list.list_ground, name='list_ground'),
     path('list_air', promotion_list.list_air, name='list_air'),
 
+    path("announcement/create/", promotion_create.announcement_create, name="announcement_create"),
     path('create_ground/', promotion_create.create_ground, name='create_ground'),
     path('create_air/', promotion_create.create_air, name='create_air'),
 
@@ -24,8 +27,6 @@ main_urlpatterns = [
     
     path("file/delete/<int:pk>/", promotion_edit.file_delete, name="file_delete"),
     path("image/delete/<int:pk>/", promotion_edit.image_delete, name="image_delete"),
-
-
 
     path('quiz/<int:quiz_id>/', quiz_view.view, name='quiz_view'),
     path('quiz/result/<int:result_id>/', quiz_result.result, name='quiz_result'),
@@ -45,8 +46,6 @@ main_urlpatterns = [
     path("document/files/<int:pk>", document_file.file_list, name="document_file_list"),
     path("document/files/delete/<int:file_id>/", document_file.file_delete, name="document_file_delete"),
 
-    path("announcement/", promotion_list.announcement_list, name="announcement_list"),
-    path("announcement/create/", promotion_create.announcement_create, name="announcement_create"),
 ]
 
 

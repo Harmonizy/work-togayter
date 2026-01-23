@@ -72,7 +72,7 @@ def list(request):
     reports = (
         reports.select_related("recorder", "affiliation", "recorder__rank")
                 .prefetch_related("file_attachment", "image_attachment")
-                .order_by("-event_date")
+                .order_by("-event_date", "-event_time")
     )
 
     report_cards = card_data(reports)
