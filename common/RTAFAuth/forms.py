@@ -13,21 +13,21 @@ class MyAuthForm(AuthenticationForm):
     )
 
     password = forms.CharField(
-        label="OTP",
+        label="OTP (ดูใน Superapp)",
         widget=forms.PasswordInput(attrs={
             "class": "form-control auth-pass-inputgroup",
-            "placeholder": "กรอกรหัส OTP 6 หลัก จาก RTAF-Superapp",
+            "placeholder": "กรอกรหัส OTP 6 หลัก",
             "autocomplete": "one-time-code",
             "inputmode": "numeric",
         })
     )
 
     def clean_username(self):
-        username = self.cleaned_data.get("username", "").strip()
+        username = self.cleaned_data.get("username", "").strip().lower()
 
         DOMAIN = "@rtaf.mi.th"
 
-        if username.lower().endswith(DOMAIN):
+        if username.endswith(DOMAIN):
             username = username[:-len(DOMAIN)]
 
         return username
