@@ -87,21 +87,21 @@ class GroundSafetyCategory(models.Model):
         return self.name
 
 
-class Keyword(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+class Role(models.Model):
+    name = models.CharField(verbose_name="ชื่อ", max_length=255)
 
     class Meta:
-        verbose_name = verbose_name_plural = "7. คำสำคัญ"
+        verbose_name = verbose_name_plural = "7. บทบาท"
 
     def __str__(self):
         return self.name
 
 
-class Role(models.Model):
-    name = models.CharField(verbose_name="ชื่อ", max_length=255)
+class Keyword(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "8. บทบาท"
+        verbose_name = verbose_name_plural = "8. คำสำคัญ"
 
     def __str__(self):
         return self.name

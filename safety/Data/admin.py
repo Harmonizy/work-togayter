@@ -26,9 +26,10 @@ class AircraftTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Aircraft)
 class AircraftAdmin(admin.ModelAdmin):
-    list_display = ("name", "name_en",)
-    search_fields = ("name", "name_en")
+    list_display = ("name", "name_en", "squadron",)
+    search_fields = ("name", "name_en", "squadron__name")
     list_filter = ("squadron", "type")
+    filter_horizontal = ("type",)
 
     # def squadron_display(self, obj):
     #     return obj.squadron.name if obj.squadron else "-"
@@ -61,10 +62,10 @@ class GroundSafetyCategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-@admin.register(Keyword)
-class KeywordAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
+# @admin.register(Keyword)
+# class KeywordAdmin(admin.ModelAdmin):
+#     list_display = ("name",)
+#     search_fields = ("name",)
 
 
 @admin.register(Role)

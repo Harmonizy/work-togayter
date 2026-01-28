@@ -49,45 +49,87 @@
             </div>
             {% endif %}
 
-            <!-- รูปภาพ -->
+             <div class="d-none">
+            <!-- รูปภาพ (formset เดิม) -->
             <div class="card mb-4 shadow-sm">
               <div class="card-body p-3 p-md-4">
-                {% include "Report/safety-reports/partials/formset-block.html"
-                  with formset=image_formset
-                  formset_name="images"
-                  title="รูปภาพ"
-                  container_id="image-formset-container"
-                  empty_form_id="empty-image-form"
-                  form_class="file-form"
-                  icon="ri-image-add-line" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=image_formset formset_name="images" container_id="images-container" title="รูปภาพ" %}
               </div>
             </div>
 
-            <!-- ไฟล์ -->
+            <!-- ไฟล์ (formset เดิม) -->
             <div class="card mb-4 shadow-sm">
               <div class="card-body p-3 p-md-4">
-                {% include "Report/safety-reports/partials/formset-block.html"
-                  with formset=file_formset
-                  formset_name="files"
-                  title="ไฟล์"
-                  container_id="file-formset-container"
-                  empty_form_id="empty-file-form"
-                  form_class="file-form"
-                  icon="ri-file-add-line" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=file_formset formset_name="files" container_id="files-container" title="ไฟล์" %}
               </div>
             </div>
+            </div>
+
+            <!-- ================= BULK ATTACHMENT ================= -->
+            <div class="card mb-4 shadow-sm">
+              <div class="card-body p-3 p-md-4">
+
+                <div class="d-flex align-items-center mb-3">
+                  <i class="ri-folder-upload-line fs-4 me-2"></i>
+                  <h5 class="mb-0">แนบไฟล์เพิ่มเติม (Bulk)</h5>
+                </div>
+
+                {{ bulk_form|crispy }}
+
+                <hr class="my-4">
+
+                <h6 class="fw-bold mb-3">
+                  <i class="ri-attachment-line me-1"></i>
+                  ไฟล์และรูปภาพที่แนบไว้แล้ว
+                </h6>
+
+                {% if report.images.exists or report.files.exists %}
+                <div class="row g-3">
+
+                  <!-- รูปภาพเก่า -->
+                  {% for img in report.images.all %}
+                  <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100 shadow-sm">
+                      <img src="{{ img.image.url }}"
+                           class="card-img-top"
+                           style="object-fit: cover; height: 160px;"
+                           alt="image">
+                      <div class="card-body p-2 text-center">
+                        <span class="badge bg-info">รูปภาพ</span>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+
+                  <!-- ไฟล์เก่า -->
+                  {% for f in report.files.all %}
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <div class="border rounded p-2 h-100 d-flex align-items-center">
+                      <i class="ri-file-line fs-4 me-2 text-secondary"></i>
+                      <div class="flex-grow-1">
+                        <a href="{{ f.file.url }}" target="_blank"
+                           class="fw-semibold text-decoration-none">
+                          {{ f.file.name|cut:"uploads/" }}
+                        </a>
+                        <div class="small text-muted">ไฟล์แนบ</div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+
+                </div>
+                {% else %}
+                  <p class="text-muted mb-0">ยังไม่มีไฟล์หรือรูปภาพที่แนบไว้</p>
+                {% endif %}
+
+              </div>
+            </div>
+            <!-- ================= END BULK ================= -->
 
             <!-- คอมเมนต์ -->
             <div class="card mb-4 shadow-sm">
               <div class="card-body p-3 p-md-4">
-                {% include "Report/safety-reports/partials/formset-block.html"
-                  with formset=recommendation_formset
-                  formset_name="recommendations"
-                  title="คอมเมนต์"
-                  container_id="recommendation-formset-container"
-                  empty_form_id="empty-rec-form"
-                  form_class="rec-form"
-                  icon="bx bx-comment-add" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=recommendation_formset formset_name="recommendations" title="คอมเมนต์" container_id="recommendation-formset-container" empty_form_id="empty-rec-form" form_class="rec-form" icon="bx bx-comment-add" %}
               </div>
             </div>
 
@@ -95,14 +137,7 @@
             {% if participant_formset %}
             <div class="card mb-4 shadow-sm">
               <div class="card-body p-3 p-md-4">
-                {% include "Report/safety-reports/partials/formset-block.html"
-                  with formset=participant_formset
-                  formset_name="participants"
-                  title="ผู้เกี่ยวข้อง"
-                  container_id="participant-formset-container"
-                  empty_form_id="empty-participant-form"
-                  form_class="participant-form"
-                  icon="ri-user-add-line" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=participant_formset formset_name="participants" title="ผู้เกี่ยวข้อง" container_id="participant-formset-container" empty_form_id="empty-participant-form" form_class="participant-form" icon="ri-user-add-line" %}
               </div>
             </div>
             {% endif %}
@@ -111,14 +146,7 @@
             {% if reference_formset %}
             <div class="card mb-4 shadow-sm">
               <div class="card-body p-3 p-md-4">
-                {% include "Report/safety-reports/partials/formset-block.html"
-                  with formset=reference_formset
-                  formset_name="references"
-                  title="เอกสารอ้างอิง"
-                  container_id="reference-formset-container"
-                  empty_form_id="empty-reference-form"
-                  form_class="reference-form"
-                  icon="ri-links-line" %}
+                {% include "Report/safety-reports/partials/formset-block.html" with formset=reference_formset formset_name="references" title="เอกสารอ้างอิง" container_id="reference-formset-container" empty_form_id="empty-reference-form" form_class="reference-form" icon="ri-links-line" %}
               </div>
             </div>
             {% endif %}
@@ -126,22 +154,13 @@
             <!-- ปุ่มบันทึก -->
             <div class="my-5">
               <p class="fw-bold mb-3">อัปเดตสถานะรายงาน</p>
-
               <div class="d-grid gap-2 d-md-flex">
                 <button type="submit" name="initial_assessment" value="green"
-                        class="btn btn-success flex-fill">
-                  <i class="bi bi-check-circle"></i> ปกติ
-                </button>
-
+                        class="btn btn-success flex-fill">ปกติ</button>
                 <button type="submit" name="initial_assessment" value="yellow"
-                        class="btn btn-warning flex-fill">
-                  <i class="bi bi-exclamation-circle"></i> ต้องติดตาม
-                </button>
-
+                        class="btn btn-warning flex-fill">ต้องติดตาม</button>
                 <button type="submit" name="initial_assessment" value="red"
-                        class="btn btn-danger flex-fill">
-                  <i class="bi bi-x-circle"></i> เร่งด่วน
-                </button>
+                        class="btn btn-danger flex-fill">เร่งด่วน</button>
               </div>
             </div>
 
@@ -149,7 +168,6 @@
 
         </div>
       </div>
-
     </div>
   </div>
 
@@ -165,11 +183,8 @@
 <script>
 $(document).ready(function () {
 
-  $('.js-example-basic-single, .js-example-basic-multiple').select2({
-    width: '100%'
-  });
+  $('.js-example-basic-single, .js-example-basic-multiple').select2({ width: '100%' });
 
-  // confirm submit
   $('#reportForm').on('submit', function (e) {
     e.preventDefault();
     Swal.fire({
@@ -181,24 +196,6 @@ $(document).ready(function () {
     }).then((result) => {
       if (result.isConfirmed) this.submit();
     });
-  });
-
-  // add formset
-  $('.add-formset-btn').click(function () {
-    const container = $($(this).data('target'));
-    const totalFormsInput = $(container.data('total-forms'));
-    const emptyForm = $(container.data('empty-form')).html();
-
-    let index = parseInt(totalFormsInput.val());
-    container.append(emptyForm.replace(/__prefix__/g, index));
-    totalFormsInput.val(index + 1);
-  });
-
-  // delete formset
-  $(document).on('click', '.delete-form-btn', function () {
-    const formBlock = $(this).closest('.formset-form');
-    formBlock.find('input[name$="-DELETE"]').prop('checked', true);
-    formBlock.addClass('d-none');
   });
 
 });

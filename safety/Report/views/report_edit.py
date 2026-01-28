@@ -8,118 +8,245 @@ from ..forms.reports import (
     BaseReportForm, GroundReportForm, AviationReportForm,
     ParticipantFormSet, ReferenceReportFormSet
 )
-from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet
+from ..forms.attachments import (
+    ImageFormSet, RecommendationFormSet, FileFormSet,
+    BulkAttachmentForm  
+)
 from ..choices import ReportTypeChoices, ReportStatusChoices
 
 import logging
 logger = logging.getLogger("report")
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
+from django.shortcuts import get_object_or_404, redirect, render
+
 
 @login_required
 @permission_required("Report.edit_report", raise_exception=True)
 def edit_report(request, report_id):
-    """แก้ไขรายงานได้ทั้งแบบพื้นฐานและแบบเจ้าหน้าที่"""
-    report = get_object_or_404(BaseReport, pk=report_id) 
+    base_report = get_object_or_404(BaseReport, pk=report_id)
 
-    # ตรวจสิทธิ์
-    if report.status == ReportStatusChoices.DRAFT:
-        # if report.recorder != request.user and not request.user.has_perm("Report.edit_report"):
-        if not report.recorder == request.user :
-            messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานฉบับร่างของผู้อื่น")
-            return redirect("report:safety-report.list")
-    # else:
-    #     if not request.user.has_perm("Report.edit_report"):
-    #         messages.error(request, "คุณไม่มีสิทธิ์แก้ไขรายงานนี้ เนื่องจากรายงานนี้ได้รับการอนุมัติแล้ว")
-    #         return redirect("report:safety-report.list")
+    report_type = base_report.report_type
+    affiliation = base_report.affiliation
 
-    # เตรียมฟอร์มหลัก
-    if request.method == "POST":
-        base_form = BaseReportForm(request.POST, instance=report, prefix="base_form", user=request.user)
-        participant_formset = ParticipantFormSet(request.POST, prefix="participants", instance=report)
-        reference_formset = ReferenceReportFormSet(request.POST, prefix="references", instance=report)
-        image_formset = ImageFormSet(request.POST, request.FILES, instance=report, prefix="images")
-        rec_formset = RecommendationFormSet(request.POST, instance=report, prefix="recommendations")
-        file_formset = FileFormSet(request.POST, request.FILES, instance=report, prefix="files")
+    # ======================
+    # GET
+    # ======================
+    if request.method == "GET":
+        context = build_context_for_edit(
+            base_report=base_report,
+            report_type=report_type,
+            affiliation=affiliation,
+        )
+        return render(
+            request,
+            "Report/safety-reports/report-edit.html",
+            context
+        )
 
-        # ฟอร์มพิเศษตามประเภท
-        report_type = report.report_type
-        additional_form = None
-        if report_type in [ReportTypeChoices.HAZARD_GROUND, ReportTypeChoices.SAFETY_GROUND, ReportTypeChoices.MINOR_ACCIDENT_GROUND, ReportTypeChoices.MAJOR_ACCIDENT_GROUND]:
-            additional_form = GroundReportForm(request.POST, instance=report, prefix="ground")
-        elif report_type in [ReportTypeChoices.HAZARD_AVIATION, ReportTypeChoices.SAFETY_AVIATION, ReportTypeChoices.ANALYSIS_AVIATION, ReportTypeChoices.BIRD_AVIATION, ReportTypeChoices.FIX_ANALYSIS_AVIATION]:
-            additional_form = AviationReportForm(request.POST, instance=report, prefix="aviation")
+    # ======================
+    # POST
+    # ======================
+    base_form = BaseReportForm(
+        request.POST,
+        instance=base_report,
+        prefix="base_form",
+        user=request.user,
+    )
 
-        # ตรวจสอบความถูกต้องทั้งหมด
-        form_list = [
-                base_form, image_formset, rec_formset, file_formset, participant_formset, reference_formset
-            ]
+    participant_formset = ParticipantFormSet(
+        request.POST,
+        instance=base_report,
+        prefix="participants",
+    )
+
+    image_formset = ImageFormSet(
+        request.POST,
+        request.FILES,
+        instance=base_report,
+        prefix="images",
+    )
+
+    rec_formset = RecommendationFormSet(
+        request.POST,
+        instance=base_report,
+        prefix="recommendations",
+    )
+
+    file_formset = FileFormSet(
+        request.POST,
+        request.FILES,
+        instance=base_report,
+        prefix="files",
+    )
+
+    reference_formset = ReferenceReportFormSet(
+        request.POST,
+        instance=base_report,
+        prefix="references",
+    )
+
+    bulk_form = BulkAttachmentForm(
+        request.POST or None,
+        request.FILES or None,
+    )
+
+    additional_form, addition_context = build_additional_form_edit(
+        report_type,
+        request,
+        base_report,
+    )
+
+    forms_valid = (
+        base_form.is_valid()
+        and participant_formset.is_valid()
+        and image_formset.is_valid()
+        and rec_formset.is_valid()
+        and file_formset.is_valid()
+        and reference_formset.is_valid()
+        and (additional_form.is_valid() if additional_form else True)
+    )
+
+    if forms_valid:
+        base_report = base_form.save()
+
+        participant_formset.instance = base_report
+        participant_formset.save()
+
+        image_formset.instance = base_report
+        image_formset.save()
+
+        rec_formset.instance = base_report
+        rec_formset.save()
+
+        file_formset.instance = base_report
+        file_formset.save()
+
+        reference_formset.instance = base_report
+        reference_formset.save()
+
         if additional_form:
-            form_list.append(additional_form)
+            additional_form.save()
 
-        if all(form.is_valid() for form in form_list):
-            try:
-                with transaction.atomic():
-                    base_report = base_form.save()
+        if bulk_form.is_valid():
+            bulk_form.save(base_report, request.user)
 
-                    # Save all formsets
-                    save_formset_with_parent(image_formset, base_report)
-                    save_formset_with_parent(rec_formset, base_report)
-                    save_formset_with_parent(file_formset, base_report)
-                    save_formset_with_parent(participant_formset, base_report)
-                    save_formset_with_parent(reference_formset, base_report)
+        messages.success(request, "แก้ไขรายงานเรียบร้อยแล้ว")
+        return redirect(
+            "report:safety-report.detail",
+            pk=base_report.pk
+        )
 
-                    if additional_form:
-                        additional_form.save()
+    # ======================
+    # ERROR
+    # ======================
+    messages.error(request, "กรุณาตรวจสอบข้อมูล")
 
-                messages.success(request, f"อัปเดตรายงาน {base_report} เรียบร้อยแล้ว")
-                return redirect("report:safety-report.list")
-            except Exception as e:
-                logger.exception(f"Error updating report #{report.id}: {e}")
-                messages.error(request, "เกิดข้อผิดพลาดขณะอัปเดตรายงาน กรุณาลองใหม่อีกครั้ง")
-        else:
-            messages.error(request, "กรุณาตรวจสอบข้อมูลอีกครั้งก่อนบันทึก")
-            print_form_errors(form_list)
-    else:
-        # GET Method
-        base_form = BaseReportForm(instance=report, prefix="base_form", user=request.user)
-        participant_formset = ParticipantFormSet(prefix="participants", instance=report)
-        reference_formset = ReferenceReportFormSet(prefix="references", instance=report)
-        image_formset = ImageFormSet(prefix="images", instance=report)
-        rec_formset = RecommendationFormSet(prefix="recommendations", instance=report)
-        file_formset = FileFormSet(prefix="files", instance=report)
+    return render(
+        request,
+        "Report/safety-reports/report-edit-officer.html",
+        {
+            "base_report": base_report,
+            "base_form": base_form,
+            "participant_formset": participant_formset,
+            "image_formset": image_formset,
+            "recommendation_formset": rec_formset,
+            "file_formset": file_formset,
+            "reference_formset": reference_formset,
+            "bulk_form": bulk_form,
+            **addition_context,
+            "report_type": report_type,
+            "ReportTypeChoices": ReportTypeChoices,
+        }
+    )
 
-        additional_form = None
-        if report.report_type in [ReportTypeChoices.HAZARD_GROUND, ReportTypeChoices.SAFETY_GROUND]:
-            additional_form = GroundReportForm(prefix="ground", instance=report)
-        elif report.report_type in [ReportTypeChoices.HAZARD_AVIATION, ReportTypeChoices.SAFETY_AVIATION]:
-            additional_form = AviationReportForm(prefix="aviation", instance=report)
 
+
+def build_context_for_edit(base_report, report_type, affiliation):
     context = {
-        "report": report,
-        "base_form": base_form,
-        "participant_formset": participant_formset,
-        "reference_formset": reference_formset,
-        "image_formset": image_formset,
-        "recommendation_formset": rec_formset,
-        "file_formset": file_formset,
-        "additional_form": additional_form,
+        "base_form": BaseReportForm(
+            instance=base_report,
+            prefix="base_form"
+        ),
+        "participant_formset": ParticipantFormSet(
+            instance=base_report,
+            prefix="participants"
+        ),
+        "image_formset": ImageFormSet(
+            instance=base_report,
+            prefix="images"
+        ),
+        "recommendation_formset": RecommendationFormSet(
+            instance=base_report,
+            prefix="recommendations"
+        ),
+        "file_formset": FileFormSet(
+            instance=base_report,
+            prefix="files"
+        ),
+        "reference_formset": ReferenceReportFormSet(
+            instance=base_report,
+            prefix="references"
+        ),
+        "bulk_form": BulkAttachmentForm(),
+        "report_type": report_type,
         "ReportTypeChoices": ReportTypeChoices,
     }
-    return render(request, "Report/safety-reports/report-edit.html", context)
+
+    if report_type in [
+        ReportTypeChoices.HAZARD_GROUND,
+        ReportTypeChoices.SAFETY_GROUND,
+        ReportTypeChoices.MINOR_ACCIDENT_GROUND,
+        ReportTypeChoices.MAJOR_ACCIDENT_GROUND,
+    ]:
+        context["ground_form"] = GroundReportForm(
+            instance=base_report.groundreport,
+            prefix="ground"
+        )
+
+    elif report_type in [
+        ReportTypeChoices.HAZARD_AVIATION,
+        ReportTypeChoices.SAFETY_AVIATION,
+        ReportTypeChoices.ANALYSIS_AVIATION,
+        ReportTypeChoices.BIRD_AVIATION,
+        ReportTypeChoices.FIX_ANALYSIS_AVIATION,
+    ]:
+        context["aviation_form"] = AviationReportForm(
+            instance=base_report.aviationreport,
+            prefix="aviation",
+            initial={"affiliation": affiliation}
+        )
+
+    return context
 
 
-def save_formset_with_parent(formset, parent):
-    """บันทึกฟอร์มเซ็ตพร้อม parent"""
-    instances = formset.save(commit=False)
-    for obj in instances:
-        obj.base_report = parent
-        obj.save()
-    for obj in formset.deleted_objects:
-        obj.delete()
+def build_additional_form_edit(report_type, request, base_report):
+    if report_type in [
+        ReportTypeChoices.HAZARD_GROUND,
+        ReportTypeChoices.SAFETY_GROUND,
+        ReportTypeChoices.MINOR_ACCIDENT_GROUND,
+        ReportTypeChoices.MAJOR_ACCIDENT_GROUND,
+    ]:
+        form = GroundReportForm(
+            request.POST,
+            instance=base_report.groundreport,
+            prefix="ground"
+        )
+        return form, {"ground_form": form}
 
+    elif report_type in [
+        ReportTypeChoices.HAZARD_AVIATION,
+        ReportTypeChoices.SAFETY_AVIATION,
+        ReportTypeChoices.ANALYSIS_AVIATION,
+        ReportTypeChoices.BIRD_AVIATION,
+        ReportTypeChoices.FIX_ANALYSIS_AVIATION,
+    ]:
+        form = AviationReportForm(
+            request.POST,
+            instance=base_report.aviationreport,
+            prefix="aviation"
+        )
+        return form, {"aviation_form": form}
 
-def print_form_errors(forms):
-    """พิมพ์ error ของทุกฟอร์มเพื่อ debug"""
-    for f in forms:
-        if hasattr(f, "errors") and f.errors:
-            print(f"{f.__class__.__name__} Errors:", f.errors)
+    return None, {}

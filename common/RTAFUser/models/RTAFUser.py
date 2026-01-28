@@ -32,7 +32,7 @@ class AffiliationAircraft(models.Model):
     aircraft = models.ForeignKey('Data.Aircraft', verbose_name="ประเภทอากาศยาน", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "5. สังกัด - ประเภทอากาศยาน"
+        verbose_name_plural = "5. อากาศยานประจำสังกัด"
 
 
 class Affiliation(models.Model):
@@ -47,7 +47,7 @@ class Affiliation(models.Model):
     airviation_content = models.TextField(verbose_name="ร่างเนื้อหารายงานการบิน", null=True, blank=True)
     officer_content = models.TextField(verbose_name="ร่างเนื้อหาผู้บังคับบัญชาด้านความปลอดภัย", null=True, blank=True)
 
-    aircraft_types = models.ManyToManyField('Data.Aircraft', verbose_name="ประเภทอากาศยาน", through=AffiliationAircraft, blank=True)
+    aircraft_types = models.ManyToManyField('Data.Aircraft', verbose_name="อากาศยานบที่มี", through=AffiliationAircraft, blank=True)
 
     class Meta:
         verbose_name_plural = "2. สังกัด"
@@ -92,9 +92,9 @@ class Squadron(models.Model):
     longitude = models.FloatField(verbose_name="ลองจิจูด", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "4. หน่วยบิน"
+        verbose_name = verbose_name_plural = "4. ฝูงบิน"
         ordering = ['code']
 
     def __str__(self):
-        return f"{self.code} - {self.nickname}"
+        return f"{self.code}({self.affiliation})"
 
