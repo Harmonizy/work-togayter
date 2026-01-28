@@ -259,7 +259,7 @@ def rtaf_message_form(request, base_report_id):
         '##sender-action##': "ด่วนที่สุด" if base_report.priority == "H" else "ด่วน",
         '##sender-info##': "ด่วนที่สุด" if base_report.priority == "H" else "ด่วน",
         '##secret-type##': "ลับมาก" if base_report.priority == "H" else "ลับ",
-        '##action-list##': base_report.recorder.affiliation or "ไม่ระบุ",
+        '##action-list##': base_report.recorder.affiliation if (base_report and base_report.recorder) else "ไม่ระบุ",
         '##info-list##': "สนภ.ทอ., ศปก.ทอ.",
         '##name-drafter##': commander_name,
         '##office##': commander_position,
