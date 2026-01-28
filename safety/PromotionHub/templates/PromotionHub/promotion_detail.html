@@ -4,149 +4,199 @@
 
 {% block extra_css %}
 <style>
-    .promotion-main-img {
-        height: auto;
-        max-width: 100%;
-        border-radius: 8px;
-        margin: 1rem auto;
-        display: block;
-        transition: all 0.3s ease-in-out;
-        cursor: zoom-in;   /* บอกผู้ใช้ว่าคลิกได้ */
+  .promotion-main-img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    cursor: zoom-in;
+    transition: transform .3s ease;
+  }
+
+  .promotion-main-img:hover {
+    transform: scale(1.02);
+  }
+
+  .promotion-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+
+  .promotion-meta {
+    font-size: .9rem;
+    color: #888;
+    line-height: 1.4;
+  }
+
+  .modal-img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* 📱 Mobile Optimization */
+  @media (max-width: 576px) {
+    h2 {
+      font-size: 1.4rem;
     }
 
-    /* จำกัดความสูงสำหรับจอใหญ่ แต่ยังรักษาสัดส่วน */
-    @media (min-width: 992px) {
-        .promotion-main-img {
-            max-height: 100vh;
-        }
-    }
-
-    .promotion-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin: 0.5rem 0;
+    .card-body {
+      padding: 1rem !important;
     }
 
     .promotion-meta {
-        font-size: 0.9rem;
-        color: #888;
+      font-size: .8rem;
     }
 
-    .ck-content {
-        line-height: 1.7;
-        font-size: 1.05rem;
+    .btn-lg {
+      width: 100%;
+      font-size: 1rem;
     }
-
-    .promotion-main-img:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    /* Modal image style */
-    .modal-img {
-        width: 100%;
-        height: auto;   /* รักษาสัดส่วน */
-        border-radius: 8px;
-    }
-
-    .modal-content {
-        background: #000 !important; /* ดำเพื่อโชว์ภาพล้วนๆ */
-    }
+  }
 </style>
-{% endblock extra_css %}
+{% endblock %}
 
 {% block content %}
 <div class="main-content">
   <div class="page-content">
-    <div class="container-fluid">
+    <div class="container">
 
-      <!-- OUTER CARD -->
       <div class="row justify-content-center">
-        <div class="col-lg-10">
-          <div class="card shadow-lg border-0">
+        <div class="col-lg-10 col-xl-9">
+
+          <div class="card shadow border-0">
             <div class="card-body p-4">
 
-              <!-- Header -->
+              <!-- ===== TITLE ===== -->
               <div class="text-center mb-4">
                 <h2 class="fw-bold">{{ promotion.title }}</h2>
               </div>
 
-              <!-- Image -->
-              {% if promotion.image %}
-              <div class="text-center mb-4">
-                <img src="{{ promotion.image.url }}" 
-                  class="promotion-main-img shadow-sm" 
-                  alt="{{ promotion.title }}">
-              </div>
-              {% endif %}
-
-              <!-- Content -->
-              <div class="card shadow-sm mb-4 border-0">
-                <div class="card-body promotion-content ck-content">
+              <!-- ===== CONTENT ===== -->
+              <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body promotion-content">
                   {{ promotion.content|safe }}
                 </div>
               </div>
 
-              {% if quiz %}
-              <div class="text-center my-4">
-
-                  {% if not user_completed_quiz %}
-                  <a href="{% url 'promotion:quiz_view' quiz.id %}" 
-                    class="btn btn-primary btn-lg">
-                      <i class="ri-questionnaire-line me-1"></i>
-                      ทำแบบทดสอบ
-                  </a>
-
-                  {% else %}
-                  <div class="alert alert-success text-center">
-                      ✔ คุณทำแบบทดสอบนี้แล้ว
+              <!-- ===== IMAGES ===== -->
+              {% if promotion.images.all %}
+              <div class="mb-4">
+                <div class="row g-2 g-md-3">
+                  {% for img in promotion.images.all %}
+                  <div class="col-12 col-sm-6 col-md-4">
+                    <img src="{{ img.image.url }}"
+                          class="promotion-main-img shadow-sm"
+                          alt="{{ promotion.title }}">
                   </div>
-                  {% endif %}
+                  {% endfor %}
+                </div>
               </div>
               {% endif %}
 
-              <!-- Priority Alert -->
+              <!-- ===== FILES ===== -->
+              {% if promotion.files.all %}
+              <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                  <h5 class="fw-bold mb-3">
+                    <i class="ri-attachment-2 me-1"></i> ไฟล์แนบ
+                  </h5>
+
+                  <ul class="list-group list-group-flush">
+                    {% for file in promotion.files.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <div class="d-flex align-items-center">
+                        <i class="ri-file-line fs-4 me-3 text-primary"></i>
+                        <div>
+                          <div class="fw-semibold">
+                            <a href="{{ file.file.url }}">
+                              {{ file.file.name|cut:"promotion/files/" }}
+                            </a>
+                          </div>
+                          <small class="text-muted">
+                            {{ file.file.size|filesizeformat }}
+                          </small>
+                        </div>
+                      </div>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              {% endif %}
+
+              <!-- ===== QUIZ ===== -->
+              {% if quiz %}
+              <div class="text-center my-4">
+                {% if not user_completed_quiz %}
+                <a href="{% url 'promotion:quiz_view' quiz.id %}"
+                   class="btn btn-primary btn-lg w-100 w-sm-auto">
+                  <i class="ri-questionnaire-line me-1"></i>
+                  ทำแบบทดสอบ
+                </a>
+                {% else %}
+                <div class="alert alert-success mb-0">
+                  ✔ คุณทำแบบทดสอบนี้แล้ว
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              <!-- ===== PRIORITY ===== -->
               {% if promotion.priority == "H" %}
               <div class="card border-danger shadow-sm mb-4">
                 <div class="card-body text-center">
                   <h5 class="text-danger fw-bold">
                     <i class="ri-alert-line me-1"></i> จำเป็นต้องทราบ
                   </h5>
-                  <p>กรุณากดปุ่มด้านล่างเพื่อยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
+                  <p class="mb-3">กรุณากดยืนยันว่าท่านรับทราบข้อมูลนี้แล้ว</p>
 
                   {% if not promotion_view.accepted %}
-                  <form method="POST" action="{% url 'promotion:accept' promotion_view.id %}">
+                  <form method="post" action="{% url 'promotion:accept' promotion_view.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger btn-lg">
+                    <button type="submit"
+                            class="btn btn-danger btn-lg w-100 w-sm-auto">
                       <i class="ri-check-line me-1"></i> รับทราบ
                     </button>
                   </form>
                   {% else %}
-                  <div class="text-success fw-bold mt-2">
-                    ✔ ท่านได้ยืนยันการรับทราบแล้ว
+                  <div class="text-success fw-bold">
+                    ✔ รับทราบแล้ว
                   </div>
                   {% endif %}
                 </div>
               </div>
               {% endif %}
 
-              <!-- Meta info -->
-              {% comment %} {% if perms.PromotionHub.view_all_promotion_hub or perms.PromotionHub.view_affiliation_promotion_hub %} {% endcomment %}
+              <!-- ===== META ===== -->
               <div class="text-center mt-3">
                 <div class="promotion-meta">
-                  โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }}
-                  • {{ promotion.created_at|date:"d M Y" }}
-                  {% if promotion.num_view %} • เข้าชม {{ promotion.num_view }} คน{% endif %}
-                  {% if quiz_completed_count %} • ทำแบบทดสอบ {{ quiz_completed_count }} คน{% endif %}
-                  {% if promotion.num_accepted %} • รับทราบ {{ promotion.num_accepted }} คน{% endif %}
-                  {% comment %} รับทราบ {{ promotion.num_accepted }} คน  {% endcomment %}
+                  <span class="d-block d-sm-inline">
+                    โดย {{ promotion.user.get_full_name|default:"ไม่ทราบชื่อผู้เขียน" }}
+                  </span>
+                  <span class="d-block d-sm-inline">
+                    • {{ promotion.created_at|date:"d M Y" }}
+                  </span>
+                  {% if promotion.num_view %}
+                  <span class="d-block d-sm-inline">
+                    • เข้าชม {{ promotion.num_view }} คน
+                  </span>
+                  {% endif %}
+                  {% if quiz_completed_count %}
+                  <span class="d-block d-sm-inline">
+                    • ทำแบบทดสอบ {{ quiz_completed_count }} คน
+                  </span>
+                  {% endif %}
+                  {% if promotion.num_accepted %}
+                  <span class="d-block d-sm-inline">
+                    • รับทราบ {{ promotion.num_accepted }} คน
+                  </span>
+                  {% endif %}
                 </div>
               </div>
-              {% comment %} {% endif %} {% endcomment %}
 
-            </div> <!-- /card-body -->
-          </div> <!-- /card -->
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -154,31 +204,31 @@
   </div>
 </div>
 
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+<!-- ===== IMAGE MODAL ===== -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-xl">
     <div class="modal-content bg-dark">
       <div class="modal-body p-0 text-center">
-        <img id="modalImage" src="" class="modal-img" alt="Promotion Image">
+        <img id="modalImage" class="modal-img">
       </div>
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const mainImg = document.querySelector(".promotion-main-img");
-    const modalImg = document.getElementById("modalImage");
+  const modalImg = document.getElementById("modalImage");
+  const modalEl = document.getElementById("imageModal");
+  const modal = new bootstrap.Modal(modalEl);
 
-    if (mainImg) {
-        mainImg.addEventListener("click", function () {
-            modalImg.src = this.src;
-            const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-            modal.show();
-        });
-    }
+  document.querySelectorAll(".promotion-main-img").forEach(img => {
+    img.addEventListener("click", function () {
+      modalImg.src = this.src;
+      modal.show();
+    });
+  });
 });
 </script>
 {% endblock %}

@@ -6,9 +6,9 @@ from .choices import RegionChoices
 from common.RTAFUser.models import Affiliation, Squadron
 
 class Event(models.Model):
-    name = models.CharField(verbose_name="ชื่อ", max_length=120)
-    # type = models.CharField(verbose_name="ประเภท", max_length=120, choices=EventTypeChoices.choices, blank=True, null=True)
-    # hazard_title = models.CharField(verbose_name="หัวข้อทะเบียนความเสี่ยง", max_length=120, blank=True, null=True)
+    name = models.CharField(verbose_name="ชื่อ", max_length=255)
+    # type = models.CharField(verbose_name="ประเภท", max_length=255, choices=EventTypeChoices.choices, blank=True, null=True)
+    # hazard_title = models.CharField(verbose_name="หัวข้อทะเบียนความเสี่ยง", max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = verbose_name_plural = "1. เหตุการณ์"
@@ -18,7 +18,7 @@ class Event(models.Model):
 
 
 class AircraftType(models.Model):
-    name = models.CharField(verbose_name="ชื่อ", max_length=120)
+    name = models.CharField(verbose_name="ชื่อ", max_length=255)
 
     class Meta:
         verbose_name = verbose_name_plural = "2.1 ประเภทอากาศยาน"
@@ -29,7 +29,7 @@ class AircraftType(models.Model):
 
 class Aircraft(models.Model):
     name = models.CharField(verbose_name="แบบ บ.", max_length=60)
-    name_en = models.CharField(verbose_name="แบบ บ.(ENG)", max_length=120, blank=True, null=True)
+    name_en = models.CharField(verbose_name="Model", max_length=255, blank=True, null=True)
     squadron = models.ForeignKey("RTAFUser.Squadron", verbose_name="ฝูงบิน", related_name="aircrafts",on_delete=models.CASCADE, blank=True, null=True)
     type = models.ManyToManyField("Data.AircraftType", verbose_name="ประเภท", related_name="aircrafts", blank=True)
 
@@ -41,7 +41,7 @@ class Aircraft(models.Model):
     
 
 class AircraftSystem(models.Model):
-    name = models.CharField(verbose_name="ชื่อ", max_length=120)
+    name = models.CharField(verbose_name="ชื่อ", max_length=255)
 
     class Meta:
         verbose_name = verbose_name_plural = "3. ระบบอากาศยาน"
@@ -51,7 +51,7 @@ class AircraftSystem(models.Model):
 
 
 class FlightPhase(models.Model):
-    name = models.CharField(verbose_name="ชื่อ", max_length=120)
+    name = models.CharField(verbose_name="ชื่อ", max_length=255)
 
     class Meta:
         verbose_name = verbose_name_plural = "4. ช่วงของการบิน"
@@ -77,7 +77,7 @@ class Location(models.Model):
 
 class GroundSafetyCategory(models.Model):
     order = models.PositiveIntegerField(verbose_name="ลำดับ", default=0)
-    name = models.CharField(verbose_name="ชื่อ", max_length=120)
+    name = models.CharField(verbose_name="ชื่อ", max_length=255)
 
     class Meta:
         verbose_name = verbose_name_plural = "6. สาขานิรภัย (ภาคพื้น)"
@@ -87,21 +87,21 @@ class GroundSafetyCategory(models.Model):
         return self.name
 
 
-class Keyword(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+class Role(models.Model):
+    name = models.CharField(verbose_name="ชื่อ", max_length=255)
 
     class Meta:
-        verbose_name = verbose_name_plural = "7. คำสำคัญ"
+        verbose_name = verbose_name_plural = "7. บทบาท"
 
     def __str__(self):
         return self.name
 
 
-class Role(models.Model):
-    name = models.CharField(verbose_name="ชื่อ", max_length=120)
+class Keyword(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "8. บทบาท"
+        verbose_name = verbose_name_plural = "8. คำสำคัญ"
 
     def __str__(self):
         return self.name

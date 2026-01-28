@@ -396,6 +396,7 @@ canvas {
 {% endblock content %}
 
 {% block extra_js %}
+
 <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js'%}"></script>
 <script src="{% static 'libs/swiper/swiper-bundle.min.js'%}"></script>
 <script src="{% static 'libs/sweetalert2/dist/sweetalert2.min.js' %}"></script>
@@ -411,6 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 0) Priority dataset (global)
     // ===============================
     window.priority_datasets = {{ priority_datasets|safe }};
+    window.customerImpressionSeries = {{ priority_apex_series|safe }};
     
 
     // ===============================
@@ -556,6 +558,58 @@ document.addEventListener("DOMContentLoaded", function () {
     ).render();
 
 
+     // ===============================
+    // 📊 CUSTOMER IMPRESSION (PRIORITY)
+    // ===============================
+
+    const priorityDatasets = {{ priority_datasets|safe }};
+
+    const impressionSeries = priorityDatasets.map(item => ({
+        name: item.label,
+        type: "bar",
+        data: item.data
+    }));
+
+    const impressionOptions = {
+        chart: {
+            height: 370,
+            type: "line",
+            toolbar: { show: false }
+        },
+        series: impressionSeries,
+        stroke: {
+            curve: "straight",
+            width: 2
+        },
+        fill: {
+            opacity: 0.85
+        },
+        xaxis: {
+            categories: [
+                "ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.",
+                "ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."
+            ]
+        },
+        legend: {
+            position: "bottom"
+        },
+        colors: [
+            "#f46a6a",   // เร่งด่วน
+            "#f7b84b",   // ต้องติดตาม
+            "#34c38f"    // ปกติ
+        ],
+        tooltip: {
+            shared: true,
+            intersect: false
+        }
+    };
+
+    new ApexCharts(
+        document.querySelector("#customer_impression_charts"),
+        impressionOptions
+    ).render();
+
+
 // ===============================
 // SPAGHETTI GRAPH — GROUND SAFETY (MONTHLY)
 // ===============================
@@ -613,6 +667,7 @@ new Chart(
         }
     }
 );
+
 
 
 }); // END DOMContentLoaded

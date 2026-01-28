@@ -11,7 +11,7 @@ from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator
 
-from ...models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile
+from ...models import Promotion, PromotionView, Quiz, Question, Choice, QuizResult, Document, DocumentFile, PromotionImage, PromotionFile
 from ...forms import PromotionForm, QuizForm, QuestionFormSet, ChoiceFormSet, DocumentForm, DocumentFileForm
 from ...choices import PromotionStatusChoices, PromotionPublishChoices, PromotionPriorityChoices, PromotionTypeChoices
 from common.RTAFAuth.views import SuperAppLoginMixins
@@ -28,6 +28,19 @@ def create_ground(request):
             promotion.priority = PromotionPriorityChoices.NONE
             promotion.type = PromotionTypeChoices.GROUND
             promotion.save()
+
+            for img in request.FILES.getlist("images"):
+                PromotionImage.objects.create(
+                    promotion=promotion,
+                    image=img
+                )
+
+            for f in request.FILES.getlist("files"):
+                PromotionFile.objects.create(
+                    promotion=promotion,
+                    file=f
+                )
+
             messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
             return redirect("promotion:list_ground")
         else:
@@ -35,11 +48,10 @@ def create_ground(request):
     else:
         form = PromotionForm()
 
-    context = {
+    return render(request, "PromotionHub/promotion_create.html", {
         "form": form,
-        "type" : "ภาคพื้น"
-    }
-    return render(request, "PromotionHub/promotion_create.html", context)
+        "type": "ภาคพื้น"
+    })
 
 
 @login_required
@@ -52,6 +64,19 @@ def create_air(request):
             promotion.priority = PromotionPriorityChoices.NONE
             promotion.type = PromotionTypeChoices.AIR
             promotion.save()
+
+            for img in request.FILES.getlist("images"):
+                PromotionImage.objects.create(
+                    promotion=promotion,
+                    image=img
+                )
+
+            for f in request.FILES.getlist("files"):
+                PromotionFile.objects.create(
+                    promotion=promotion,
+                    file=f
+                )
+
             messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
             return redirect("promotion:list_air")
         else:
@@ -59,11 +84,10 @@ def create_air(request):
     else:
         form = PromotionForm()
 
-    context = {
+    return render(request, "PromotionHub/promotion_create.html", {
         "form": form,
-        "type" : "การบิน"
-    }
-    return render(request, "PromotionHub/promotion_create.html", context)
+        "type": "การบิน"
+    })
 
 
 @login_required
@@ -76,6 +100,20 @@ def announcement_create(request):
             promotion.priority = PromotionPriorityChoices.HIGH
             promotion.type = PromotionTypeChoices.NONE
             promotion.save()
+
+            for img in request.FILES.getlist("images"):
+                PromotionImage.objects.create(
+                    promotion=promotion,
+                    image=img
+                )
+
+            for f in request.FILES.getlist("files"):
+                PromotionFile.objects.create(
+                    promotion=promotion,
+                    file=f
+                )
+
+
             messages.success(request, "สร้างบทความใหม่เรียบร้อยแล้ว!")
             return redirect("promotion:announcement_list")
         else:
@@ -83,8 +121,8 @@ def announcement_create(request):
     else:
         form = PromotionForm()
 
-    context = {
+    return render(request, "PromotionHub/promotion_create.html", {
         "form": form,
-        "type" : "การแจ้งเตือน"
-    }
-    return render(request, "PromotionHub/promotion_create.html", context)
+        "type": "การแจ้งเตือน"
+    })
+

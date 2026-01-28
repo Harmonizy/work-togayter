@@ -129,16 +129,16 @@
                                     </colgroup>
                                     <thead class="table-light text-muted text-center" style="font-size:1.1em;">
                                         <tr>
-                                            <th>#</th>                                                         
-                                            <th>รับผิดชอบ/ที่เกิดเหตุ</th>
+                                            <th>ลำดับ</th>                                                         
+                                            <th>หน่วยผู้รายงาน/หน่วยที่เกิดเหตุ</th>
                                             <th>ประเภท</th>
                                             <th>วันที่เกิดเหตุ</th>
-                                            <th>หัวข้อ</th>
+                                            <th>เรื่อง</th>
                                             <th>ภาพ</th>
                                             <th>ไฟล์</th>
                                             {% comment %} <th>ผู้บันทึก</th> {% endcomment %}
                                             <th>สถานะ</th>
-                                            <th>ความสำคัญ</th>
+                                            <th>ความเร่งด่วน</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -156,7 +156,13 @@
                                                     #{{ report.id|stringformat:"04d" }}
                                                 </a>
                                             </td>
-                                            <td>{{ report.affiliation|default:"-" }}/{{ report.location_affiliation|default:"-" }}</td>
+                                            <td>
+                                                {% if report.affiliation == report.location_affiliation %}
+                                                    {{ report.affiliation|default:"-" }}
+                                                {% else %}
+                                                    {{ report.affiliation|default:"-" }}/{{ report.location_affiliation|default:"-" }}
+                                                {% endif %}
+                                            </td>
                                             <td>{{ report.get_report_type_display }}</td>
                                             <td>{{ report.event_date|thai_date }}, {{ report.event_time|time:"H:i" }}</td>
                                             <td class="text-start">

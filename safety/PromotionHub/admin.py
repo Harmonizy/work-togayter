@@ -58,7 +58,7 @@ class PromotionAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
     fieldsets = (
-        (None, {"fields": ("image", "title", "content")}),
+        (None, {"fields": ("title", "content")}),
         ("ความสำคัญและประเภท", {"fields": ("priority", "type")}),
         ("สถานะและการเผยแพร่", {"fields": ("status", "publish")}),
         ("แบบทดสอบ", {"fields": ("quiz",)}),

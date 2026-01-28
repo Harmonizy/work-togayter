@@ -32,13 +32,13 @@ class AffiliationAircraft(models.Model):
     aircraft = models.ForeignKey('Data.Aircraft', verbose_name="ประเภทอากาศยาน", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "5. สังกัด - ประเภทอากาศยาน"
+        verbose_name_plural = "5. อากาศยานประจำสังกัด"
 
 
 class Affiliation(models.Model):
     hris_code = models.CharField(verbose_name="รหัส HRIS", max_length=10, null=True, blank = True)
     short_name = models.CharField(verbose_name="ชื่อย่อ", max_length=20, null=True, blank = True)
-    full_name = models.CharField(verbose_name="ชื่อเต็ม", max_length=120, null=True, blank = True)
+    full_name = models.CharField(verbose_name="ชื่อเต็ม", max_length=255, null=True, blank = True)
     
     is_rtaf_directed = models.BooleanField(verbose_name="นขต.ทอ.", default=True, null=True, blank = True)
     is_airbase = models.BooleanField(verbose_name="ฐานบิน", default=False, null=True, blank = True)
@@ -47,7 +47,7 @@ class Affiliation(models.Model):
     airviation_content = models.TextField(verbose_name="ร่างเนื้อหารายงานการบิน", null=True, blank=True)
     officer_content = models.TextField(verbose_name="ร่างเนื้อหาผู้บังคับบัญชาด้านความปลอดภัย", null=True, blank=True)
 
-    aircraft_types = models.ManyToManyField('Data.Aircraft', verbose_name="ประเภทอากาศยาน", through=AffiliationAircraft, blank=True)
+    aircraft_types = models.ManyToManyField('Data.Aircraft', verbose_name="อากาศยานบที่มี", through=AffiliationAircraft, blank=True)
 
     class Meta:
         verbose_name_plural = "2. สังกัด"
@@ -61,7 +61,7 @@ class RTAFUser(RTAFUserMixins, AbstractUser):
     af_id = models.CharField(verbose_name="เลข ขรก.", max_length=12, null=True, blank=True, validators=[validate_af_id])
     person_id = models.CharField(verbose_name="เลข ปชช.", max_length=13, null=True, blank=True, validators=[validate_person_id])
     rank = models.ForeignKey(Rank, verbose_name="ยศ/คำนำหน้า",  on_delete=models.SET_NULL, limit_choices_to={"is_airforce" : True}, null=True, blank=True)
-    position = models.CharField(verbose_name="ตำแหน่ง (ย่อ)", max_length=120, null = True, blank = True)    
+    position = models.CharField(verbose_name="ตำแหน่ง (ย่อ)", max_length=255, null = True, blank = True)    
     affiliation = models.ForeignKey(Affiliation, verbose_name="สังกัด", on_delete=models.SET_NULL, null = True, blank=True, related_name='staff')
     work_affiliation = models.ForeignKey(Affiliation, verbose_name="ปฏิบัติงานที่", on_delete=models.SET_NULL, null = True, blank=True, related_name='work_staff') 
     
@@ -92,9 +92,9 @@ class Squadron(models.Model):
     longitude = models.FloatField(verbose_name="ลองจิจูด", null=True, blank=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "4. หน่วยบิน"
+        verbose_name = verbose_name_plural = "4. ฝูงบิน"
         ordering = ['code']
 
     def __str__(self):
-        return f"{self.code} - {self.nickname}"
+        return f"{self.code}({self.affiliation})"
 

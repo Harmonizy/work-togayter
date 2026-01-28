@@ -116,18 +116,23 @@ class AuthAPIService:
             raise ExternalAPIError(f"Salt service error: {str(e)}")
         
 
+def clean_str(value):
+    if value is None:
+        return ""
+    return value.strip()
+
 from common.RTAFUser.models import Affiliation, Rank
 def update_user_function_AD(user, response_data):
     
     user.is_active = True
-    user.rank_id = response_data.get("rankID", 0)
-    user.first_name = response_data.get("fname", "")
-    user.last_name = response_data.get("lname", "")
-    user.position = response_data.get("user_position", "")
+    user.rank_id = clean_str(response_data.get("rankID", ""))
+    user.first_name = clean_str(response_data.get("fname", ""))
+    user.last_name = clean_str(response_data.get("lname", ""))
+    user.position = clean_str(response_data.get("user_position", ""))
     user.affiliation = Affiliation.objects.get_or_create(
-                                                    short_name=response_data.get("user_orgname", ""),
+                                                    short_name= clean_str(response_data.get("user_orgname", "")),
                                                     defaults={
-                                                        "full_name": response_data.get("user_orgname", "")
+                                                        "full_name": clean_str(response_data.get("user_orgname", ""))
                                                     })[0]
-    user.email = response_data.get("email", "")
+    user.email = clean_str(response_data.get("email", ""))
     user.save()

@@ -18,56 +18,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
+
     <!-- App favicon -->
     <link rel="shortcut icon" href="{% static 'images/SA-logo-bg.ico'%}">
 
     {% block css %}
-    {% block extra_css %}
-    {% endblock extra_css %}
+    {% block extra_css %}{% endblock extra_css %}
 
     <!-- Layout config Js -->
     <script src="{% static 'js/layout.js'%}"></script>
     <script src="https://unpkg.com/htmx.org"></script>
+
     <!-- Bootstrap Css -->
-    <link href="{% static 'css/bootstrap.min.css'%}" id="bootstrap-style" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="{% static 'css/icons.min.css'%}" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="{% static 'css/app.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
-    <!-- custom Css-->
-    <link href="{% static 'css/custom.min.css'%}" id="app-style" rel="stylesheet" type="text/css" />
-    
+    <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/icons.min.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/app.min.css'%}" rel="stylesheet" />
+    <link href="{% static 'css/custom.min.css'%}" rel="stylesheet" />
+
+    <!-- ✅ ADDED: padding กัน content ชน appbar บนมือถือ -->
+    <style>
+        @media (max-width: 991.98px) {
+            body {
+                padding-bottom: 64px;
+            }
+        }
+
+        /* Mobile Bottom Bar */
+        .mobile-appbar a {
+            flex: 1;
+            padding: 6px 0;
+            transition: all .2s ease;
+        }
+
+        .mobile-appbar a:hover,
+        .mobile-appbar a:focus {
+            color: var(--vz-primary);
+        }
+
+        .mobile-appbar a.active {
+            color: var(--vz-primary);
+            font-weight: 500;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            color: #212529;
+        }
+
+        .menu-item:hover {
+            color: var(--vz-primary);
+        }
+
+        .mobile-appbar a {
+            color: #9aa0a6;
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+
+        .mobile-appbar a.active,
+        body[data-page="safety-report.list"] a[data-page="safety-report.list"],
+        body[data-page="hazard-log"] a[data-page="hazard-log"],
+        body[data-page="dashboard-home.index"] a[data-page="dashboard-home.index"] {
+            color: #0d6efd;
+        }
+
+        body[data-page^="list_"] a[data-page="promo"],
+        body[data-page="document_list"] a[data-page="promo"],
+        body[data-page="quiz_list"] a[data-page="promo"] {
+            color: #0d6efd;
+        }
+
+        .mobile-appbar a:hover {
+            transform: translateY(-2px);
+        }
+
+
+    </style>
     {% endblock css %}
 </head>
 
-<body>
+<body data-page="{{ request.resolver_match.url_name }}">
     <!-- Begin page -->
     <div id="layout-wrapper">
+
         {% block header %}
             {% include "partials/topbar.html" %}
         {% endblock header %}
 
-        {% block sidebar %}
-            {% include "partials/sidebar.html" %}
-        {% endblock sidebar %}
+        <!-- Sidebar (Desktop only) -->
+        <div class="d-none d-lg-block">
+            {% block sidebar %}
+                {% include "partials/sidebar.html" %}
+            {% endblock sidebar %}
+        </div>
 
+        <!-- Main Content -->
         {% block content %}
             {% block pagetitle %}{% endblock pagetitle %}
         {% endblock content %}
-{% comment %}         
-        {% block footer %}
-            {% include "partials/footer.html" %}
-        {% endblock footer %} {% endcomment %}
+
     </div>
-    
-    {% block extra_content %}        
-    {% endblock extra_content %}
-        
-    <!-- END layout-wrapper -->
+
+    {% block extra_content %}{% endblock extra_content %}
+
     {% block right_sidebar %}
-    {% include "partials/customizer.html" %}
+        {% include "partials/customizer.html" %}
     {% endblock right_sidebar %}
 
+<!-- ✅ Offcanvas (ไม่ต้อง fixed) -->
+    {% include "partials/mobile_offcanvas.html" %}
+
+    <!-- ✅ Bottom App Bar (fixed-bottom ตัวเดียวพอ) -->
+    <div class="d-lg-none fixed-bottom bg-white border-top shadow-sm">
+        {% include "partials/mobile_appbar.html" %}
+    </div>
     {% block javascript %}
     <!-- JAVASCRIPT -->
     <script src="{% static 'libs/bootstrap/dist/js/bootstrap.bundle.min.js'%}"></script>
@@ -77,17 +144,15 @@
     <script src="{% static 'js/pages/plugins/lord-icon-2.1.0.js'%}"></script>
     <script src="{% static 'js/plugins.js'%}"></script>
 
-    {% block extra_js %}
-    {% endblock extra_js %}
+    {% block extra_js %}{% endblock extra_js %}
 
-    <!-- App js -->
     <script src="{% static 'js/app.js'%}"></script>
     {% endblock javascript %}
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function confirmLogout(event) {
-            event.preventDefault(); // ป้องกันไม่ให้ form ส่งทันที
-
+            event.preventDefault();
             Swal.fire({
                 title: 'ออกจากระบบ?',
                 text: "คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ",
@@ -104,7 +169,5 @@
         }
     </script>
 
-
 </body>
-
 </html>

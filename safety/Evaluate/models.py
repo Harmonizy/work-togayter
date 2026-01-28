@@ -19,8 +19,8 @@ class ResultType(models.Model):
 
 class EvaluationResult(models.Model):
     type = models.ForeignKey(ResultType, to_field='code', related_name='evaluation_results', on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=120)
-    english_name = models.CharField(max_length=120)
+    name = models.CharField(max_length=255)
+    english_name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -30,7 +30,7 @@ class EvaluationResult(models.Model):
 
 
 class QuestionSet(models.Model):
-    name = models.CharField(max_length=120)
+    name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     start_question = models.ForeignKey('EvaluationQuestion', null=True, blank=True, related_name='start_of_sets', on_delete=models.SET_NULL)
 

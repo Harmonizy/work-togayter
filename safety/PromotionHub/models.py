@@ -62,9 +62,8 @@ class QuizResult(models.Model):
 
 
 class Promotion(models.Model):
-    image = models.ImageField(verbose_name="รูปภาพ", upload_to='safety_promotion/', null=True, blank=True)
     title = models.CharField(verbose_name="หัวข้อ", max_length=255)
-    content = HTMLField(verbose_name="เนื้อหา", null=True, blank=True)
+    content = RichTextField(verbose_name="เนื้อหา", null=True, blank=True)
     status = models.CharField(verbose_name="สถานะ", max_length=1, choices=PromotionStatusChoices.choices, default=PromotionStatusChoices.DRAFT, null=True, blank=True)
     publish = models.CharField(verbose_name="เผยแพร่", max_length=1, choices=PromotionPublishChoices.choices, default=PromotionPublishChoices.NONE, null=True, blank=True)
     priority = models.CharField(verbose_name="ความสำคัญ", max_length=1, choices=PromotionPriorityChoices.choices, default=PromotionPriorityChoices.NONE, null=True, blank=True)
@@ -145,6 +144,31 @@ class PromotionView(models.Model):
         super().save(*args, **kwargs)
 
 
+class PromotionImage(models.Model):
+    promotion = models.ForeignKey(Promotion,on_delete=models.CASCADE,related_name="images")
+    image = models.ImageField(upload_to="promotion/images/")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "รูปภาพประกอบ"
+
+    def __str__(self):
+        return self.image.name
+    
+
+class PromotionFile(models.Model):
+    promotion = models.ForeignKey(Promotion,on_delete=models.CASCADE,related_name="files")
+    file = models.FileField(upload_to="promotion/files/")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = verbose_name_plural = "ไฟล์แนบ"
+
+    def __str__(self):
+        return self.file.name
+
+
+
 class Document(models.Model):
     title = models.CharField("ชื่อ", max_length=255, blank=True)
     description = models.TextField("คำอธิบาย", blank=True)
@@ -155,7 +179,7 @@ class Document(models.Model):
     updated_at = models.DateTimeField("วันที่แก้ไข", auto_now=True)
 
     class Meta:
-        verbose_name = verbose_name_plural = "6. เอกสารแจ้งเตือน"
+        verbose_name = verbose_name_plural = "7. เอกสารแจ้งเตือน"
 
     def __str__(self):
         return f"{self.promotion}"
@@ -175,7 +199,7 @@ class DocumentFile(models.Model):
 
     class Meta:
         ordering = ["order", "-created_at"]
-        verbose_name = verbose_name_plural = "6.5 ไฟล์ - เอกสารแจ้งเตือน"
+        verbose_name = verbose_name_plural = "7.5 ไฟล์ - เอกสารแจ้งเตือน"
 
     def __str__(self):
         return self.title or self.file.name
@@ -187,3 +211,4 @@ class DocumentFile(models.Model):
         if not type_:
             return "other"
         return type_.split("/")[0] 
+

@@ -103,6 +103,7 @@
                                         <a href="{% url 'promotion:list_air' %}" class="nav-link" data-key="t-dashboard">ประชาสัมพันธ์การบิน</a>
                                         <a href="{% url 'promotion:quiz_list' %}" class="nav-link" data-key="t-dashboard">แบบทดสอบ</a>
                                         <a href="{% url 'promotion:document_list' %}" class="nav-link" data-key="t-dashboard">เอกสาร</a>
+                                        {% comment %} <a href="#" class="nav-link" data-key="t-dashboard">วารสาร</a> {% endcomment %}
                                     </li> 
                                 </ul>
                             </div>
@@ -120,12 +121,10 @@
                                         <a href="{% url 'admin:index' %}" class="nav-link" data-key="t-dashboard">การตั้งค่า</a>
                                     </li>
                                     {% endif %}
-
                                     <li class="nav-item">
                                         <a href="#" class="nav-link" onclick="confirmLogout(event)">
                                             <span data-key="t-logout">ออกจากระบบ</span>
                                         </a>
-
                                         <!-- ฟอร์มซ่อน -->
                                         <form id="logout-form" action="{% url 'account_logout' %}" method="post" style="display:none;">
                                             {% csrf_token %}

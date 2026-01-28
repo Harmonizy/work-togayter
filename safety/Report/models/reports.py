@@ -9,7 +9,7 @@ from django.shortcuts import reverse
 # from taggit.managers import TaggableManager
 from ckeditor.fields import RichTextField
 
-from ..choices import (BaseReportTypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices, GroundSafetyCategoryChoices)
+from ..choices import (TypeChoices, ReportTypeChoices, DamageTypeChoices, InjuryLevelChoices, ReportStatusChoices, OrganizationExpectationChoice, PriorityChoices, RoleTypeChoices, AccidentTypeChoices, GroundSafetyCategoryChoices)
 from safety.Data.models import Event, Aircraft, AircraftSystem, FlightPhase, Location, GroundSafetyCategory, Keyword, Role
 from common.RTAFUser.models import RTAFUser, Affiliation, Squadron
 
@@ -28,6 +28,21 @@ class ReportManager(models.Manager):
             return self.filter(Q(affiliation=user.affiliation) | Q(recorder=user))
         else:
             return self.filter(recorder=user)
+
+
+class ReportType(models.Model):
+    value = models.CharField(max_length=4,unique=True,verbose_name="รหัสประเภทรายงาน")
+    label = models.CharField(max_length=255,verbose_name="ชื่อประเภทรายงาน")
+    type = models.CharField(max_length=1,choices=TypeChoices.choices,default=TypeChoices.GROUND,verbose_name="กลุ่มรายงาน")
+    is_active = models.BooleanField(default=True,verbose_name="เปิดใช้งาน")
+    order = models.PositiveSmallIntegerField(default=0,verbose_name="ลำดับการแสดงผล")
+
+    class Meta:
+        verbose_name = verbose_name_plural = "2. ประเภทรายงาน"
+        ordering = ["type", "order", "value"]
+
+    def __str__(self):
+        return f"{self.value} - {self.label}"
 
 
 class BaseReport(models.Model):
@@ -49,11 +64,11 @@ class BaseReport(models.Model):
 
     recorder = models.ForeignKey(RTAFUser,verbose_name="ผู้บันทึก", on_delete=models.CASCADE,null=True, blank=True)
     anonymous = models.BooleanField(verbose_name="ไม่ระบุชื่อผู้บันทึก", default=False)
-    comment = models.CharField(verbose_name="หมายเหตุ",max_length=120, null=True, blank=True)
+    comment = models.CharField(verbose_name="หมายเหตุ",max_length=255, null=True, blank=True)
 
     created_at = models.DateTimeField(verbose_name="วัน-เวลาที่สร้างรายงาน", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="วัน-เวลาที่แก้ไขล่าสุด", auto_now=True)
-    
+
     objects = ReportManager()
     
     class Meta:
@@ -84,7 +99,6 @@ class BaseReport(models.Model):
 
 
 class BaseAbsoluteURL:
-    
     def __str__(self):
         return self.base_report.title
         

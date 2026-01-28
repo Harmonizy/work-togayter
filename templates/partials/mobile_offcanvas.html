@@ -1,0 +1,100 @@
+<div class="offcanvas offcanvas-bottom"
+     tabindex="-1"
+     id="mobileMenu"
+     style="height:88vh">
+
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-semibold">
+            <i class="ri-menu-line me-1"></i> เมนูทั้งหมด
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+    <div class="offcanvas-body pt-3">
+
+        <!-- ===== Safety Report ===== -->
+        <div class="card border shadow-sm mb-3">
+            <div class="card-body py-2">
+                <h6 class="text-muted mb-2">
+                    <i class="ri-file-text-line me-1"></i> Safety Report
+                </h6>
+
+                <a href="{% url 'report:safety-report.list' %}"
+                   class="d-flex align-items-center justify-content-between py-2 text-dark">
+                    <span>รายงานนิรภัย</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ===== Risk Management ===== -->
+        {% if perms.RiskManagement.view_all_hazard_log or perms.RiskManagement.view_affiliation_hazard_log %}
+        <div class="card border shadow-sm mb-3">
+            <div class="card-body py-2">
+                <h6 class="text-muted mb-2">
+                    <i class="ri-file-warning-line me-1"></i> Safety Risk Management
+                </h6>
+
+                <a href="{% url 'risk_management:hazard-log' %}"
+                   class="d-flex align-items-center justify-content-between py-2 text-dark">
+                    <span>การจัดการความเสี่ยง</span>
+                </a>
+
+                <a href="{% url 'risk_management:cap-list' %}"
+                   class="d-flex align-items-center justify-content-between py-2 text-dark">
+                    <span>Corrective Action Plan (CAPs)</span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ===== Safety Assurance ===== -->
+        {% if perms.Report.view_all_dashboard or perms.Report.view_affiliation_dashboard %}
+        <div class="card border shadow-sm mb-3">
+            <div class="card-body py-2">
+                <h6 class="text-muted mb-2">
+                    <i class="ri-file-chart-line me-1"></i> Safety Assurance
+                </h6>
+
+                <a href="{% url 'safety-dashboard:dashboard-home.index' %}"
+                   class="d-flex align-items-center justify-content-between py-2 text-dark">
+                    <span>สถิติ & ข้อมูล</span>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ===== Promotion ===== -->
+        <div class="card border shadow-sm mb-3">
+            <div class="card-body py-2">
+                <h6 class="text-muted mb-2">
+                    <i class="ri-send-plane-line me-1"></i> Safety Promotion
+                </h6>
+
+                <a href="{% url 'promotion:announcement_list' %}" class="menu-item">การแจ้งเตือน</a>
+                <a href="{% url 'promotion:list_ground' %}" class="menu-item">ประชาสัมพันธ์ภาคพื้น</a>
+                <a href="{% url 'promotion:list_air' %}" class="menu-item">ประชาสัมพันธ์การบิน</a>
+                <a href="{% url 'promotion:quiz_list' %}" class="menu-item">แบบทดสอบ</a>
+                <a href="{% url 'promotion:document_list' %}" class="menu-item">เอกสาร</a>
+            </div>
+        </div>
+
+        <!-- ===== Admin ===== -->
+        <div class="card border shadow-sm">
+            <div class="card-body py-2">
+                <h6 class="text-muted mb-2">
+                    <i class="ri-user-line me-1"></i> Admin
+                </h6>
+
+                {% if request.user.is_staff or request.user.is_superuser %}
+                <a href="{% url 'admin:index' %}" class="menu-item">การตั้งค่า</a>
+                {% endif %}
+
+                <a href="#" onclick="confirmLogout(event)"
+                   class="menu-item text-danger">
+                    ออกจากระบบ
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>

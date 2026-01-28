@@ -23,7 +23,7 @@ def validate_file_size(file):
 class BaseContentType(models.Model):
     base_report = models.ForeignKey(BaseReport, on_delete=models.CASCADE, related_name='%(class)s_attachment', null=False, blank=False)
 
-    comment = models.CharField(verbose_name="หมายเหตุ", max_length=120, null=True, blank=True)
+    comment = models.CharField(verbose_name="หมายเหตุ", max_length=255, null=True, blank=True)
     recorder = models.ForeignKey(RTAFUser, verbose_name="ผู้บันทึก", on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="วันที่สร้าง")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="วันที่แก้ไข")
