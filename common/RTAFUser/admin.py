@@ -100,7 +100,7 @@ class SquadronAdmin(admin.ModelAdmin):
     search_fields = ('code', 'nickname')
     
 
-# @admin.register(AffiliationAircraft)
-# class AffiliationAircraftAdmin(admin.ModelAdmin):
-#     list_display = ('affiliation', 'aircraft')
-#     search_fields = ('affiliation__model', 'aircraft__name')
+@admin.register(AffiliationAircraft)
+class AffiliationAircraftAdmin(admin.ModelAdmin):
+    list_display = ('affiliation', 'aircraft')
+    search_fields = ('affiliation__model', 'aircraft__name')
