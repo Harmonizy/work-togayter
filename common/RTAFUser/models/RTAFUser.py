@@ -32,7 +32,7 @@ class AffiliationAircraft(models.Model):
     aircraft = models.ForeignKey('Data.Aircraft', verbose_name="ประเภทอากาศยาน", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = "5. อากาศยานประจำสังกัด"
+        verbose_name_plural = "5. อากาศยานประจำฝูงบิน"
 
 
 class Affiliation(models.Model):

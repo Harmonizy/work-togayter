@@ -120,7 +120,7 @@ class GroundReport(BaseAbsoluteURL, models.Model):
 class AviationReport(BaseAbsoluteURL, models.Model):
     base_report = models.OneToOneField(BaseReport, on_delete=models.CASCADE, primary_key=True)
 
-    squadron = models.ForeignKey(Squadron, verbose_name="หน่วยบิน", on_delete=models.CASCADE, null=True, blank=True)
+    squadron = models.ForeignKey(Squadron, verbose_name="ฝูงบิน", on_delete=models.CASCADE, null=True, blank=True)
     aircraft = models.ForeignKey(Aircraft, verbose_name="อากาศยาน", on_delete=models.CASCADE, null=True, blank=True)
     system = models.ManyToManyField(AircraftSystem, verbose_name="ระบบอากาศยาน", related_name='aviation_reports', blank=True)
     flight_phase = models.ManyToManyField('Data.FlightPhase', verbose_name="ช่วงของการบิน", related_name='aviation_reports', blank=True)

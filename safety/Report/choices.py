@@ -15,6 +15,7 @@ class ReportTypeChoices(models.TextChoices):
     FIX_ANALYSIS_AVIATION = 'FAA', "รายงานผลการวิเคราะห์อากาศยานอุบัติการณ์"
 
     OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
+    #ถ้าเพิ่มต้องไปเขียนเพิ่มใน report_create_officer ด้วย
 
 
 class GroundSafetyCategoryChoices(models.IntegerChoices):
