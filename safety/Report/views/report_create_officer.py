@@ -125,6 +125,8 @@ def build_additional_form(report_type, request):
     if report_type in [
         ReportTypeChoices.HAZARD_GROUND,
         ReportTypeChoices.SAFETY_GROUND,
+        ReportTypeChoices.MINOR_ACCIDENT_GROUND,
+        ReportTypeChoices.MAJOR_ACCIDENT_GROUND,
     ]:
         ground_form = GroundReportForm(request.POST, prefix="ground")
         return ground_form, {"ground_form": ground_form}
@@ -132,6 +134,9 @@ def build_additional_form(report_type, request):
     elif report_type in [
         ReportTypeChoices.HAZARD_AVIATION,
         ReportTypeChoices.SAFETY_AVIATION,
+        ReportTypeChoices.ANALYSIS_AVIATION,
+        ReportTypeChoices.BIRD_AVIATION,
+        ReportTypeChoices.FIX_ANALYSIS_AVIATION,
     ]:
         aviation_form = AviationReportForm(request.POST, prefix="aviation")
         return aviation_form, {"aviation_form": aviation_form}

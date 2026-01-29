@@ -204,16 +204,6 @@
                                                             <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> แก้ไข
                                                         </a>
 
-                                                        {% if perms.Report.approve_report and report.status == ReportStatusChoices.DRAFT %}
-                                                        <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item text-success" href="{% url 'report:report.approve' report.id %}">
-                                                            <i class="ri-check-double-line align-bottom me-2"></i> อนุมัติ
-                                                        </a>
-                                                        <a class="dropdown-item text-danger" href="{% url 'report:report.reject' report.id %}">
-                                                            <i class="ri-close-circle-line align-bottom me-2"></i> ไม่อนุมัติ
-                                                        </a>
-                                                        {% endif %}
-
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item" href="{% url 'report:word_export.safety_doc' report.id %}">
                                                             <i class="ri-file-word-fill align-bottom me-2 text-primary"></i> บันทึกข้อความ
