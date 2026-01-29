@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-from .views import  report_list, report_create, report_create_officer, report_delete, report_details, report_edit, word_export, sixA, view_403
+from .views import  report_list, report_create, report_create_officer, report_delete, report_details, report_edit, word_export, sixA, view_403, report_status_change
 # from .views import safety_create
 
 app_name = 'report'
@@ -14,8 +14,14 @@ main_urlpatterns = [
     path('', report_list.list, name='safety-report.home'),
     path('safety-report/list/', report_list.list, name='safety-report.list'),
     path("safety-report/detail/<int:pk>/", report_details.main_page, name="safety-report.detail"),
-    path("safety-report/approve/<int:report_id>/", report_list.approve_report, name="report.approve"),
-    path("safety-report/reject/<int:report_id>/", report_list.reject_report, name="report.reject"),
+
+    path("safety-report/approve/<int:report_id>/", report_status_change.approve_report, name="report.approve"),
+    path("safety-report/reject/<int:report_id>/", report_status_change.reject_report, name="report.reject"),
+    path("safety-report/send/<int:report_id>/", report_status_change.send_report, name="report.send"),
+    path("safety-report/receive/<int:report_id>/", report_status_change.receive_report, name="report.receive"),
+    path("safety-report/complete/<int:report_id>/", report_status_change.complete_report, name="report.complete"),
+    path("safety-report/archive/<int:report_id>/", report_status_change.archive_report, name="report.archive"),
+
 
     path('safety-create/new-report/', report_create.new_report, name='safety-create.new_report'),   
     path('safety-create-officer/new-report/', report_create_officer.new_report, name='safety-create-officer.new_report'),  

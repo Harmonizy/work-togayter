@@ -124,7 +124,6 @@
                                         <col style="width: 5%;">                                        
                                         {% comment %} <col style="width: 20%;"> {% endcomment %}
                                         <col style="width: 5%;">
-                                        <col style="width: 9%;">
                                         <col style="width: 5%;">
                                     </colgroup>
                                     <thead class="table-light text-muted text-center" style="font-size:1.1em;">
@@ -138,7 +137,6 @@
                                             <th>ไฟล์</th>
                                             {% comment %} <th>ผู้บันทึก</th> {% endcomment %}
                                             <th>สถานะ</th>
-                                            <th>ความเร่งด่วน</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -187,10 +185,10 @@
                                             </td>
                                             {% comment %} <td>{{ report.recorder.get_full_name|truncatechars:25 }}</td> {% endcomment %}
                                             <td>
-                                                {{ report.get_status_display }}
-                                                {% comment %} {% status_badge report %} {% endcomment %}
+                                                {% comment %} {{ report.get_status_display }} {% endcomment %}
+                                                {% status_badge report %}
+                                                {% priority_badge report %}
                                             </td>
-                                            <td>{{ report.get_priority_display }}</td>
                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15 material-shadow-none" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

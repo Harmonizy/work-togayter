@@ -16,7 +16,6 @@ from django.contrib.auth.decorators import login_required
 
 @login_required 
 def new_report(request):
-
     if request.method == "GET":
         initial, affiliation, report_type = extract_get_params(request)
         context = build_context_for_get(initial, report_type, affiliation)
@@ -58,7 +57,7 @@ def extract_get_params(request):
     report_type = request.GET.get("report_type", "")
     initial = {
         "affiliation": affiliation,
-        "report_type": report_type,
+        "report_type": ReportTypeChoices.SIMPLE,
         "content": affiliation.airviation_content if affiliation and affiliation.airviation_content else default_content,
     }
     return initial, affiliation, report_type

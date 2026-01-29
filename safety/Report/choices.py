@@ -40,12 +40,13 @@ class PriorityChoices(models.TextChoices):
 
 class ReportStatusChoices(models.IntegerChoices):
     DRAFT = 1, "ร่าง"
-    APPROVED = 2, "อนุมัติ"
-    REJECTED = 3, "ไม่อนุมัติ"
-    DELETED = 4, "ลบ"
-    # อนุมัติ สนภ. รับเรื่อง
-    # หน่วยอนุมัติ รับเรื่อง
-    
+    APPROVE = 2, "อนุมัติ"
+    REJECT = 3, "ไม่อนุมัติ"
+    SEND = 4, "ส่งเรื่องสนภ."
+    RECEIVE = 5, "สนภ.รับเรื่อง"
+    COMPLETE = 6, "เสร็จสิ้น"
+    ARCHIVE = 0, "เก็บถาวร"
+
 
 class DamageTypeChoices(models.IntegerChoices):
     NONE = 0, "ไม่มี"

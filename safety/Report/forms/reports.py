@@ -135,14 +135,14 @@ class AviationReportForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('squadron', css_class='col-md-4'),
-                Column('plane_number', css_class='col-md-4'),
-                Column('air_control', css_class='col-md-4'),
+                Column('squadron', css_class='col-4 col-md-4'),
+                Column('plane_number', css_class='col-4 col-md-4'),
+                Column('air_control', css_class='col-4 col-md-4'),
             ),
             Row(
-                Column('aircraft', css_class='col-md-4'),
-                Column('system', css_class='col-md-4'),
-                Column('flight_phase', css_class='col-md-4'),
+                Column('aircraft', css_class='col-4 col-md-4'),
+                Column('system', css_class='col-4 col-md-4'),
+                Column('flight_phase', css_class='col-4 col-md-4'),
             )
         )
 
@@ -152,7 +152,6 @@ class ParticipantForm(forms.ModelForm):
         model = Participant
         fields = ["full_name", "role", "injury_level", "note"]
         widgets = {
-            'full_name': single_select_widget,
             'role': single_select_widget,
             'injury_level': single_select_widget,
             'note': forms.TextInput(attrs={'placeholder': 'หมายเหตุเพิ่มเติม...'}),
@@ -165,10 +164,10 @@ class ParticipantForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('full_name', css_class='col-md-3'),
-                Column('role', css_class='col-md-3'),
-                Column('injury_level', css_class='col-md-3'),
-                Column('note', css_class='col-md-3'),
+                Column('full_name', css_class='col-3 col-md-3'),
+                Column('role', css_class='col-3 col-md-3'),
+                Column('injury_level', css_class='col-3 col-md-3'),
+                Column('note', css_class='col-3 col-md-3'),
             )
         )
 
@@ -191,8 +190,8 @@ class ImageForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('image', css_class='col-md-8'),
-                Column('comment', css_class='col-md-4'),
+                Column('image', css_class='col-8 col-md-8'),
+                Column('comment', css_class='col-4 col-md-4'),
             )
         )
 
@@ -225,8 +224,8 @@ class FileForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('file', css_class='col-md-8'),
-                Column('comment', css_class='col-md-4'),
+                Column('file', css_class='col-8 col-md-8'),
+                Column('comment', css_class='col-4 col-md-4'),
             )
         )
 
@@ -249,8 +248,8 @@ class RecommendationForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('note', css_class='col-md-8'),
-                Column('comment', css_class='col-md-4'),
+                Column('note', css_class='col-8 col-md-8'),
+                Column('comment', css_class='col-4 col-md-4'),
             )
         )
 
@@ -271,8 +270,8 @@ class ReferenceReportForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
             Row(
-                Column('report', css_class='col-md-6'),
-                Column('note', css_class='col-md-6'),
+                Column('report', css_class='col-6 col-md-6'),
+                Column('note', css_class='col-6 col-md-6'),
             )
         )
 

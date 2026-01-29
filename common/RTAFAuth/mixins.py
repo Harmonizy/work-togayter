@@ -79,6 +79,12 @@ class HRISDataMixin:
             return {"error": str(e)}
 
 
+def clean_str(value):
+    if value is None:
+        return ""
+    return value.strip()
+
+
 class SaltAuthMixin:
     """Mixin for handling salt-based authentication"""
     
@@ -86,6 +92,7 @@ class SaltAuthMixin:
         reponse = AuthAPIService.call_salt_auth_api(salt)
         return reponse
     
+
 
     def _get_or_create_user(self, user_info):
         UserModel = get_user_model()
@@ -98,7 +105,7 @@ class SaltAuthMixin:
                 "first_name": mfa_data.get("fname", ""),
                 "last_name": mfa_data.get("lname", ""),
                 "email": f"{username}@rtaf.mi.th",
-                "rank_id": mfa_data.get("rankID", ""),
+                "rank_id": clean_str(mfa_data.get("rankID", "")),
                 "person_id": user_info.get("citizen_id", ""),
                 "af_id": user_info.get("airforce_id", ""),                
                 "position": mfa_data.get("user_position", ""),

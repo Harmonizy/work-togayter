@@ -7,7 +7,7 @@ from django.http import HttpResponse
 
 from ..models.reports import BaseReport, AviationReport, GroundReport, Participant, ReferenceReport
 from ..models.attachments import Image, File, Recommendation
-from ..choices import ReportTypeChoices
+from ..choices import ReportTypeChoices, ReportStatusChoices
 from safety.Report.models.sixA import SixA, Answer
 from safety.Evaluate.models import BaseReportEvaluation, EvaluationAnswer
 
@@ -138,6 +138,7 @@ def main_page(request, pk):
 
     context = {
         "base_report": report,
+        "STATUS": ReportStatusChoices,
         "aviation_report": aviation_report,
         "ground_report": ground_report,
 

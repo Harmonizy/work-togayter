@@ -7,7 +7,7 @@ def card_data(reports):
     total_growth = "0.87"
     pending_reports = reports.filter(status=ReportStatusChoices.DRAFT).count()
     pending_growth = "3.2"
-    completed_reports = reports.filter(status=ReportStatusChoices.APPROVED).count()
+    completed_reports = reports.filter(status=ReportStatusChoices.APPROVE).count()
     completed_growth = "5.8"
     high_priority_reports = reports.filter(priority=PriorityChoices.HIGH).count()
     high_priority_growth = "1.1"

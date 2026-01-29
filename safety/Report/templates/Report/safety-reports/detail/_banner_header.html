@@ -12,17 +12,14 @@
         </span>
 
         <span class="badge bg-primary fs-6 d-inline-block mb-1">
-          ความสำคัญ: {{ base_report.get_priority_display }}
+          ประเภท: {{ base_report.get_report_type_display }}
         </span>
 
-        <span class="badge bg-info text-dark fs-6 d-inline-block mb-1">
-          สถานะ: {{ base_report.get_status_display }}
-        </span>
       </div>
     </div>
 
     <!-- ส่วนขวา: ปุ่ม Risk Register -->
-    <div class="d-flex flex-wrap justify-content-start justify-content-lg-end gap-2 w-100 w-lg-auto mt-2 mt-lg-0">
+    <div class="d-flex flex-wrap justify-content-start justify-content-lg-end gap-2 w-100 w-lg-auto mt-1 mt-lg-0">
       <button class="btn btn-warning w-sm-auto" onclick="window.location.href='{% url 'report:sixA.sixA_create_view' base_report.id %}'">
         ประเมิน 6A
       </button>
@@ -45,3 +42,85 @@
 
   </div>
 </div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+
+    <!-- HEADER -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+      <span class="fw-semibold mb-0">
+        สถานะเอกสาร: 
+        <span class="badge 
+          {% if base_report.status == STATUS.DRAFT %} bg-secondary
+          {% elif base_report.status == STATUS.APPROVE %} bg-info
+          {% elif base_report.status == STATUS.SEND %} bg-warning
+          {% elif base_report.status == STATUS.RECEIVE %} bg-primary
+          {% elif base_report.status == STATUS.COMPLETE %} bg-success
+          {% endif %}
+          fs-6">
+          {{ base_report.get_status_display }}
+        </span>
+      </span>
+
+      <!-- ACTION BUTTON -->
+      {% if perms.Report.approve_report %}
+      <div class="d-flex justify-content-end">
+        {% if base_report.status == STATUS.DRAFT %}
+        <div class="gap-2">
+          <a href="{% url 'report:report.approve' base_report.id %}"
+            class="btn btn-sm btn-info">
+            อนุมัติ
+          </a>
+          <a href="{% url 'report:report.reject' base_report.id %}"
+            class="btn btn-sm btn-danger">
+            ไม่อนุมัติ
+          </a>
+        </div>
+        {% elif base_report.status == STATUS.APPROVE %}
+          <a href="{% url 'report:report.send' base_report.id %}"
+            class="btn btn-sm btn-warning">
+            ส่งเรื่องสนภ.
+          </a>
+        {% elif base_report.status == STATUS.SEND %}
+          <a href="{% url 'report:report.receive' base_report.id %}"
+            class="btn btn-sm btn-primary">
+            สนภ.รับเรื่อง
+          </a>
+        {% elif base_report.status == STATUS.RECEIVE %}
+          <a href="{% url 'report:report.complete' base_report.id %}"
+            class="btn btn-sm btn-success">
+            เสร็จสิ้น
+          </a>
+        {% endif %}
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="mt-1">
+      <div class="progress" style="height: 14px;">
+        <div class="progress-bar
+          {% if base_report.status == STATUS.DRAFT %} w-0 bg-secondary
+          {% elif base_report.status == STATUS.APPROVE %} w-25 bg-info
+          {% elif base_report.status == STATUS.SEND %} w-50 bg-warning
+          {% elif base_report.status == STATUS.RECEIVE %} w-75 bg-primary
+          {% elif base_report.status == STATUS.COMPLETE %} w-100 bg-success
+          {% endif %}
+        ">
+        </div>
+      </div>
+
+      <!-- STEP LABEL -->
+      <div class="d-flex justify-content-between mt-1 small text-muted">
+        <span>ร่าง</span>
+        <span>อนุมัติ</span>
+        <span>ส่งเรื่องสนภ.</span>
+        <span>สนภ.รับเรื่อง</span>
+        <span>เสร็จสิ้น</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+

@@ -24,8 +24,8 @@
       </div>
 
       <div class="col-12 col-md-6 d-flex flex-column flex-md-row">
-        <div class="meta-label me-md-2">ประเภทรายงาน:</div>
-        <div>{{ base_report.get_report_type_display|default:"-" }}</div>
+        <div class="meta-label me-md-2">ความสำคัญ:</div>
+        <div>{{ base_report.get_priority_display|default:"-" }}</div>
       </div>
 
       {% if base_report.first_recommendation %}
