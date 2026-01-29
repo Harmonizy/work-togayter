@@ -106,12 +106,17 @@ def build_context_for_get(initial, report_type, affiliation):
     if report_type in [
         ReportTypeChoices.HAZARD_GROUND,
         ReportTypeChoices.SAFETY_GROUND,
+        ReportTypeChoices.MINOR_ACCIDENT_GROUND,
+        ReportTypeChoices.MAJOR_ACCIDENT_GROUND,
     ]:
         context["ground_form"] = GroundReportForm(prefix="ground")
 
     elif report_type in [
         ReportTypeChoices.HAZARD_AVIATION,
         ReportTypeChoices.SAFETY_AVIATION,
+        ReportTypeChoices.ANALYSIS_AVIATION,
+        ReportTypeChoices.BIRD_AVIATION,
+        ReportTypeChoices.FIX_ANALYSIS_AVIATION,
     ]:
         aviation_initial = {"affiliation": affiliation} if affiliation else {}
         context["aviation_form"] = AviationReportForm(
