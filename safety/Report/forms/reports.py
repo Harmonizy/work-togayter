@@ -129,7 +129,7 @@ class AviationReportForm(forms.ModelForm):
         affiliation = self.initial.get("affiliation", None)
         if affiliation:
             self.fields['squadron'].queryset = self.fields['squadron'].queryset.filter(affiliation=affiliation)
-            self.fields['aircraft'].queryset = self.fields['aircraft'].queryset.filter(affiliation=affiliation)
+            self.fields['aircraft'].queryset = self.fields['aircraft'].queryset.filter(squadron__affiliation=affiliation)
 
         self.helper = FormHelper()
         self.helper.form_tag = False
