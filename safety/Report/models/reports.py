@@ -47,8 +47,8 @@ class ReportType(models.Model):
 
 class BaseReport(models.Model):
     fiscal_year = models.IntegerField(verbose_name="ปีงบประมาณ", default=current_fiscal_year)
-    affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยรับผิดชอบ", related_name='base_reports', on_delete=models.CASCADE, default=None, help_text="หน่วยงานหลักที่รับผิดชอบ")
-    location_affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยที่เกิดเหตุ",related_name='location_base_reports', on_delete=models.CASCADE, default=None, help_text="หน่วยงานที่อยู่ในสถานที่เกิดเหตุ")
+    affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยรับผิดชอบ", related_name='base_reports', on_delete=models.SET_NULL, null=True, blank=True, help_text="หน่วยงานหลักที่รับผิดชอบ")
+    location_affiliation = models.ForeignKey(Affiliation,verbose_name="หน่วยที่เกิดเหตุ",related_name='location_base_reports', on_delete=models.SET_NULL, null=True, blank=True, help_text="หน่วยงานที่อยู่ในสถานที่เกิดเหตุ")
     event_date = models.DateField(verbose_name="วันที่เกิดเหตุ", default=date.today)
     event_time = models.TimeField(verbose_name="เวลาเกิดเหตุ", default=timezone.now)
 
