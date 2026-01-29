@@ -37,7 +37,7 @@ class Aircraft(models.Model):
         verbose_name = verbose_name_plural = "2. อากาศยาน"
 
     def __str__(self):
-        return f'{self.name, self.name_en}' 
+        return f'{self.name} ({self.name_en})' 
     
 
 class AircraftSystem(models.Model):

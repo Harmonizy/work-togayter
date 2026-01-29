@@ -255,7 +255,7 @@ def rtaf_message_form(request, base_report_id):
     context = {
         '##report-title##': base_report.title,
         '##event-date-time##': f"{thai_date(base_report.event_date)} เวลา {base_report.event_time.strftime('%H:%M') if base_report.event_time else ''}",
-        '##report-body##': report_body.strip() or base_report.content or "ไม่มีรายละเอียดเพิ่มเติม",
+        '##report-body##': base_report.content,
         '##sender-action##': "ด่วนที่สุด" if base_report.priority == "H" else "ด่วน",
         '##sender-info##': "ด่วนที่สุด" if base_report.priority == "H" else "ด่วน",
         '##secret-type##': "ลับมาก" if base_report.priority == "H" else "ลับ",
