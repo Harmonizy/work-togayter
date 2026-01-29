@@ -62,13 +62,13 @@ class GroundSafetyCategoryAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
-# @admin.register(Keyword)
-# class KeywordAdmin(admin.ModelAdmin):
-#     list_display = ("name",)
-#     search_fields = ("name",)
-
-
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
     list_display = ("name",)
     search_fields = ("name",)
+
+
+# @admin.register(Keyword)
+# class KeywordAdmin(admin.ModelAdmin):
+#     list_display = ("name",)
+#     search_fields = ("name",)
