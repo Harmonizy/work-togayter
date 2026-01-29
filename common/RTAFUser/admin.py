@@ -63,7 +63,7 @@ class RTAFUserAdmin(UserAdmin):
     list_display = ('username', 'get_full_name', 'position', 'affiliation', 'last_login',)
     list_display_links = ('username', 'get_full_name')
     search_fields = ('af_id', 'person_id', 'first_name', 'last_name', 'position', 'username')
-    list_filter = ('groups', 'affiliation',)
+    list_filter = ('groups', 'affiliation', 'rank')
     raw_id_fields = ('rank', 'affiliation', 'work_affiliation')
     list_select_related = ('rank', 'affiliation', 'work_affiliation')
     fieldsets = (
@@ -100,7 +100,7 @@ class SquadronAdmin(admin.ModelAdmin):
     search_fields = ('code', 'nickname')
     
 
-@admin.register(AffiliationAircraft)
-class AffiliationAircraftAdmin(admin.ModelAdmin):
-    list_display = ('affiliation', 'aircraft')
-    search_fields = ('affiliation__model', 'aircraft__name')
+# @admin.register(AffiliationAircraft)
+# class AffiliationAircraftAdmin(admin.ModelAdmin):
+#     list_display = ('affiliation', 'aircraft')
+#     search_fields = ('affiliation__model', 'aircraft__name')
