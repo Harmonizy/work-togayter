@@ -100,3 +100,9 @@ class QuestionCategoryChoices(models.IntegerChoices):
 class AnswerChoices(models.IntegerChoices):
     YES = 1, "Y"
     NO = 2, "N"
+    
+    
+class ExampleContentChoices(models.IntegerChoices):
+    SIMPLE = 1, "เนื้อหารายงาน"
+    GROUND = 2, "เนื้อหารายงานภาคพื้น"
+    AVIATION = 3, "เนื้อหารายงานภาคอากาศ"

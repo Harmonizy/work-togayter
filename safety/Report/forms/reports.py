@@ -10,7 +10,7 @@ from ..models import (
     BaseReport, Image, Recommendation, File, AviationReport, GroundReport,
     Participant, ReferenceReport
 )
-from ..choices import ReportTypeChoices
+from ..choices import ReportTypeChoices, ExampleContentChoices
 from common.RTAFUser.models.RTAFUser import Affiliation
 
 
@@ -26,6 +26,16 @@ class BaseInlineFormSet(forms.BaseInlineFormSet):
 
 class BaseReportForm(forms.ModelForm):
     content = content_field(400, content_example)
+    
+    example_content = forms.ChoiceField(
+        choices=ReportTypeChoices.choices,
+        required=False,
+        label="ตัวอย่างเนื้อหารายงาน",
+        widget=forms.Select(attrs={
+            "class": "form-select",
+            "id": "example-content-select"
+        })
+    )
 
     class Meta:
         model = BaseReport
@@ -79,7 +89,21 @@ class BaseReportForm(forms.ModelForm):
                 Column('event_time', css_class='col-md-2'),
             ),
             Div(
-                Row(Column('title', css_class='col-md-12')),
+                Row(
+                    Column('title', css_class='col-md-9'),
+                    Column('example_content', css_class='col-md-2'),
+                    Column(
+                        HTML("""
+                            <a id="example-download-btn"
+                            class="btn btn-outline-primary mt-4 d-none"
+                            target="_blank">
+                            ดาวน์โหลดตัวอย่าง
+                            </a>
+                        """),
+                        css_class="col-md-1"
+                    ),
+                    ),
+                
                 Row(Column(Field('content'), css_class='col-md-12')),
                 css_id="title-content-part",
             ),

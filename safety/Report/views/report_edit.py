@@ -138,9 +138,6 @@ def edit_report(request, report_id):
             pk=base_report.pk
         )
 
-    # ======================
-    # ERROR
-    # ======================
     messages.error(request, "กรุณาตรวจสอบข้อมูล")
 
     return render(

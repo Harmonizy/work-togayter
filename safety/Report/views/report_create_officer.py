@@ -1,6 +1,10 @@
+import os
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.http import FileResponse, Http404
+from django.conf import settings
 
 from ..forms.reports import BaseReportForm, GroundReportForm, AviationReportForm, ParticipantForm, ParticipantFormSet, ReferenceReportForm, ReferenceReportFormSet
 from ..forms.attachments import ImageFormSet, RecommendationFormSet, FileFormSet
@@ -172,4 +176,28 @@ def handle_post_failure(forms, addition_context):
         None,
         "Report/safety-reports/report-create-officer.html",
         context,
+    )
+
+
+def example_content(request, pk):
+    try:
+        report_type = ReportTypeChoices(pk)
+    except ValueError:
+        raise Http404("ไม่พบประเภทเนื้อหา")
+
+    base_dir = os.path.join(
+        settings.BASE_DIR,
+        "safety/Report/templates/Documents/example-content"
+    )
+
+    filename = f"{report_type.value}.docx"
+    file_path = os.path.join(base_dir, filename)
+
+    if not os.path.exists(file_path):
+        raise Http404(f"ไม่พบไฟล์ตัวอย่าง: {filename}")
+
+    return FileResponse(
+        open(file_path, "rb"),
+        as_attachment=False,   # False = เปิดดูในเบราว์เซอร์ (ถ้ารองรับ)
+        filename=filename
     )
