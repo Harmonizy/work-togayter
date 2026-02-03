@@ -125,7 +125,7 @@ def index(request):
     # ---- COUNTERS (use filtered queryset) ----
     report_all = reports.count()
     report_draft = reports.filter(status=ReportStatusChoices.DRAFT).count()
-    report_approved = reports.filter(status=ReportStatusChoices.APPROVED).count()
+    report_approved = reports.filter(status=ReportStatusChoices.APPROVE).count()
 
     report_high = reports.filter(priority=PriorityChoices.HIGH).count()
     report_medium = reports.filter(priority=PriorityChoices.MEDIUM).count()

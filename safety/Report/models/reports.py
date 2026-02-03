@@ -82,6 +82,7 @@ class BaseReport(models.Model):
             ("view_all_report_detail", "*ดูรายละเอียดรายงานทั้งหมดได้"),
             ("view_affiliation_report_detail", "*ดูรายละเอียดรายงานของหน่วยงานตัวเองได้"),
             ("approve_report", "*อนุมัติรายงานได้"),
+            ("receive_report", "*รับเรื่องรายงานได้"),
 
             ("create_sixA", "*ประเมิน 6A ได้"),
 

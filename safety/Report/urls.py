@@ -2,7 +2,6 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 from .views import  report_list, report_create, report_create_officer, report_delete, report_details, report_edit, word_export, sixA, view_403, report_status_change
 # from .views import safety_create
 
@@ -22,7 +21,6 @@ main_urlpatterns = [
     path("safety-report/complete/<int:report_id>/", report_status_change.complete_report, name="report.complete"),
     path("safety-report/archive/<int:report_id>/", report_status_change.archive_report, name="report.archive"),
 
-
     path('safety-create/new-report/', report_create.new_report, name='safety-create.new_report'),   
     path('safety-create-officer/new-report/', report_create_officer.new_report, name='safety-create-officer.new_report'),  
     path('safety-edit/edit-report/<int:report_id>/', report_edit.edit_report, name='safety-edit.edit-report'),
@@ -33,6 +31,7 @@ main_urlpatterns = [
     # export
     path('word-export/safety-doc/<int:pk>/', word_export.safety_doc, name='word_export.safety_doc'),
     path('word-export/rtaf-message-form/<int:base_report_id>/', word_export.rtaf_message_form, name='word_export.rtaf_message_form'),
+    path('example-content/<str:pk>/', report_create_officer.example_content, name='report_create.example_content'),
 
     # form
     # path('create-safety-report/<str:report_type>/', create.create_report, name='create.create_report'),

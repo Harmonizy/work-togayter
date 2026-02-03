@@ -44,20 +44,17 @@ def get_report_type_dropdown_choices():
 
 @login_required
 def list(request):
-    # GET parameters
     search_query = request.GET.get('search', '').strip()
     date_range = request.GET.get('date_range', '').strip()
     status_filter = request.GET.get('status', '').strip()
     priority_filter = request.GET.get('priority', '').strip()
 
-    # selected affiliation
     selected_affiliation = (
         request.user.work_affiliation
         if request.user.work_affiliation
         else request.user.affiliation
     )
 
-    # Permission-based queryset
     if request.user.has_perm('Report.view_all_report_list'):
         reports = BaseReport.objects.all()
     elif request.user.has_perm('Report.view_affiliation_report_list'):
@@ -72,12 +69,10 @@ def list(request):
     reports = (
         reports.select_related("recorder", "affiliation", "recorder__rank")
                 .prefetch_related("file_attachment", "image_attachment")
-                .order_by("-event_date", "event_time") 
     )
 
     report_cards = card_data(reports)
 
-    # Search
     if search_query:
         reports = reports.filter(
             Q(title__icontains=search_query) |
@@ -85,7 +80,6 @@ def list(request):
             Q(recorder__last_name__icontains=search_query)
         ).distinct()
 
-    # Date range filter
     if date_range and " to " in date_range:
         start_str, end_str = date_range.split(" to ", 1)
         try:
@@ -95,21 +89,17 @@ def list(request):
         except ValueError:
             pass
 
-    # Status / Priority filter
     if status_filter.isdigit():
         reports = reports.filter(status=int(status_filter))
 
     if priority_filter:
         reports = reports.filter(priority=priority_filter)
 
-    # Ordering (สำคัญที่สุด)
-    reports = reports.order_by('-event_date')
+    reports = reports.order_by('-event_date', "-event_time")
 
-    # Pagination
     paginator = Paginator(reports, 10)
     page_obj = paginator.get_page(request.GET.get('page'))
 
-    # Context
     context = {
         'report_cards': report_cards,
         'base_reports': page_obj,
@@ -127,6 +117,8 @@ def list(request):
     return render(request, 'Report/safety-reports/report-list.html', context)
 
 
+
+
 class MobileHomeView(LoginRequiredMixin, TemplateView):
     template_name = 'Report/safety-reports/mobile-home.html'
     
@@ -134,6 +126,9 @@ class MobileHomeView(LoginRequiredMixin, TemplateView):
 @login_required
 def mobile_create(request):
     return render(request, 'Report/safety-reports/mobile-create.html')
+
+
+
 
 
 
