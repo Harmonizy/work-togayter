@@ -13,7 +13,6 @@ from ..models import (
 from ..choices import ReportTypeChoices, ExampleContentChoices
 from common.RTAFUser.models.RTAFUser import Affiliation
 
-
 class BaseInlineFormSet(forms.BaseInlineFormSet):
     """This enables CrispyForms to respect each subform's layout."""
     def __init__(self, *args, **kwargs):
@@ -26,7 +25,7 @@ class BaseInlineFormSet(forms.BaseInlineFormSet):
 
 class BaseReportForm(forms.ModelForm):
     content = content_field(400, content_example)
-    
+
     example_content = forms.ChoiceField(
         choices=ReportTypeChoices.choices,
         required=False,
@@ -54,6 +53,8 @@ class BaseReportForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        
+        
 
         self.fields['event_time'] = forms.TimeField(
             input_formats=['%H:%M'],

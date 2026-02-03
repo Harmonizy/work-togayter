@@ -156,5 +156,20 @@ $(document).ready(function () {
     totalFormsInput.val(totalFormsCount + 1);
   });
 });
+
+document.getElementById("example-content-select").addEventListener("change", function () {
+    const value = this.value;
+    const btn = document.getElementById("example-download-btn");
+
+    if (!value) {
+        btn.classList.add("d-none");
+        return;
+    }
+
+    btn.href = `/example-content/${value}/`;
+    btn.classList.remove("d-none");
+});
+
+
 </script>
 {% endblock %}
