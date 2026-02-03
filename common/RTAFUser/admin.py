@@ -6,7 +6,12 @@ from django.db.models.query import QuerySet
 from django.db.models import Q
 from django.http import HttpRequest
 # from rest_framework.authtoken.admin import TokenAdmin
+from import_export.admin import ExportMixin
+from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget
+from import_export.formats.base_formats import XLSX
 
+from .resources import RTAFUserResource
 from .models import Rank, Affiliation, RTAFUser, Squadron, AffiliationAircraft
 
 # TokenAdmin.raw_id_fields = ['user']
@@ -59,7 +64,9 @@ class AffiliationAdmin(admin.ModelAdmin):
 
 
 @admin.register(RTAFUser)
-class RTAFUserAdmin(UserAdmin):
+class RTAFUserAdmin(ExportMixin, UserAdmin):
+    resource_class = RTAFUserResource
+    formats = [XLSX]
     list_display = ('username', 'get_full_name', 'position', 'affiliation', 'last_login',)
     list_display_links = ('username', 'get_full_name')
     search_fields = ('af_id', 'person_id', 'first_name', 'last_name', 'position', 'username')
@@ -104,3 +111,5 @@ class SquadronAdmin(admin.ModelAdmin):
 # class AffiliationAircraftAdmin(admin.ModelAdmin):
 #     list_display = ('affiliation', 'aircraft')
 #     search_fields = ('affiliation__model', 'aircraft__name')
+
+

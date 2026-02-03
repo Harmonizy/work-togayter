@@ -64,6 +64,8 @@ THIRDPARTY_APPS = [
     'ckeditor',
     "template_partials",
     "rules",
+    
+    'import_export',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + LOCAL_APPS + COMMON_APPS + THIRDPARTY_APPS
