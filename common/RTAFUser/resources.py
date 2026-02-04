@@ -25,14 +25,10 @@ class RTAFUserResource(resources.ModelResource):
     class Meta:
         model = RTAFUser
         fields = (
-            "id",
-            "af_id",
-            "person_id",
             "rank",
             "first_name",
             "last_name",
             "position",
             "affiliation",
             "work_affiliation",
-            "is_active",
         )
