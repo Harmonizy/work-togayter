@@ -10,9 +10,12 @@ from ..models import (
     BaseReport, Image, Recommendation, File, AviationReport, GroundReport,
     Participant, ReferenceReport
 )
-from ..choices import ReportTypeChoices, ExampleContentChoices
+from ..choices import ReportTypeChoices
 from common.RTAFUser.models.RTAFUser import Affiliation
 
+# =========================
+# Inline Formset Base
+# =========================
 class BaseInlineFormSet(forms.BaseInlineFormSet):
     """This enables CrispyForms to respect each subform's layout."""
     def __init__(self, *args, **kwargs):
@@ -23,11 +26,33 @@ class BaseInlineFormSet(forms.BaseInlineFormSet):
         self.helper.disable_csrf = True
 
 
+# =========================
+# ReportType Groups
+# =========================
+GROUND_TYPES = [
+    ReportTypeChoices.HAZARD_GROUND,
+    ReportTypeChoices.SAFETY_GROUND,
+    ReportTypeChoices.MINOR_ACCIDENT_GROUND,
+    ReportTypeChoices.MAJOR_ACCIDENT_GROUND,
+]
+
+AVIATION_TYPES = [
+    ReportTypeChoices.HAZARD_AVIATION,
+    ReportTypeChoices.SAFETY_AVIATION,
+    ReportTypeChoices.ANALYSIS_AVIATION,
+    ReportTypeChoices.BIRD_AVIATION,
+    ReportTypeChoices.FIX_ANALYSIS_AVIATION,
+]
+
+
+# =========================
+# Base Report Form
+# =========================
 class BaseReportForm(forms.ModelForm):
     content = content_field(400, content_example)
 
     example_content = forms.ChoiceField(
-        choices=ReportTypeChoices.choices,
+        choices=[],
         required=False,
         label="ตัวอย่างเนื้อหารายงาน",
         widget=forms.Select(attrs={
@@ -53,9 +78,37 @@ class BaseReportForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        
-        
 
+        # -------------------------
+        # report_type (ใช้ร่วมกันทั้งฟอร์ม)
+        # -------------------------
+        report_type = (
+            self.initial.get("report_type")
+            or self.data.get("base_form-report_type")
+        )
+
+        # -------------------------
+        # example_content (กรองตาม report_type)
+        # -------------------------
+        if report_type == ReportTypeChoices.SIMPLE:
+            allowed = [ReportTypeChoices.SIMPLE]
+
+        elif report_type in GROUND_TYPES:
+            allowed = GROUND_TYPES
+
+        elif report_type in AVIATION_TYPES:
+            allowed = AVIATION_TYPES
+
+        else:
+            allowed = []
+
+        self.fields["example_content"].choices = [
+            (c.value, c.label) for c in allowed
+        ]
+
+        # -------------------------
+        # event_time
+        # -------------------------
         self.fields['event_time'] = forms.TimeField(
             input_formats=['%H:%M'],
             widget=forms.TimeInput(
@@ -65,20 +118,28 @@ class BaseReportForm(forms.ModelForm):
         )
         self.fields['event_time'].label = "เวลาเกิดเหตุ"
 
-        report_type = self.initial.get("report_type", "")
-        affiliation = self.initial.get("affiliation", None)
-
+        # -------------------------
+        # report_type choices (lock ตาม initial)
+        # -------------------------
         if report_type:
             self.fields["report_type"].choices = [
-                (choice.value, choice.label) for choice in ReportTypeChoices if choice.value == report_type
+                (choice.value, choice.label)
+                for choice in ReportTypeChoices
+                if choice.value == report_type
             ]
 
+        # -------------------------
+        # affiliation
+        # -------------------------
+        affiliation = self.initial.get("affiliation", None)
         if affiliation:
             if isinstance(affiliation, int):
                 affiliation = Affiliation.objects.get(id=affiliation)
             self.fields['affiliation'].queryset = Affiliation.objects.filter(id=affiliation.id)
 
+        # -------------------------
         # Crispy Layout
+        # -------------------------
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
@@ -96,15 +157,14 @@ class BaseReportForm(forms.ModelForm):
                     Column(
                         HTML("""
                             <a id="example-download-btn"
-                            class="btn btn-outline-primary mt-4 d-none"
-                            target="_blank">
-                            ดาวน์โหลดตัวอย่าง
+                               class="btn btn-outline-primary mt-4 d-none"
+                               target="_blank">
+                               ดาวน์โหลดตัวอย่าง
                             </a>
                         """),
                         css_class="col-md-1"
                     ),
-                    ),
-                
+                ),
                 Row(Column(Field('content'), css_class='col-md-12')),
                 css_id="title-content-part",
             ),
@@ -116,7 +176,6 @@ class BaseReportForm(forms.ModelForm):
             'anonymous'
         )
     
-
 
 class GroundReportForm(forms.ModelForm):
     class Meta:
