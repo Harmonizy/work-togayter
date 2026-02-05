@@ -158,10 +158,18 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                {% if report.affiliation == report.location_affiliation %}
-                                                    {{ report.affiliation|default:"-" }}
+                                                {% if report.affiliation and report.location_affiliation %}
+                                                    {% if report.affiliation == report.location_affiliation %}
+                                                        {{ report.affiliation }}
+                                                    {% else %}
+                                                        {{ report.affiliation }} / {{ report.location_affiliation }}
+                                                    {% endif %}
+                                                {% elif report.affiliation %}
+                                                    {{ report.affiliation }}
+                                                {% elif report.location_affiliation %}
+                                                    {{ report.location_affiliation }}
                                                 {% else %}
-                                                    {{ report.affiliation|default:"-" }}/{{ report.location_affiliation|default:"-" }}
+                                                    -
                                                 {% endif %}
                                             </td>
                                             <td>{{ report.get_report_type_display }}</td>

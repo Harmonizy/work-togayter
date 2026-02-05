@@ -156,5 +156,29 @@ $(document).ready(function () {
     totalFormsInput.val(totalFormsCount + 1);
   });
 });
+
+const select = document.getElementById("example-content-select");
+const btn = document.getElementById("example-download-btn");
+
+function updateDownloadBtn() {
+    const value = select.value;
+
+    if (!value) {
+        btn.classList.add("d-none");
+        btn.removeAttribute("href");
+        return;
+    }
+
+    btn.href = `/example-content/${value}/`;
+    btn.classList.remove("d-none");
+}
+
+// 👉 ตอนเปลี่ยนค่า (ของเดิม)
+select.addEventListener("change", updateDownloadBtn);
+
+// 👉 ตอนโหลดหน้า (ที่ขาดไป)
+updateDownloadBtn();
+
+
 </script>
 {% endblock %}
