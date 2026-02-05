@@ -172,7 +172,7 @@
                                                     -
                                                 {% endif %}
                                             </td>
-                                            <td>{{ report.get_report_type_display|truncatechars:35 }}</td>
+                                            <td>{{ report.get_report_type_display|truncatechars:32 }}</td>
                                             <td>{{ report.event_date|thai_date }}, {{ report.event_time|time:"H:i" }}</td>
                                             <td class="text-start">
                                                 <a href="{% url 'report:safety-report.detail' report.id %}"  class="fw-medium link-primary" style="font-family: monospace; font-size: 1.1em;">
