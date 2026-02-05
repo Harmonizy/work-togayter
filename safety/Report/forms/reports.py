@@ -94,7 +94,8 @@ class BaseReportForm(forms.ModelForm):
             allowed = [ReportTypeChoices.SIMPLE]
 
         elif report_type in GROUND_TYPES:
-            allowed = GROUND_TYPES
+            allowed = [ReportTypeChoices.MINOR_ACCIDENT_GROUND]
+
 
         elif report_type in AVIATION_TYPES:
             allowed = AVIATION_TYPES

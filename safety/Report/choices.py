@@ -12,7 +12,7 @@ class ReportTypeChoices(models.TextChoices):
     SAFETY_AVIATION = 'SA', 'รายงานนิรภัยการบินขั้นต้น'
     ANALYSIS_AVIATION = 'AA', 'รายงานผลการวิเคราะห์อันตราย'
     BIRD_AVIATION = 'BA', "รายงานอากาศยานชนนก"
-    FIX_ANALYSIS_AVIATION = 'FAA', "รายงานผลการวิเคราะห์อากาศยานอุบัติการณ์"
+    FIX_ANALYSIS_AVIATION = 'FAA', "รายงานข้อขัดข้องของการรายงานผลการวิเคราะห์ออกาศยานอุบัติการณ์"
 
     OBSERVATION = 'O', 'สังเกตการณ์พฤติกรรม'
     #ถ้าเพิ่มต้องไปเขียนเพิ่มใน report_create_officer ด้วย
