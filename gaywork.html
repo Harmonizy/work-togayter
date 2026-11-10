@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAYWORK — Work Togayter</title>
+  <style>
+    :root {
+      --bg: #0f0f14;
+      --card: #1a1a22;
+      --text: #f4f4f7;
+      --muted: #a0a0b0;
+      --pride: linear-gradient(90deg, #e40303, #ff8c00, #ffed00, #008026, #24408e, #732982);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .stripe { height: 6px; background: var(--pride); }
+    header {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: 0.05em; }
+    nav a { color: var(--muted); text-decoration: none; margin-left: 1.25rem; }
+    nav a:hover { color: var(--text); }
+    .hero {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem 3rem;
+      text-align: center;
+    }
+    .hero h1 {
+      display: inline-block;
+      font-size: clamp(3rem, 12vw, 7rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      background: var(--pride);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p { color: var(--muted); font-size: 1.2rem; margin: 1rem auto 2rem; max-width: 600px; }
+    .btn {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      border-radius: 999px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #fff;
+      background: var(--pride);
+      transition: transform 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .features {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.75rem;
+      border-top: 4px solid;
+    }
+    .card:nth-child(1) { border-color: #e40303; }
+    .card:nth-child(2) { border-color: #ffed00; }
+    .card:nth-child(3) { border-color: #008026; }
+    .card:nth-child(4) { border-color: #732982; }
+    .card .icon { font-size: 2rem; }
+    .card h3 { margin: 0.5rem 0; }
+    .card p { color: var(--muted); }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 2rem 1.5rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="stripe"></div>
+
+  <header>
+    <div class="logo">GAYWORK</div>
+    <nav>
+      <a href="#features">ฟีเจอร์</a>
+      <a href="#join">เข้าร่วม</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>GAYWORK</h1>
+    <p>ทำงานด้วยกัน อย่างเป็นตัวเอง — พื้นที่ทำงานที่เปิดกว้าง ปลอดภัย และสนุกสำหรับทุกคน</p>
+    <a class="btn" href="#join" id="join">เริ่มทำงานด้วยกัน</a>
+  </section>
+
+  <section class="features" id="features">
+    <div class="card">
+      <div class="icon">🤝</div>
+      <h3>ทำงานเป็นทีม</h3>
+      <p>แบ่งงาน ติดตามความคืบหน้า และช่วยเหลือกันได้ในที่เดียว</p>
+    </div>
+    <div class="card">
+      <div class="icon">🌈</div>
+      <h3>เป็นตัวเองได้เต็มที่</h3>
+      <p>วัฒนธรรมการทำงานที่เคารพความหลากหลายของทุกคน</p>
+    </div>
+    <div class="card">
+      <div class="icon">💬</div>
+      <h3>สื่อสารง่าย</h3>
+      <p>พูดคุย แชร์ไอเดีย และให้ฟีดแบ็กกันอย่างสร้างสรรค์</p>
+    </div>
+    <div class="card">
+      <div class="icon">🚀</div>
+      <h3>เติบโตไปด้วยกัน</h3>
+      <p>เรียนรู้ พัฒนาทักษะ และฉลองความสำเร็จร่วมกัน</p>
+    </div>
+  </section>
+
+  <div class="stripe"></div>
+  <footer>
+    &copy; <span id="year"></span> GAYWORK · Work Togayter
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
